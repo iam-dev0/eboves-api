@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "es6",
+        "removeComments": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "dist",
+        "baseUrl": ".",
+        "strict": true,
+        "paths": {
+            "*": [
+                "node_modules/*",
+                "src/types/*"
+            ],
+            "#root/*": ["./src/*"]
+        }
+    },
+    "include": [
+        "src/**/*"
+    ]
+}
