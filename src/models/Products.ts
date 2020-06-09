@@ -7,7 +7,8 @@ import {
   DeletedAt,
   CreatedAt,
   DefaultScope,
-  Scopes
+  Scopes,
+  Default
 } from "sequelize-typescript";
 
 
@@ -91,9 +92,10 @@ export class Products extends Model<Products> {
   })
   metaDescription!: string;
 
+  @Default("eboves")
   @Column({
     type: DataType.ENUM,
-    values: ["Injesting", "Uploaded", "Processing", "Transcoded", "Failed"]
+    values:["eboves", "supplier"]
   })
   productType!: string;
 

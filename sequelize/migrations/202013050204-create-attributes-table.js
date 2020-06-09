@@ -11,6 +11,9 @@ module.exports.up = (queryInterface, DataTypes) => {
       name: {
         type: DataTypes.STRING,
       },
+      unit: {
+        type: DataTypes.STRING,
+      },
       slug: {
         uniqueKey: true,
         type: DataTypes.STRING,

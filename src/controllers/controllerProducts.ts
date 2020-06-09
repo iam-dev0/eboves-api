@@ -33,7 +33,7 @@ export const getProducts = async (req: Request, res: Response): Promise<Response
         limit: parseInt(params.pageSize || "20"),
         offset: parseInt(params.current || "1") * parseInt(params.pageSize || "20") - parseInt(params.pageSize || "20"),
         where
-        
+
     });
 
     return res.json({
@@ -42,5 +42,24 @@ export const getProducts = async (req: Request, res: Response): Promise<Response
         pageSize: params.pageSize,
         success: true,
         total: data.count,
+    });
+};
+
+
+
+
+
+export const updateProductStatus = async (req: Request, res: Response): Promise<Response> => {
+    const { id } = req.params;
+    const { active } = req.query;
+
+    await Products.update({ active }, {
+        where: {
+            id
+        }
+    });
+
+    return res.json({
+        success: true,
     });
 };

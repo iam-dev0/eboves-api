@@ -1,6 +1,6 @@
 module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
-    "attribute_product_variation",
+    "attribute_values_product_variation",
     {
       id: {
         allowNull: false,
@@ -8,7 +8,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      attributeId: {
+      productAttributeId: {
         allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
@@ -24,14 +24,6 @@ module.exports.up = (queryInterface, DataTypes) => {
           model: "product_variations",
         },
       },
-      unitId: {
-        allowNull: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "units",
-        },
-      },
       value: DataTypes.STRING,
       image: DataTypes.STRING,
       alt: DataTypes.STRING,
@@ -43,4 +35,4 @@ module.exports.up = (queryInterface, DataTypes) => {
 };
 
 module.exports.down = (queryInterface) =>
-  queryInterface.dropTable("attribute_product_variation");
+  queryInterface.dropTable("attribute_values_product_variation");
