@@ -1,6 +1,6 @@
 module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
-    "attribute_product",
+    "product_attribute",
     {
       id: {
         allowNull: false,
@@ -32,4 +32,4 @@ module.exports.up = (queryInterface, DataTypes) => {
 };
 
 module.exports.down = (queryInterface) =>
-  queryInterface.dropTable("attribute_product");
+  queryInterface.dropTable("product_attribute");

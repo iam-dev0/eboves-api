@@ -3,6 +3,7 @@ import {
   DataType,
   Model,
   Table,
+  Scopes,
   UpdatedAt,
   DeletedAt,
   CreatedAt,
@@ -22,6 +23,14 @@ import {
   paranoid: true,
   tableName: "Brands"
 })
+@Scopes(() => ({
+  basic: {
+    attributes:["id","name","slug"]
+  },
+  extends: {
+    where: {primaryColor: "yellow"}
+  }
+}))
 export class Brands extends Model<Brands> {
   @Column({
     allowNull: false,

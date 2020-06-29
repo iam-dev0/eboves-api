@@ -3,72 +3,87 @@ import {
   DataType,
   Model,
   Table,
+  HasMany,
   UpdatedAt,
   DeletedAt,
   CreatedAt,
   DefaultScope,
   Scopes,
-  Default
+  Default,
+  ForeignKey,
+  HasOne,
+  BelongsTo,
 } from "sequelize-typescript";
-
-
-
-
-
-
+import ProductsImages from "./ProductImages";
+import ProductAttribute from "./ProductAttributes";
+import Brands from "./Brands";
 
 @DefaultScope(() => ({
-  attributes: ["id","name", "brandId","sku","productType","active","createdAt",]
+  attributes: [
+    "id",
+    "name",
+    "brandId",
+    "sku",
+    "productType",
+    "active",
+    "createdAt",
+  ],
 }))
 @Scopes(() => ({
-  full: {
-  },
+  full: {},
   // yellow: {
   //   where: { brandId: "yellow" }
   // }
 }))
-
 @Table({
   defaultScope: {
-    attributes: { exclude: ["deletedAt"] }
+    attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Products"
+  tableName: "Products",
 })
 export class Products extends Model<Products> {
   @Column({
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: DataType.INTEGER.UNSIGNED
+    type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;
 
+  @ForeignKey(() => Brands)
   @Column
   brandId!: number;
 
+  @BelongsTo(() => Brands)
+  brand!: Brands;
+  
   @Column
   supplierId!: number;
-
 
   @Column
   attributeId!: number;
 
   @Column({
     unique: false,
-    type: DataType.STRING
+    type: DataType.STRING,
   })
   sku!: string;
 
+  @HasMany(() => ProductAttribute)
+  attributes!: ProductAttribute[];
+
+  @HasMany(() => ProductsImages)
+  images!: ProductsImages[];
   @Column({
     unique: false,
-    type: DataType.STRING
+    type: DataType.STRING,
   })
   productCode!: string;
 
   @Column({
     unique: false,
-    type: DataType.STRING
+    type: DataType.STRING,
   })
   slug!: string;
 
@@ -95,7 +110,7 @@ export class Products extends Model<Products> {
   @Default("eboves")
   @Column({
     type: DataType.ENUM,
-    values:["eboves", "supplier"]
+    values: ["eboves", "supplier"],
   })
   productType!: string;
 
@@ -126,7 +141,7 @@ export class Products extends Model<Products> {
   updatedBy!: number;
   @Column
   DeletedBy!: number;
-  
+
   @CreatedAt
   @Column
   createdAt!: Date;
