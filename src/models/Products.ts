@@ -11,12 +11,14 @@ import {
   Scopes,
   Default,
   ForeignKey,
-  HasOne,
+  BelongsToMany,
   BelongsTo,
 } from "sequelize-typescript";
 import ProductsImages from "./ProductImages";
 import ProductAttribute from "./ProductAttributes";
 import Brands from "./Brands";
+import Attributes from "./Attributes";
+import ProductVariations from "./ProductVariations";
 
 @DefaultScope(() => ({
   attributes: [
@@ -57,24 +59,19 @@ export class Products extends Model<Products> {
 
   @BelongsTo(() => Brands)
   brand!: Brands;
-  
+
   @Column
   supplierId!: number;
 
-  @Column
-  attributeId!: number;
+  @BelongsToMany(() => Attributes, () => ProductAttribute)
+  attributes!: Attributes[];
 
-  @Column({
-    unique: false,
-    type: DataType.STRING,
-  })
-  sku!: string;
-
-  @HasMany(() => ProductAttribute)
-  attributes!: ProductAttribute[];
+  @HasMany(() => ProductVariations)
+  variations!: ProductVariations[];
 
   @HasMany(() => ProductsImages)
   images!: ProductsImages[];
+
   @Column({
     unique: false,
     type: DataType.STRING,
@@ -87,10 +84,6 @@ export class Products extends Model<Products> {
   })
   slug!: string;
 
-  @Column({
-    type: DataType.DECIMAL,
-  })
-  price!: number;
 
   @Column({
     type: DataType.TEXT,

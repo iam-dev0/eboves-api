@@ -6,7 +6,12 @@ import status from "http-status";
 import myconnect from "../db/db";
 import { Request, Response } from "express";
 import Brands from "../models/Brands";
-export interface TableListParams {
+import Attributes from "../models/Attributes";
+import { http } from "winston";
+import httpStatus from "http-status";
+import ProductVariations from "../models/ProductVariations";
+import { any } from "bluebird";
+export interface SearchParams {
   sorter?: string;
   status?: string;
   name?: string;
@@ -29,29 +34,48 @@ export interface CreateProductBody {
   attributes: string[];
 }
 
+export interface CreateVariationBody {
+  sku: string;
+  slug: string;
+  price: number;
+  attributes: [];
+  barcodes: [];
+}
+
 export const getProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const params: TableListParams = req.query;
+  const params: SearchParams = req.query;
 
   let where = {};
 
   if (params.name) {
     where = {
       ...where,
-      name: {
-        [Op.like]: `${params.name}%`,
-      },
+      [Op.or]: [
+        {
+          name: {
+            [Op.like]: `${params.name}%`,
+          },
+        },
+        {
+          "$variations.sku$": {
+            [Op.like]: `${params.name}%`,
+          },
+        },
+      ]
     };
   }
-  console.log(params);
+
   const data = await Products.findAndCountAll({
     limit: parseInt(params.pageSize || "20"),
+    include: [{ model: ProductVariations, as:"variations" }],
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
       parseInt(params.pageSize || "20"),
     where,
+   
   });
 
   return res.json({
@@ -69,7 +93,12 @@ export const getSingleProduct = async (
 ): Promise<Response> => {
   const id: string = req.params.id;
 
-  const data = await Products.findByPk(id,{include: [{ model: ProductAttribute},{ model:Brands.scope("basic")}]});
+  const data = await Products.findByPk(id, {
+    include: [
+      { model: Attributes.scope("basic") },
+      { model: Brands.scope("basic") },
+    ],
+  });
 
   return res.json({
     data: data,
@@ -114,7 +143,7 @@ export const createProduct = async (
           attributeId: i,
           productId: product.id,
         }));
-        product.attributes = await ProductAttribute.bulkCreate(attrs, {
+        await ProductAttribute.bulkCreate(attrs, {
           transaction: t,
           fields: ["productId", "attributeId"],
         });
@@ -138,6 +167,40 @@ export const createProduct = async (
     return res.status(status.CREATED).json({
       data: result,
     });
+  } catch (error) {
+    // If the execution reaches this line, an error occurred.
+    // The transaction has already been rolled back automatically by Sequelize!
+    console.log(error);
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      error: error,
+    });
+  }
+};
+
+export const createVariations = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const variations: CreateVariationBody[] = req.body;
+  const { id } = req.params;
+  const varValues = variations?.map(
+    ({ sku, slug, price }: CreateVariationBody) => ({
+      productId: id,
+      sku,
+      slug,
+      price,
+      createdBy: 1, // Hardcord for now
+      updatedBy: 1, // Hardcord for now
+    })
+  );
+  try {
+    const result = await myconnect.transaction(async (t) => {
+      return await ProductVariations.bulkCreate(varValues, {
+        transaction: t,
+      });
+    });
+
+    return res.status(httpStatus.CREATED).json({ data: result });
   } catch (error) {
     // If the execution reaches this line, an error occurred.
     // The transaction has already been rolled back automatically by Sequelize!

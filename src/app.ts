@@ -3,6 +3,7 @@ import compression from "compression";  // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
 import lusca from "lusca";
+import cors from "cors";
 import "./db/db";
 import routes from "./routes";
 // import config from "./config/config";
@@ -38,6 +39,7 @@ const app = express();
 
 
 // Express configuration
+app.use(cors());
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

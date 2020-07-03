@@ -4,6 +4,7 @@ import {
     Model,
     Table,
     ForeignKey,
+    BelongsTo,
   } from "sequelize-typescript";
 import Products from "./Products";
 import Attributes from "./Attributes";
@@ -41,6 +42,7 @@ import Attributes from "./Attributes";
     @ForeignKey(() => Attributes)
     @Column
     attributeId!: number;
+
 
   }
   

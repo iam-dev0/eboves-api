@@ -6,6 +6,7 @@ import {
   UpdatedAt,
   DeletedAt,
   CreatedAt,
+  Scopes,
 } from "sequelize-typescript";
 
 
@@ -21,6 +22,11 @@ import {
   },
   paranoid: true,
   tableName: "Attributes"
+})
+@Scopes({
+  basic: {
+    attributes:["id","name","slug"]
+  },
 })
 export class Attributes extends Model<Attributes> {
   @Column({
