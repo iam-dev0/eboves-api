@@ -43,6 +43,9 @@ import Attributes from "./Attributes";
     @Column
     attributeId!: number;
 
+    @BelongsTo(()=>Attributes)
+    attribue!: Attributes;
+
 
   }
   
