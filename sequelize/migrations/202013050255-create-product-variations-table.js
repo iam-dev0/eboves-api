@@ -59,10 +59,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.BOOLEAN,
         default: false,
       },
-      continue: {
-        type: DataTypes.BOOLEAN,
-        default: true,
-      },
       active: {
         type: DataTypes.BOOLEAN,
         default: false,

@@ -45,7 +45,7 @@ export class Attributes extends Model<Attributes> {
 
   @Column({
     type: DataType.ENUM,
-    values:["string", "numeric", "image"],
+    values:["text","image"],
   })
   type!: string;
 

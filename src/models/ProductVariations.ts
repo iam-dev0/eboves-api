@@ -7,8 +7,14 @@ import {
   ForeignKey,
   Default,
   AllowNull,
+  HasMany,
+  HasOne,
+  BelongsTo,
+  BelongsToMany,
 } from "sequelize-typescript";
 import Products from "./Products";
+import ProductVariationAttributeValues from "./ProductVariationAttributeValues";
+import ProductAttributes from "./ProductAttributes";
 
 @Table({
   defaultScope: {
@@ -31,12 +37,22 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   id!: number;
 
+
+  @BelongsToMany(()=>ProductAttributes,()=>ProductVariationAttributeValues)
+  attributes!: ProductAttributes[];
+
   @ForeignKey(() => Products)
   @AllowNull(false)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
   })
   productId!: number;
+
+  @BelongsTo(() => Products)
+  product!: Products;
+
+  @HasMany(() => ProductVariationAttributeValues)
+  attributesValues!: ProductVariationAttributeValues[];
 
   @Column
   slug!: string;
@@ -83,13 +99,11 @@ export class ProductVariations extends Model<ProductVariations> {
   @Column
   preOrder!: boolean;
 
-  @Default(true)
-  @Column
-  continue!: boolean;
 
   @Default(true)
   @Column
   active!: boolean;
+
 
   
   @Column

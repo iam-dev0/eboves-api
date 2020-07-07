@@ -1,23 +1,23 @@
 import Products from "../models/Products";
 import ProductsImages from "../models/ProductImages";
-import ProductAttribute from "../models/ProductAttributes";
-import { Op } from "sequelize";
+import ProductAttributes from "../models/ProductAttributes";
+import sequelize, { Op } from "sequelize";
 import status from "http-status";
 import myconnect from "../db/db";
 import { Request, Response } from "express";
 import Brands from "../models/Brands";
 import Attributes from "../models/Attributes";
-import { http } from "winston";
 import httpStatus from "http-status";
 import ProductVariations from "../models/ProductVariations";
-import { any } from "bluebird";
 export interface SearchParams {
   sorter?: string;
-  status?: string;
+  active?: string;
   name?: string;
   brandId?: number;
   sku?: string;
+  createdAt?: string;
   productType?: string;
+  supplierId?: string;
   pageSize?: string;
   current?: string;
 }
@@ -47,9 +47,8 @@ export const getProducts = async (
   res: Response
 ): Promise<Response> => {
   const params: SearchParams = req.query;
-
   let where = {};
-
+  const order: any = [];
   if (params.name) {
     where = {
       ...where,
@@ -64,18 +63,30 @@ export const getProducts = async (
             [Op.like]: `${params.name}%`,
           },
         },
-      ]
+      ],
     };
+  }
+  if (params.brandId) where = { brandId: params.brandId };
+  if (params.productType) where = { productType: params.productType };
+  if (params.supplierId) where = { supplierId: params.supplierId };
+  if (params.active) where = { active: params.active.toLowerCase() === "true" };
+  if (params.createdAt) where = { active: params.createdAt };
+  if (params.sorter) {
+    const sorting = params.sorter.split("_");
+    order.push([
+      sorting[0],
+      sorting[1].toLowerCase() === "ascend" ? "ASC" : "DESC",
+    ]);
   }
 
   const data = await Products.findAndCountAll({
-    limit: parseInt(params.pageSize || "20"),
-    include: [{ model: ProductVariations, as:"variations" }],
+    include: [{ model: ProductVariations, attributes: ["id", "sku"] }],
+    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
       parseInt(params.pageSize || "20"),
     where,
-   
+    order,
   });
 
   return res.json({
@@ -143,7 +154,7 @@ export const createProduct = async (
           attributeId: i,
           productId: product.id,
         }));
-        await ProductAttribute.bulkCreate(attrs, {
+        await ProductAttributes.bulkCreate(attrs, {
           transaction: t,
           fields: ["productId", "attributeId"],
         });
@@ -182,10 +193,10 @@ export const createVariations = async (
   res: Response
 ): Promise<Response> => {
   const variations: CreateVariationBody[] = req.body;
-  const { id } = req.params;
+  const { Pid } = req.params;
   const varValues = variations?.map(
     ({ sku, slug, price }: CreateVariationBody) => ({
-      productId: id,
+      productId: Pid,
       sku,
       slug,
       price,
@@ -218,7 +229,7 @@ export const updateProductStatus = async (
   const { id } = req.params;
   const { active } = req.query;
 
-  await Products.update(
+  const result = await Products.update(
     { active },
     {
       where: {
@@ -229,5 +240,59 @@ export const updateProductStatus = async (
 
   return res.json({
     success: true,
+    data: result,
+  });
+};
+
+export const getVaraitions = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { Pid } = req.params;
+
+  const result = await ProductVariations.findAll({
+    where: { productId: Pid },
+    attributes: {
+      include: [
+        "id",
+        "sku",
+        "active",
+        "createdAt",
+        [
+          sequelize.fn(
+            "product_variation_name",
+            sequelize.col("ProductVariations.id")
+          ),
+          "name",
+        ],
+      ],
+    },
+  });
+
+  return res.json({
+    data: result,
+  });
+};
+
+export const getVaraition = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { Vid } = req.params;
+
+  const result = await ProductVariations.findByPk(Vid, {
+    attributes: {
+      include: [[
+        sequelize.fn(
+          "product_variation_name",
+          sequelize.col("id")
+        ),
+        "name",
+      ]],
+    },
+  });
+
+  return res.json({
+    data: result,
   });
 };
