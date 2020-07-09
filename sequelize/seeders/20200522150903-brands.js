@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
-
+const { stringGenerator ,randomArrayElement,getrandomBoolean} = require("../../dist/util/index");
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -13,35 +14,40 @@ module.exports = {
       }], {});
     */
 
-    const users = [];
-    for (let i = 1; i < 10; i++) {
-      users.push({
-        id: i,
-        countryId: 1,
+    const country = await queryInterface.sequelize.query(
+      `select countries.id as countryId ,states.id as stateId,cities.id as cityId , outlets.id as outletId from countries 
+  inner join states on countries.id =states.countryId
+  inner join cities on states.id =cities.stateId
+  inner join outlets on outlets.cityId=cities.id
+  limit 1 ;`
+    );
+    const users = await queryInterface.sequelize.query("select * from users;");
 
-        name: `foobar${i}`,
-        slug: null,
-        code: null,
-        logo1: `foobar${i}`,
-        logo2: `foobar${i}`,
-        image: null,
-        storyText: null,
-        storyTextColor: null,
-        storyCover: null,
-        popularity: false,
-        new: true,
-        active: true,
-        metaTitle: null,
-        metaKeywords: null,
-        metaDescription: null,
-        createdBy:1,
-        updatedBy:1,
-        deletedBy:null,
+    const brands = [];
+    [...Array(Math.floor(Math.random() * 100))].map(() =>
+    brands.push({
+        name: stringGenerator(Math.floor(Math.random() * 2) + 1),
+        slug: stringGenerator(Math.floor(Math.random() * 2) + 1),
+        logo1: "https://via.placeholder.com/150x200",
+        logo2: "https://via.placeholder.com/150x200",
+        image: "https://via.placeholder.com/1080x720",
+        storyText: stringGenerator(Math.floor(Math.random() * 15) + 1),
+        storyTextColor: ["#eeee", "#ffff"][Math.floor(Math.random * 1)],
+        storyCover: "https://via.placeholder.com/1080x720",
+        popularity: getrandomBoolean(.9),
+        new: getrandomBoolean(.9),
+        active: getrandomBoolean(.1),
+        metaTitle: stringGenerator(Math.floor(Math.random() * 15) + 1),
+        metaKeywords: stringGenerator(Math.floor(Math.random() * 15) + 1),
+        metaDescription: stringGenerator(Math.floor(Math.random() * 15) + 1),
+        createdBy: randomArrayElement(users[0]).id,
+        updatedBy: randomArrayElement(users[0]).id,
+        deletedBy: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
-    }
-    return queryInterface.bulkInsert("brands", users);
+      })
+    );
+    return queryInterface.bulkInsert("brands", brands);
   },
 
   down: (queryInterface, Sequelize) => {

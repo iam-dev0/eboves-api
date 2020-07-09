@@ -3,29 +3,25 @@ import {
   DataType,
   Model,
   Table,
-  ForeignKey,
   UpdatedAt,
   DeletedAt,
   CreatedAt,
-  HasMany,
   Scopes,
 } from "sequelize-typescript";
-
 
 @Table({
   defaultScope: {
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-
-  tableName: "Categories",
+  tableName: "Outlets",
 })
 @Scopes({
   basic: {
-    attributes:["id","name","active","createdAt"]
+    attributes: ["id", "name", "slug"],
   },
 })
-export class Categories extends Model<Categories> {
+export class Outlets extends Model<Outlets> {
   @Column({
     allowNull: false,
     autoIncrement: true,
@@ -34,12 +30,8 @@ export class Categories extends Model<Categories> {
   })
   id!: number;
 
-  @ForeignKey(() => Categories)
   @Column
-  categoryId!: number;
-
-  @HasMany(()=>Categories)
-  childrens!: Categories[];
+  cityId!: number;
 
   @Column({ unique: true })
   slug!: string;
@@ -47,35 +39,18 @@ export class Categories extends Model<Categories> {
   @Column
   name!: string;
 
-  @Column
-  image!: string;
-
-  @Column({ type: DataType.INTEGER.UNSIGNED })
-  displayOrder!: number;
-
-  @Column
-  storyText!: string;
-
-  @Column
-  storyTextColor!: string;
-
-  @Column
-  storyCover!: string;
-
-  metaTitle!: string;
-
-  @Column({
-    type: DataType.TEXT,
-  })
-  metaKeywords!: string;
-
-  @Column({
-    type: DataType.TEXT,
-  })
-  metaDescription!: string;
-
+  @Column({ type: DataType.TEXT })
+  address!: string;
   @Column
   active!: boolean;
+  @Column
+  default!: boolean;
+  @Column
+  online!: boolean;
+
+  // @ForeignKey(() => Categories)
+  @Column
+  managerId!: number;
 
   @Column
   createdBy!: number;
@@ -97,4 +72,4 @@ export class Categories extends Model<Categories> {
   deletedAt!: Date;
 }
 
-export default Categories;
+export default Outlets;

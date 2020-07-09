@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
-
+const { stringGenerator,randomArrayElement,getrandomBoolean } = require("../../dist/util/index");
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -12,36 +13,47 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-    const users = [];
-    for (let i = 1; i < 10; i++) {
-      users.push({
-        id: i,
-        categoryId: null,
-        brandId:null,
-        supplierId:null,
-        attributeId:null,
-        sku:null,
-        name: `foobar${i}`,
-        description: `foobar${i}`,
-        descriptionImage:"someimage here",
-        howToUse:"instruction how to use",
-        productCode:null,
-        slug: null,
-        price:100,
-        commentsCount:7,
-        rating:4,
-        metaTitle: null,
-        metaKeywords: null,
-        metaDescription: null,
-        active: true,
-        createdBy: 1,
-        updatedBy: 1,
+    const brands = await queryInterface.sequelize.query("select * from brands");
+    const suppliers = await queryInterface.sequelize.query(
+      "select * from suppliers"
+    );
+    const categoris = await queryInterface.sequelize.query(
+      "select id from categories where id in (select id from categories where id in (select id from categories where categoryId is null));"
+    );
+
+    
+    const users = await queryInterface.sequelize.query("select * from users;");
+
+    const products = [];
+    [...Array(Math.floor(Math.random() * 500)+10)].map(() =>
+    products.push({
+        categoryId: randomArrayElement(categoris[0]).id,
+        brandId: randomArrayElement(brands[0]).id,
+        supplierId: randomArrayElement(suppliers[0]).id,
+        attributeId: null,
+        productType:randomArrayElement(["eboves","supplier"]),
+        sku: stringGenerator(1),
+        name:stringGenerator(Math.floor(Math.random() * 10) + 1),
+        description: stringGenerator(Math.floor(Math.random() * 100) + 1),
+        descriptionImage:"https://via.placeholder.com/1080x720",
+        howToUse: stringGenerator(Math.floor(Math.random() * 100) + 1),
+        productCode: stringGenerator(Math.floor(Math.random() * 10) + 1),
+        slug: stringGenerator(Math.floor(Math.random() * 10) + 1).replace(/\s/g,"-"),
+        price: Math.floor(Math.random()*10000)+100,
+        commentsCount:  Math.floor(Math.random()*100)+1,
+        rating:  Math.floor(Math.random()*5),
+        metaTitle: stringGenerator(Math.floor(Math.random() * 10) + 1),
+        metaKeywords: stringGenerator(Math.floor(Math.random() * 10) + 1),
+        metaDescription: stringGenerator(Math.floor(Math.random() * 10) + 1),
+        active: getrandomBoolean(.1),
+        createdBy: randomArrayElement(users[0]).id,
+        updatedBy: randomArrayElement(users[0]).id,
         deletedBy: null,
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
-    }
-    return queryInterface.bulkInsert("products", users);
+      })
+    );
+    return queryInterface.bulkInsert("products", products);
   },
 
   down: (queryInterface, Sequelize) => {

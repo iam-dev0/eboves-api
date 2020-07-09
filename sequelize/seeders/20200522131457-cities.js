@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
+const  { stringGenerator }= require("../../dist/util/index");
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -13,19 +15,20 @@ module.exports = {
       }], {});
     */
 
+    const states = await queryInterface.sequelize.query(
+      "select * from states;"
+    );
     const cities = [];
-    for (let i = 1; i < 10; i++) {
-      for (let j = 1; j < 10; j++) {
+    states[0].map(({ id }) => {
+      [...Array(Math.floor(Math.random() * 10)+1)].map(()=>
         cities.push({
-          id: i + (j * 10 - 10),
-          stateId: i + (j * 10 - 10),
-          countryId:i,
-          name: `foobar${j}`,
+          stateId: id,
+          name: stringGenerator(Math.floor(Math.random() * 2) + 1),
           createdAt: new Date(),
           updatedAt: new Date(),
-        });
-      }
-    }
+        })
+      );
+    });
     return queryInterface.bulkInsert("cities", cities);
   },
 

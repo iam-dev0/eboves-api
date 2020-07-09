@@ -1,7 +1,13 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
+const {
+  stringGenerator,
+  randomArrayElement,
+  getrandomBoolean,
+} = require("../../dist/util/index");
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -12,34 +18,40 @@ module.exports = {
         isBetaMember: false
       }], {});
     */
-    const users = [];
-    for (let i = 1; i < 10; i++) {
-      users.push({
-        id: i,
-        productId: i,
-        sku:null,
-        slug:null,
-        // name: `foobar${i}`,
-        shortDescription: `foobar${i}`,
-        virtualQuantity:20,
-        price:200,
-        discountPercentage:0,
-        discountPrice:0,
-        discountStartTime:null,
-        discountEndTime:null,
-        trending:false,
-        continue:true,
-        preOrder:false,
-        bestSeller:false,
-        active: true,
-        createdBy: 1,
-        updatedBy: 1,
-        deletedBy: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-    }
-    return queryInterface.bulkInsert("product_variations", users);
+    const products = await queryInterface.sequelize.query(
+      "select * from products"
+    );
+
+    const users = await queryInterface.sequelize.query("select * from users;");
+
+    const vps = [];
+    products[0].map((product) =>
+      [...Array(Math.floor(Math.random() * 10)+1)].map(() =>
+        vps.push({
+          productId: product.id,
+          sku: stringGenerator(1),
+          slug: stringGenerator(Math.floor(Math.random() * 10) + 1).replace(/\s/g,"-"),
+          shortDescription: stringGenerator(Math.floor(Math.random() * 50) + 1),
+          virtualQuantity: Math.floor(Math.random() * 100) + 10,
+          price: Math.floor(Math.random() * 10000) + 100,
+          discountPercentage: Math.floor(Math.random() * 100) + 0,
+          discountPrice: Math.floor(Math.random() * 10000) + 0,
+          discountStartTime: new Date(),
+          discountEndTime: new Date(),
+          trending: getrandomBoolean(.9),
+          preOrder:getrandomBoolean(.9),
+          bestSeller: getrandomBoolean(.9),
+          active: getrandomBoolean(.1),
+          createdBy: randomArrayElement(users[0]).id,
+          updatedBy: randomArrayElement(users[0]).id,
+          deletedBy: null,
+          deletedBy: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+      )
+    );
+    return queryInterface.bulkInsert("product_variations", vps);
   },
 
   down: (queryInterface, Sequelize) => {

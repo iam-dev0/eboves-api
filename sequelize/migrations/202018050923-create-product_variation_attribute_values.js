@@ -43,4 +43,4 @@ module.exports.up = (queryInterface, DataTypes) => {
 };
 
 module.exports.down = (queryInterface) =>
-  queryInterface.dropTable("product_variation.attribute_values");
+  queryInterface.dropTable("product_variation_attribute_values");

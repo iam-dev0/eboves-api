@@ -66,17 +66,19 @@ export const getProducts = async (
       ],
     };
   }
-  if (params.brandId) where = { brandId: params.brandId };
-  if (params.productType) where = { productType: params.productType };
-  if (params.supplierId) where = { supplierId: params.supplierId };
-  if (params.active) where = { active: params.active.toLowerCase() === "true" };
-  if (params.createdAt) where = { active: params.createdAt };
+  if (params.brandId) where = { ...where, brandId: params.brandId };
+  if (params.productType) where = { ...where, productType: params.productType };
+  if (params.supplierId) where = { ...where, supplierId: params.supplierId };
+  if (params.active)
+    where = { ...where, active: params.active.toLowerCase() === "true" };
+  if (params.createdAt) where = { ...where, createdAt: params.createdAt };
   if (params.sorter) {
     const sorting = params.sorter.split("_");
     order.push([
       sorting[0],
       sorting[1].toLowerCase() === "ascend" ? "ASC" : "DESC",
     ]);
+    
   }
 
   const data = await Products.findAndCountAll({
@@ -282,13 +284,9 @@ export const getVaraition = async (
 
   const result = await ProductVariations.findByPk(Vid, {
     attributes: {
-      include: [[
-        sequelize.fn(
-          "product_variation_name",
-          sequelize.col("id")
-        ),
-        "name",
-      ]],
+      include: [
+        [sequelize.fn("product_variation_name", sequelize.col("id")), "name"],
+      ],
     },
   });
 

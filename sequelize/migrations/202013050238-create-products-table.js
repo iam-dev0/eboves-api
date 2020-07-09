@@ -40,7 +40,7 @@ module.exports.up = (queryInterface, DataTypes) => {
           model: "attributes",
         },
       },
-      description: DataTypes.STRING,
+      description: DataTypes.TEXT,
       descriptionImage: DataTypes.STRING,
       howToUse:DataTypes.TEXT,
       name: DataTypes.STRING,

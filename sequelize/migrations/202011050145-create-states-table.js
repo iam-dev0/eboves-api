@@ -10,6 +10,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       countryId: {
         type: DataTypes.INTEGER.UNSIGNED,
+        allowNull: false,
         references: {
           key: "id",
           model: "countries",

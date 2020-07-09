@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
+const { stringGenerator,randomArrayElement } = require("../../dist/util/index");
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: async (queryInterface, Sequelize) => {
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
@@ -13,16 +15,22 @@ module.exports = {
       }], {});
     */
 
+   const brands = await queryInterface.sequelize.query(
+    "select * from brands"
+  );
+  const suppliers = await queryInterface.sequelize.query(
+    "select * from suppliers"
+  );
+  
    const users = [];
-   for (let i = 1; i < 10; i++) {
+   brands[0].map((brand)=>
      users.push({
-       id: i,
-       brandId: i,
-       supplierId:i,
+       brandId: brand.id,
+       supplierId:randomArrayElement(suppliers[0]).id,
        createdAt: new Date(),
        updatedAt: new Date(),
-     });
-   }
+     })
+   );
 
    return queryInterface.bulkInsert("brand_supplier", users);
   },
