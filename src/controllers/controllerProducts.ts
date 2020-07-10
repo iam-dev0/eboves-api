@@ -82,7 +82,7 @@ export const getProducts = async (
   }
 
   const data = await Products.findAndCountAll({
-    include: [{ model: ProductVariations, attributes: ["id", "sku"] }],
+    include: [{ model: ProductVariations, attributes: ["id", "sku"] ,/*limit:1*/}],// For now as bug in sequlize
     limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "20") -

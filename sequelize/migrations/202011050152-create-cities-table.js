@@ -28,7 +28,10 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-
+      active: {
+        type: DataTypes.BOOLEAN,
+        default: true,
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,

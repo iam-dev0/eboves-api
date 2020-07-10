@@ -7,25 +7,20 @@ import {
   DeletedAt,
   CreatedAt,
   Scopes,
+  Default,
 } from "sequelize-typescript";
-
-
-
-
-
-
-
+import { literal } from "sequelize";
 
 @Table({
   defaultScope: {
-    attributes: { exclude: ["deletedAt"] }
+    attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Attributes"
+  tableName: "Attributes",
 })
 @Scopes({
   basic: {
-    attributes:["id","name","slug"]
+    attributes: ["id", "name", "slug"],
   },
 })
 export class Attributes extends Model<Attributes> {
@@ -33,7 +28,7 @@ export class Attributes extends Model<Attributes> {
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: DataType.INTEGER.UNSIGNED
+    type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;
 
@@ -43,15 +38,19 @@ export class Attributes extends Model<Attributes> {
   @Column
   name!: string;
 
+  @Column
+  unit!: string;
+
   @Column({
     type: DataType.ENUM,
-    values:["text","image"],
+    values: ["text", "image"],
   })
   type!: string;
 
+ 
+  @Default(true)
   @Column
   active!: boolean;
-
 
   @Column
   createdBy!: number;

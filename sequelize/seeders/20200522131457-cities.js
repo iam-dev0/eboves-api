@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
-const  { stringGenerator }= require("../../dist/util/index");
+const { stringGenerator,randomArrayElement } = require("../../dist/util/index");
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -16,19 +16,20 @@ module.exports = {
     */
 
     const states = await queryInterface.sequelize.query(
-      "select * from states;"
+      "select countries.id as countryId,states.id as stateId  from countries inner join  states on states.countryId=countries.id;"
     );
     const cities = [];
-    states[0].map(({ id }) => {
-      [...Array(Math.floor(Math.random() * 10)+1)].map(()=>
-        cities.push({
-          stateId: id,
-          name: stringGenerator(Math.floor(Math.random() * 2) + 1),
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        })
-      );
-    });
+
+    [...Array(Math.floor(Math.random() * 200) + 1)].map(() =>
+      cities.push({
+        stateId: randomArrayElement(states[0]).stateId,
+        countryId: randomArrayElement(states[0]).countryId,
+        name: stringGenerator(Math.floor(Math.random() * 2) + 1),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+    );
+
     return queryInterface.bulkInsert("cities", cities);
   },
 

@@ -19,7 +19,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.STRING,
       },
       type: {
-        type: DataTypes.ENUM(["string", "numeric", "image"]),
+        type: DataTypes.ENUM(["text", "numeric", "image"]),
         default: "string",
       },
       active: {

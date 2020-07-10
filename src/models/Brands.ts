@@ -25,7 +25,7 @@ import {
 })
 @Scopes(() => ({
   basic: {
-    attributes:["id","name","slug"]
+    attributes:["id","name","active","createdAt","popularity"]
   },
   extends: {
     where: {primaryColor: "yellow"}
@@ -39,10 +39,6 @@ export class Brands extends Model<Brands> {
     type: DataType.INTEGER.UNSIGNED
   })
   id!: number;
-
-
-  @Column
-  countryId!: number;
 
   @Column({ unique: true })
   slug!: string;

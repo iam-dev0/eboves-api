@@ -1,10 +1,7 @@
 import express from "express";
-import { getApi } from "../controllers/controllerCountries";
+import { getAll } from "../controllers/controllerCountries";
 const app = express();
 
-
-app.get("/", getApi);
-
-
+app.get("/", getAll);
 
 export default app;

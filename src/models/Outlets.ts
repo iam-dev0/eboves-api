@@ -7,6 +7,7 @@ import {
   DeletedAt,
   CreatedAt,
   Scopes,
+  Default,
 } from "sequelize-typescript";
 
 @Table({
@@ -41,10 +42,15 @@ export class Outlets extends Model<Outlets> {
 
   @Column({ type: DataType.TEXT })
   address!: string;
+
+  @Default(true)
   @Column
   active!: boolean;
+  @Default(false)
   @Column
   default!: boolean;
+
+  @Default(false)
   @Column
   online!: boolean;
 

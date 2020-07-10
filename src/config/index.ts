@@ -17,6 +17,10 @@ const envVarsSchema = Joi.object({
     otherwise: Joi.boolean().default(false)
   }),
 
+
+  DEFAULT_BUCKET_NAME: Joi.string(),
+  GOOGLE_CLOUD_PROJECT_ID:Joi.string(),
+
   DEV_DATABASE_NAME: Joi.string(),
   DEV_DATABASE_USER: Joi.string(),
   DEV_DATABASE_PASSWORD: Joi.string(),
@@ -102,6 +106,8 @@ const config = {
   env: envVars.NODE_ENV,
   port: envVars.PORT,
   mysqlDebug: envVars.DATABASE_DEBUG,
+  googleCloudProjectID: envVars.GOOGLE_CLOUD_PROJECT_ID,
+  bucketName: envVars.DEFAULT_BUCKET_NAME,
   devDatabase: {
     name: envVars.DEV_DATABASE_NAME,
     user: envVars.DEV_DATABASE_USER,

@@ -6,41 +6,35 @@ import {
   UpdatedAt,
   DeletedAt,
   CreatedAt,
-  HasMany
+  ForeignKey,
 } from "sequelize-typescript";
-import Cities from "./Cities";
+import Countries from "./Countries";
+
 @Table({
   defaultScope: {
-    attributes: { exclude: ["deletedAt"] }
+    attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "countries"
+  tableName: "Cities",
 })
-export class Countries extends Model<Countries> {
+export class Cities extends Model<Cities> {
   @Column({
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: DataType.INTEGER.UNSIGNED
+    type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;
 
   @Column({
     allowNull: false,
-    type: DataType.STRING
+    type: DataType.STRING,
   })
   name!: string;
 
-
   @Column
-  flag!: string;
-
- 
-  @HasMany(()=>Cities)
-  cities!: Cities[];
-
-  @Column
-  iso!: string;
+  @ForeignKey(() => Countries)
+  countryId!: number;
 
   @CreatedAt
   @Column
@@ -55,4 +49,4 @@ export class Countries extends Model<Countries> {
   deletedAt!: Date;
 }
 
-export default Countries;
+export default Cities;
