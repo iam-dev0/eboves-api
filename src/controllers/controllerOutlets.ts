@@ -91,7 +91,7 @@ export const update = async (
 ): Promise<Response> => {
   const { id } = req.params;
   const attribue = await Outlets.update(req.body, {
-    where: { id: id },
+    where: { id },
   }).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       message: err.message,

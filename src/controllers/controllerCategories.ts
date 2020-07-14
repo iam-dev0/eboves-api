@@ -1,6 +1,7 @@
 import Categories from "../models/Categories";
 import { Request, Response } from "express";
-import { Op } from "sequelize";
+import { Op, literal } from "sequelize";
+import httpStatus from "http-status";
 
 export interface SearchParams {
   sorter?: string;
@@ -102,4 +103,102 @@ export const getNestedCategories = async (
     ],
   });
   return res.json({ data });
+};
+
+export const create = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  let values = req.body;
+  values = {
+    ...values,
+    image:
+      values.image && values.image.length > 0 ? values.image[0]?.url : null,
+    storyCover:
+      values.storyCover && values.storyCover.length > 0
+        ? values.storyCover[0]?.url
+        : null,
+    createdBy: 1,
+    updatedBy: 1,
+  };
+  const data = await Categories.create(values).catch((err) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    })
+  );
+
+  return res.status(httpStatus.CREATED).json({ data });
+};
+export const update = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+  let values = req.body;
+  values = {
+    ...values,
+    image:
+      values.image && values.image.length > 0 ? values.image[0]?.url : null,
+    storyCover:
+      values.storyCover && values.storyCover.length > 0
+        ? values.storyCover[0]?.url
+        : null,
+    createdBy: 1,
+    updatedBy: 1,
+  };
+  const data = await Categories.update(values, { where: { id } }).catch((err) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    })
+  );
+
+  return res.status(httpStatus.OK).json({ data });
+};
+
+export const getCategory = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id }: any = req.params;
+
+  const data = await Categories.findByPk(id);
+
+  return res.json({
+    data: data,
+  });
+};
+
+export const toggleActiveStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+
+  const data = await Categories.findOne({ where: { id: id } })
+    .then((category) => {
+      category?.toggelChildes();
+      return category;
+    })
+    .then((category) => {
+      category?.update({ active: literal("NOT active") });
+      return category;
+    });
+
+  return res.json({ success: true, data });
+};
+
+
+export const bulkDelete = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const ids = req.query;
+  const araryOfids: any[] = Object.values(ids);
+  await Categories.destroy({ where: { id: araryOfids } }).catch((err) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    })
+  );
+
+  return res.status(httpStatus.OK).send();
 };

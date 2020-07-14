@@ -28,8 +28,7 @@ module.exports = {
     brands.push({
         name: stringGenerator(Math.floor(Math.random() * 2) + 1),
         slug: stringGenerator(Math.floor(Math.random() * 2) + 1),
-        logo1: "https://via.placeholder.com/150x200",
-        logo2: "https://via.placeholder.com/150x200",
+        logo: "https://via.placeholder.com/150x200",
         image: "https://via.placeholder.com/1080x720",
         storyText: stringGenerator(Math.floor(Math.random() * 15) + 1),
         storyTextColor: ["#eeee", "#ffff"][Math.floor(Math.random * 1)],

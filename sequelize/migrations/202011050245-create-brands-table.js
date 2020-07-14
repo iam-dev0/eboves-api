@@ -15,10 +15,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         uniqueKey: true,
         type: DataTypes.STRING,
       },
-      logo1: {
-        type: DataTypes.STRING,
-      },
-      logo2: {
+      logo: {
         type: DataTypes.STRING,
       },
       image: {

@@ -15,6 +15,7 @@ module.exports.up = (queryInterface, DataTypes) => {
           key: "id",
           model: "categories",
         },
+        onDelete: "CASCADE",
       },
       name: {
         type: DataTypes.STRING,

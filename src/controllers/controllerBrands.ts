@@ -1,7 +1,7 @@
 import Brands from "../models/Brands";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
-import { Op } from "sequelize";
+import { Op, literal } from "sequelize";
 
 export interface SearchParams {
   sorter?: string;
@@ -66,8 +66,8 @@ export const create = async (
   let values = req.body;
   values = {
     ...values,
-    logo1: values.logo ? values.logo[0]?.url : null,
-    storyCover: values.storyCover ? values.storyCover[0]?.url : null,
+    logo: values.logo && values.logo.length>0? values.logo[0]?.url : null,
+    storyCover: values.storyCover && values.storyCover.length>0 ? values.storyCover[0]?.url : null,
     createdBy: 1,
     updatedBy: 1,
   };
@@ -78,6 +78,78 @@ export const create = async (
   );
 
   return res.status(httpStatus.CREATED).json({ data });
+};
+
+
+
+
+export const update = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+  let values = req.body;
+  values = {
+    ...values,
+    logo: values.logo && values.logo.length>0? values.logo[0]?.url : null,
+    storyCover: values.storyCover && values.storyCover.length>0 ? values.storyCover[0]?.url : null,
+    createdBy: 1,
+    updatedBy: 1,
+  };
+  const data = await Brands.update(values,{where:{id}}).catch((err) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    })
+  );
+
+  return res.status(httpStatus.OK).json({ data });
+};
+
+
+export const bulkDelete = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const ids = req.query;
+  const araryOfids: any[] = Object.values(ids);
+  await Brands.destroy({ where: { id: araryOfids } }).catch((err) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    })
+  );
+
+  return res.status(httpStatus.OK).send();
+};
+
+
+
+export const toggleActiveStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+
+  const data = Brands.update(
+    { active: literal("NOT active") },
+    { where: { id: id } }
+  );
+
+  return res.json({ success: true, data });
+};
+
+
+export const togglePopularStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+
+  const data = Brands.update(
+    { popularity: literal("NOT popularity") },
+    { where: { id: id } }
+  );
+
+  return res.json({ success: true, data });
 };
 
 export const uploadImage = async (

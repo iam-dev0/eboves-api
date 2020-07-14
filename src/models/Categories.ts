@@ -9,22 +9,23 @@ import {
   CreatedAt,
   HasMany,
   Scopes,
+  Default,
+  AfterDestroy,
 } from "sequelize-typescript";
-
 
 @Table({
   defaultScope: {
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-
   tableName: "Categories",
 })
 @Scopes({
   basic: {
-    attributes:["id","name","active","createdAt"]
+    attributes: ["id", "name", "active", "createdAt"],
   },
 })
+
 export class Categories extends Model<Categories> {
   @Column({
     allowNull: false,
@@ -38,7 +39,7 @@ export class Categories extends Model<Categories> {
   @Column
   categoryId!: number;
 
-  @HasMany(()=>Categories)
+  @HasMany(() => Categories, { onDelete: "cascade", hooks: true })
   childrens!: Categories[];
 
   @Column({ unique: true })
@@ -74,6 +75,7 @@ export class Categories extends Model<Categories> {
   })
   metaDescription!: string;
 
+  @Default(true)
   @Column
   active!: boolean;
 
@@ -95,6 +97,27 @@ export class Categories extends Model<Categories> {
   @DeletedAt
   @Column
   deletedAt!: Date;
+
+  toggelChildes(): void {
+    if (this.active) {
+      Categories.findAll({ where: { categoryId: this.id } })
+        .then((categories) => {
+          for (const category of categories) {
+            category.toggelChildes();
+          }
+          return categories;
+        })
+        .then((categories) => {
+          Categories.update(
+            { active: false },
+            { where: { id: categories.map((cate) => cate.id) } }
+          );
+        });
+    }
+  }
+  // @AfterDestroy()
+  //Implemnt a hook to soft delete child
+  // }
 }
 
 export default Categories;

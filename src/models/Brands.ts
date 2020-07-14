@@ -47,10 +47,8 @@ export class Brands extends Model<Brands> {
   name!: string;
 
   @Column
-  logo1!: string;
+  logo!: string;
 
-  @Column
-  logo2!: string;
 
   @Column
   image!: string;
