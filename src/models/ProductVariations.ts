@@ -11,10 +11,14 @@ import {
   HasOne,
   BelongsTo,
   BelongsToMany,
+  Unique,
 } from "sequelize-typescript";
 import Products from "./Products";
 import ProductVariationAttributeValues from "./ProductVariationAttributeValues";
-import ProductAttributes from "./ProductAttributes";
+import ProductAttributes, { ProductAttribute } from "./ProductAttributes";
+import ProductVariationsBarcodes from "./ProductVariationBarcodes";
+import ProductVariationsImages from "./ProductVariationImages";
+import Attributes from "./Attributes";
 
 @Table({
   defaultScope: {
@@ -37,10 +41,6 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   id!: number;
 
-
-  @BelongsToMany(()=>ProductAttributes,()=>ProductVariationAttributeValues)
-  attributes!: ProductAttributes[];
-
   @ForeignKey(() => Products)
   @AllowNull(false)
   @Column({
@@ -51,8 +51,14 @@ export class ProductVariations extends Model<ProductVariations> {
   @BelongsTo(() => Products)
   product!: Products;
 
-  @HasMany(() => ProductVariationAttributeValues)
-  attributesValues!: ProductVariationAttributeValues[];
+  @HasMany(() => ProductVariationsBarcodes)
+  barcodes!: ProductVariationsBarcodes[];
+
+  @HasMany(() => ProductVariationsImages)
+  images!: ProductVariationsImages[];
+
+  @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
+  attributeValues!: Attributes[];
 
   @Column
   slug!: string;
@@ -61,6 +67,7 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   shortDescription!: string;
 
+  @Unique
   @Column
   sku!: string;
 
@@ -99,13 +106,10 @@ export class ProductVariations extends Model<ProductVariations> {
   @Column
   preOrder!: boolean;
 
-
   @Default(true)
   @Column
   active!: boolean;
 
-
-  
   @Column
   createdBy!: number;
   @Column

@@ -19,39 +19,27 @@ module.exports = {
       }], {});
     */
     const products = await queryInterface.sequelize.query(
-      "select * from products"
+      "select * from product_variations"
     );
 
     const users = await queryInterface.sequelize.query("select * from users;");
 
     const vps = [];
     products[0].map((product) =>
-      [...Array(Math.floor(Math.random() * 10)+1)].map(() =>
+      [...Array(Math.floor(Math.random() * 3) + 1)].map(() =>
         vps.push({
-          productId: product.id,
-          sku:  stringGenerator(Math.floor(Math.random() * 10) + 1,true),
-          slug: stringGenerator(Math.floor(Math.random() * 10) + 1,true).replace(/\s/g,"-"),
-          shortDescription: stringGenerator(Math.floor(Math.random() * 50) + 1),
-          virtualQuantity: Math.floor(Math.random() * 100) + 10,
-          price: Math.floor(Math.random() * 10000) + 100,
-          discountPercentage: Math.floor(Math.random() * 100) + 0,
-          discountPrice: Math.floor(Math.random() * 10000) + 0,
-          discountStartTime: new Date(),
-          discountEndTime: new Date(),
-          trending: getrandomBoolean(.9),
-          preOrder:getrandomBoolean(.9),
-          bestSeller: getrandomBoolean(.9),
-          active: getrandomBoolean(.1),
+          productVariationId: product.id,
+          barcode: stringGenerator(Math.floor(Math.random() * 10) + 1, true),
+          supplierPrice: Math.floor(Math.random() * 10000) + 100,
           createdBy: randomArrayElement(users[0]).id,
           updatedBy: randomArrayElement(users[0]).id,
-          deletedBy: null,
           deletedBy: null,
           createdAt: new Date(),
           updatedAt: new Date(),
         })
       )
     );
-    return queryInterface.bulkInsert("product_variations", vps);
+    return queryInterface.bulkInsert("product_variation_barcodes", vps);
   },
 
   down: (queryInterface, Sequelize) => {
@@ -60,6 +48,6 @@ module.exports = {
       Return a promise to correctly handle asynchronicity.
 
       Example:*/
-    return queryInterface.bulkDelete("product_variations", null, {});
+    return queryInterface.bulkDelete("product_variation_barcodes", null, {});
   },
 };

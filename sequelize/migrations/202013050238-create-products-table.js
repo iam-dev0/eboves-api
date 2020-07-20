@@ -9,7 +9,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       sku: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       brandId: {
@@ -33,24 +33,17 @@ module.exports.up = (queryInterface, DataTypes) => {
           model: "suppliers",
         },
       },
-      attributeId: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "attributes",
-        },
-      },
       description: DataTypes.TEXT,
       descriptionImage: DataTypes.STRING,
       howToUse:DataTypes.TEXT,
       name: DataTypes.STRING,
       productCode: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
         comment: "Product Handle",
       },
       slug: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       price: {

@@ -1,52 +1,38 @@
 import {
-    Column,
-    DataType,
-    Model,
-    Table,
-    ForeignKey,
-    BelongsTo,
-  } from "sequelize-typescript";
+  Column,
+  DataType,
+  Model,
+  Table,
+  ForeignKey,
+  BelongsTo,
+} from "sequelize-typescript";
 import Products from "./Products";
 import Attributes from "./Attributes";
-  
-  
-  
-  
-  
-  
-  
 
-
-  
-  @Table({
-    defaultScope: {
-      attributes: { exclude: ["deletedAt"] }
-    },
-    paranoid: false,
-    timestamps:false,
-    tableName: "product_attribute"
+@Table({
+  defaultScope: {
+    attributes: { exclude: ["deletedAt"] },
+  },
+  paranoid: false,
+  timestamps: false,
+  tableName: "product_attribute",
+})
+export class ProductAttribute extends Model<ProductAttribute> {
+  @Column({
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+    type: DataType.INTEGER.UNSIGNED,
   })
-  export class ProductAttribute extends Model<ProductAttribute> {
-    @Column({
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataType.INTEGER.UNSIGNED
-    })
-    id!: number;
-    
-    @ForeignKey(() => Products)
-    @Column
-    productId!: number;
+  id!: number;
 
-    @ForeignKey(() => Attributes)
-    @Column
-    attributeId!: number;
+  @ForeignKey(() => Products)
+  @Column
+  productId!: number;
 
-    @BelongsTo(()=>Attributes)
-    attribue!: Attributes;
+  @ForeignKey(() => Attributes)
+  @Column
+  attributeId!: number;
+}
 
-
-  }
-  
-  export default ProductAttribute;
+export default ProductAttribute;

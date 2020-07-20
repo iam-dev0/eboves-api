@@ -10,7 +10,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       name: DataTypes.STRING,
       slug: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       description: DataTypes.STRING,

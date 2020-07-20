@@ -32,7 +32,7 @@ module.exports = {
         supplierId: randomArrayElement(suppliers[0]).id,
         attributeId: null,
         productType:randomArrayElement(["eboves","supplier"]),
-        sku: stringGenerator(1),
+        sku: stringGenerator(Math.floor(Math.random() * 10) + 1, true).replace(/\s/g,"-"),
         name:stringGenerator(Math.floor(Math.random() * 10) + 1),
         description: stringGenerator(Math.floor(Math.random() * 100) + 1),
         descriptionImage:"https://via.placeholder.com/1080x720",

@@ -19,23 +19,14 @@ import ProductAttribute from "./ProductAttributes";
 import Brands from "./Brands";
 import Attributes from "./Attributes";
 import ProductVariations from "./ProductVariations";
+import Categories from "./Categories";
+import Suppliers from "./Supplier";
 
 @DefaultScope(() => ({
-  attributes: [
-    "id",
-    "name",
-    "brandId",
-    "sku",
-    "productType",
-    "active",
-    "createdAt",
-  ],
+  attributes:{exclude:["deletedBy","createdBy","updatedBy","deletedAt"]},
 }))
 @Scopes(() => ({
-  full: {},
-  // yellow: {
-  //   where: { brandId: "yellow" }
-  // }
+  full: { attributes: { exclude: ["deletedAt"] } },
 }))
 @Table({
   defaultScope: {
@@ -53,24 +44,20 @@ export class Products extends Model<Products> {
   })
   id!: number;
 
+  @Column
+  name!: string;
+
+  @ForeignKey(() => Categories)
+  @Column
+  categoryId!: number;
+
   @ForeignKey(() => Brands)
   @Column
   brandId!: number;
 
-  @BelongsTo(() => Brands)
-  brand!: Brands;
-
+  @ForeignKey(() => Suppliers)
   @Column
   supplierId!: number;
-
-  @BelongsToMany(() => Attributes, () => ProductAttribute)
-  attributes!: Attributes[];
-
-  @HasMany(() => ProductVariations)
-  variations!: ProductVariations[];
-
-  @HasMany(() => ProductsImages)
-  images!: ProductsImages[];
 
   @Column({
     unique: false,
@@ -84,6 +71,21 @@ export class Products extends Model<Products> {
   })
   slug!: string;
 
+  @BelongsToMany(() => Attributes, () => ProductAttribute)
+  attributes!: Attributes[];
+
+  @HasMany(() => ProductVariations)
+  variations!: ProductVariations[];
+
+  @HasMany(() => ProductsImages)
+  images!: ProductsImages[];
+
+  @BelongsTo(() => Categories)
+  category!: Categories;
+  @BelongsTo(() => Suppliers)
+  supplier!: Suppliers;
+  @BelongsTo(() => Brands)
+  brand!: Brands;
 
   @Column({
     type: DataType.TEXT,
@@ -116,9 +118,7 @@ export class Products extends Model<Products> {
   @Column({ type: DataType.TEXT })
   howToUse!: string;
 
-  @Column
-  name!: string;
-
+  @Default(false)
   @Column
   active!: boolean;
 
@@ -133,7 +133,7 @@ export class Products extends Model<Products> {
   @Column
   updatedBy!: number;
   @Column
-  DeletedBy!: number;
+  deletedBy!: number;
 
   @CreatedAt
   @Column

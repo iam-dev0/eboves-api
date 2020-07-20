@@ -9,6 +9,12 @@ import Brands from "../models/Brands";
 import Attributes from "../models/Attributes";
 import httpStatus from "http-status";
 import ProductVariations from "../models/ProductVariations";
+import { CreateVariationHelper } from "../util/helpers";
+import Categories from "../models/Categories";
+import Suppliers from "../models/Supplier";
+import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
+import ProductVariationsImages from "../models/ProductVariationImages";
+
 export interface SearchParams {
   sorter?: string;
   active?: string;
@@ -32,14 +38,6 @@ export interface CreateProductBody {
   description?: string;
   images?: { url: string; id?: number }[];
   attributes: string[];
-}
-
-export interface CreateVariationBody {
-  sku: string;
-  slug: string;
-  price: number;
-  attributes: [];
-  barcodes: [];
 }
 
 export const getProducts = async (
@@ -78,11 +76,15 @@ export const getProducts = async (
       sorting[0],
       sorting[1].toLowerCase() === "ascend" ? "ASC" : "DESC",
     ]);
-    
   }
 
   const data = await Products.findAndCountAll({
-    include: [{ model: ProductVariations, attributes: ["id", "sku"] ,/*limit:1*/}],// For now as bug in sequlize
+    include: [
+      {
+        model: ProductVariations,
+        attributes: ["id", "sku", "price"] /*limit:1*/,
+      },
+    ], // For now as bug in sequlize
     limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
@@ -108,8 +110,10 @@ export const getSingleProduct = async (
 
   const data = await Products.findByPk(id, {
     include: [
+      { model: ProductsImages },
       { model: Attributes.scope("basic") },
       { model: Brands.scope("basic") },
+      { model: Suppliers },
     ],
   });
 
@@ -127,12 +131,15 @@ export const createProduct = async (
     supplierId,
     brandId,
     productType,
-    stackAvailableAt,
-    subSubCategoryId,
+    categoryId,
     description,
+    howToUse,
+    metaTitle,
+    metaKeywords,
+    metaDescription,
     images,
     attributes,
-  }: CreateProductBody = req.body;
+  }: any = req.body;
 
   try {
     const result = await myconnect.transaction(async (t) => {
@@ -142,17 +149,20 @@ export const createProduct = async (
           supplierId,
           brandId,
           productType,
-          stackAvailableAt,
-          categoryId: subSubCategoryId,
+          categoryId,
           description,
+          howToUse,
+          metaTitle,
+          metaKeywords,
+          metaDescription,
           createdBy: 1, // Hardcord for now
           updatedBy: 1, // Hardcord for now
         },
         { transaction: t }
       );
 
-      if (attributes && attributes.length > 0) {
-        const attrs = attributes?.map((i: any) => ({
+      if (attributes?.length > 0) {
+        const attrs = attributes.map((i: any) => ({
           attributeId: i,
           productId: product.id,
         }));
@@ -162,17 +172,104 @@ export const createProduct = async (
         });
       }
 
-      if (images && images.length > 0) {
-        const imgs = images?.map((i: any) => ({
+      if (images?.length > 0) {
+        const imgs = images.map((i: any) => ({
           image: i.url,
           productId: product.id,
         }));
 
-        if (!imgs.find((i) => (!i.image ? true : false)))
-          product.images = await ProductsImages.bulkCreate(imgs, {
-            fields: ["productId", "image"],
-            transaction: t,
-          });
+        product.images = await ProductsImages.bulkCreate(imgs, {
+          fields: ["productId", "image"],
+          transaction: t,
+        });
+      }
+      return product;
+    });
+
+    return res.status(status.CREATED).json({
+      data: result,
+    });
+  } catch (error) {
+    // If the execution reaches this line, an error occurred.
+    // The transaction has already been rolled back automatically by Sequelize!
+    console.log(error);
+    return res.status(status.INTERNAL_SERVER_ERROR).json({
+      error: error,
+    });
+  }
+};
+
+export const updateProduct = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const {
+    name,
+    supplierId,
+    brandId,
+    productType,
+    categoryId,
+    description,
+    howToUse,
+    metaTitle,
+    metaKeywords,
+    metaDescription,
+    images,
+    attributes,
+  }: any = req.body;
+  const { id } = req.params;
+
+  try {
+    const result = await myconnect.transaction(async (t) => {
+      const product = await Products.update(
+        {
+          name,
+          supplierId,
+          brandId,
+          productType,
+          categoryId,
+          description,
+          howToUse,
+          metaTitle,
+          metaKeywords,
+          metaDescription,
+          createdBy: 1, // Hardcord for now
+          updatedBy: 1, // Hardcord for now
+        },
+        { where: { id }, transaction: t }
+      );
+
+      if (attributes?.length > 0) {
+        await ProductAttributes.destroy({
+          where: { productId: id },
+          transaction: t,
+        });
+
+        const attrs = attributes.map((i: any) => ({
+          attributeId: i,
+          productId: id,
+        }));
+
+        await ProductAttributes.bulkCreate(attrs, {
+          transaction: t,
+          fields: ["productId", "attributeId"],
+        });
+      }
+
+      if (images?.length > 0) {
+        await ProductsImages.destroy({
+          where: { productId: id },
+          transaction: t,
+        });
+        const imgs = images.map((i: any) => ({
+          image: i.url,
+          productId: id,
+        }));
+
+        await ProductsImages.bulkCreate(imgs, {
+          fields: ["productId", "image"],
+          transaction: t,
+        });
       }
       return product;
     });
@@ -194,25 +291,22 @@ export const createVariations = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const variations: CreateVariationBody[] = req.body;
-  const { Pid } = req.params;
-  const varValues = variations?.map(
-    ({ sku, slug, price }: CreateVariationBody) => ({
-      productId: Pid,
-      sku,
-      slug,
-      price,
-      createdBy: 1, // Hardcord for now
-      updatedBy: 1, // Hardcord for now
-    })
-  );
+  const variations: any[] = req.body;
+  const { id } = req.params;
+
   try {
     const result = await myconnect.transaction(async (t) => {
-      return await ProductVariations.bulkCreate(varValues, {
-        transaction: t,
-      });
-    });
+      const promises: Promise<unknown>[] = [];
+      for (const variation of variations) {
+        promises.push(CreateVariationHelper(variation, id, t));
+      }
 
+      const vs = await Promise.all(promises).then((values) => {
+        // console.log(values);
+        return values;
+      });
+      return vs;
+    });
     return res.status(httpStatus.CREATED).json({ data: result });
   } catch (error) {
     // If the execution reaches this line, an error occurred.
@@ -224,26 +318,48 @@ export const createVariations = async (
   }
 };
 
-export const updateProductStatus = async (
+export const bulkDelete = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const ids = req.query;
+  const araryOfids: any[] = Object.values(ids);
+
+  await Products.destroy({ where: { id: araryOfids } }).catch((err) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      message: err.message,
+    })
+  );
+
+  return res.status(httpStatus.OK).send();
+};
+
+export const toggleProductActiveStatus = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
-  const { active } = req.query;
 
-  const result = await Products.update(
-    { active },
-    {
-      where: {
-        id,
-      },
-    }
+  const data = Products.update(
+    { active: sequelize.literal("NOT active") },
+    { where: { id: id } }
   );
 
-  return res.json({
-    success: true,
-    data: result,
-  });
+  return res.json({ success: true, data });
+};
+
+export const toggleVariationActiveStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { vid, pid } = req.params;
+
+  const data = ProductVariations.update(
+    { active: sequelize.literal("NOT active") },
+    { where: { id: vid, productId: pid } }
+  );
+
+  return res.json({ success: true, data });
 };
 
 export const getVaraitions = async (
@@ -260,6 +376,7 @@ export const getVaraitions = async (
         "sku",
         "active",
         "createdAt",
+        "price",
         [
           sequelize.fn(
             "product_variation_name",
@@ -280,14 +397,65 @@ export const getVaraition = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { Vid } = req.params;
+  const { pid, vid } = req.params;
 
-  const result = await ProductVariations.findByPk(Vid, {
+  const result = await ProductVariations.findByPk(vid, {
+    include: [
+      { model: ProductVariationsBarcodes },
+      { model: Attributes },
+      { model: ProductVariationsImages },
+    ],
     attributes: {
       include: [
-        [sequelize.fn("product_variation_name", sequelize.col("id")), "name"],
+        [
+          sequelize.fn(
+            "product_variation_name",
+            sequelize.col("ProductVariations.id")
+          ),
+          "name",
+        ],
       ],
     },
+  });
+
+  return res.json({
+    data: result,
+  });
+};
+
+export const getProductFullInfo = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { id } = req.params;
+
+  const result = await Products.scope("full").findByPk(id, {
+    include: [
+      {
+        model: ProductVariations,
+        include: [
+          { model: ProductVariationsBarcodes },
+          { model: Attributes },
+          { model: ProductVariationsImages },
+        ],
+        attributes: {
+          include: [
+            [
+              sequelize.fn(
+                "product_variation_name",
+                sequelize.col("variations.id")
+              ),
+              "name",
+            ],
+          ],
+        },
+      },
+      { model: ProductsImages },
+      { model: Attributes },
+      { model: Brands },
+      { model: Categories },
+      { model: Suppliers },
+    ],
   });
 
   return res.json({

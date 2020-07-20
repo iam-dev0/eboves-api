@@ -51,7 +51,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       source: DataTypes.STRING,
       orderId: DataTypes.INTEGER.UNSIGNED,
       orderNumber: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
 

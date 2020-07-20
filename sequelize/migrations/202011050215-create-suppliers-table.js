@@ -21,12 +21,12 @@ module.exports.up = (queryInterface, DataTypes) => {
         comment: "Company Name",
       },
       slug: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
         comment: "Company Name Slug",
       },
       code: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       description: {

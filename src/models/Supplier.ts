@@ -25,9 +25,6 @@ export class Suppliers extends Model<Suppliers> {
   })
   id!: number;
 
-  @Column
-  countryId!: number;
-
   @Column({ unique: true })
   slug!: string;
 

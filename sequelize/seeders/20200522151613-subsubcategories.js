@@ -3,7 +3,7 @@
 const {
   stringGenerator,
   randomArrayElement,
-  getrandomBoolean
+  getrandomBoolean,
 } = require("../../dist/util/index");
 
 module.exports = {
@@ -31,7 +31,7 @@ module.exports = {
         categories.push({
           categoryId: categroy.id,
           name: stringGenerator(Math.floor(Math.random() * 2) + 1),
-          slug: stringGenerator(Math.floor(Math.random() * 2) + 1),
+          slug: stringGenerator(Math.floor(Math.random() * 10) + 1, true).replace(/\s/g,"-"),
           image: null,
           displayOrder: null,
           storyText: stringGenerator(Math.floor(Math.random() * 10) + 1),
@@ -40,7 +40,7 @@ module.exports = {
           metaTitle: stringGenerator(Math.floor(Math.random() * 10) + 1),
           metaKeywords: stringGenerator(Math.floor(Math.random() * 10) + 1),
           metaDescription: stringGenerator(Math.floor(Math.random() * 10) + 1),
-          active: getrandomBoolean(.1),
+          active: getrandomBoolean(0.1),
           createdBy: randomArrayElement(users[0]).id,
           updatedBy: randomArrayElement(users[0]).id,
           deletedBy: null,
@@ -62,6 +62,10 @@ module.exports = {
       "select id from categories where categoryId in (select id from categories where categoryId in (select id from categories where categoryId is null));"
     );
 
-    return queryInterface.bulkDelete("categories", {id:c[0].map(c=>c.id)}, {});
+    return queryInterface.bulkDelete(
+      "categories",
+      { id: c[0].map((c) => c.id) },
+      {}
+    );
   },
 };

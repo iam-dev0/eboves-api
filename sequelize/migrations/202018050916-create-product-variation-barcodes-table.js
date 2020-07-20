@@ -18,10 +18,14 @@ module.exports.up = (queryInterface, DataTypes) => {
         onDelete: "CASCADE",
       },
       barcode: {
-        uniqueKey: true,
+        unique: true,
+        allowNull: false,
         type: DataTypes.STRING,
       },
-      price: DataTypes.STRING,
+      supplierPrice: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
       active: {
         type: DataTypes.BOOLEAN,
         default: false,
@@ -70,4 +74,5 @@ module.exports.up = (queryInterface, DataTypes) => {
   );
 };
 
-module.exports.down = (queryInterface) => queryInterface.dropTable("product_variation_barcodes");
+module.exports.down = (queryInterface) =>
+  queryInterface.dropTable("product_variation_barcodes");

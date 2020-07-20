@@ -6,8 +6,8 @@ import {
   ForeignKey,
   BelongsTo,
 } from "sequelize-typescript";
-import ProductAttributes from "./ProductAttributes";
 import ProductVariations from "./ProductVariations";
+import Attributes from "./Attributes";
 @Table({
   defaultScope: {
     attributes: { exclude: ["deletedAt"] },
@@ -27,18 +27,18 @@ export class ProductVariationAttributeValues extends Model<
   })
   id!: number;
 
-  @ForeignKey(() => ProductAttributes)
-  @Column
-  productAttributeId!: number;
-
   @ForeignKey(() => ProductVariations)
   @Column
   productVariationId!: number;
 
+  @ForeignKey(() => Attributes)
+  @Column
+  attributeId!: number;
+
+
   @Column
   value!: string;
-  @Column
-  image!: string;
+
   @Column
   alt!: string;
 }

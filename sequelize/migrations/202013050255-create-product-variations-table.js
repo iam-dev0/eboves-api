@@ -17,12 +17,12 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       slug: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       shortDescription: DataTypes.TEXT,
       sku: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       virtualQuantity: {

@@ -13,10 +13,13 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
-          model: "cities",
+          model: "product_variations",
         },
       },
-     
+      image: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
     },
     {
       charset: "utf8",

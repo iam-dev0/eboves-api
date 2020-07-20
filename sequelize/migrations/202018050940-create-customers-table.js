@@ -12,10 +12,10 @@ module.exports.up = (queryInterface, DataTypes) => {
       firstname: DataTypes.STRING,
       username: {
         type: DataTypes.STRING,
-        uniqueKey: true,
+        unique: true,
       },
       slug: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
 
@@ -23,7 +23,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       image: DataTypes.STRING,
       dob: DataTypes.DATE,
       phone: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       emailVerificationCode: DataTypes.STRING,

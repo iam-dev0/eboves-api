@@ -20,7 +20,7 @@ import { literal } from "sequelize";
 })
 @Scopes({
   basic: {
-    attributes: ["id", "name", "slug"],
+    attributes: ["id", "name", "slug","type"],
   },
 })
 export class Attributes extends Model<Attributes> {

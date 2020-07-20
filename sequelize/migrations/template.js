@@ -17,7 +17,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       slug: {
-        uniqueKey: true,
+        unique: true,
         type: DataTypes.STRING,
       },
       createdAt: {
