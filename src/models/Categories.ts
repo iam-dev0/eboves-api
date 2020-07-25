@@ -11,6 +11,8 @@ import {
   Scopes,
   Default,
   AfterDestroy,
+  HasOne,
+  BelongsTo,
 } from "sequelize-typescript";
 
 @Table({
@@ -24,8 +26,11 @@ import {
   basic: {
     attributes: ["id", "name", "active", "createdAt"],
   },
+  website: {
+    attributes: ["id", "name", "slug"],
+    where: { active: true },
+  },
 })
-
 export class Categories extends Model<Categories> {
   @Column({
     allowNull: false,
@@ -41,6 +46,9 @@ export class Categories extends Model<Categories> {
 
   @HasMany(() => Categories, { onDelete: "cascade", hooks: true })
   childrens!: Categories[];
+
+  @BelongsTo(() => Categories)
+  parent!: Categories[];
 
   @Column({ unique: true })
   slug!: string;

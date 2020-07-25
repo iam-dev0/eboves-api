@@ -9,34 +9,31 @@ import {
   CreatedAt,
 } from "sequelize-typescript";
 
-
-
-
-
-
-
-
 @Table({
   defaultScope: {
-    attributes: { exclude: ["deletedAt"] }
+    attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Brands"
+  tableName: "Brands",
 })
 @Scopes(() => ({
   basic: {
-    attributes:["id","name","active","createdAt","popularity"]
+    attributes: ["id", "name", "active", "createdAt", "featured"],
+  },
+  website: {
+    attributes: ["id", "name", "slug"],
+    where: { active: true },
   },
   extends: {
-    where: {primaryColor: "yellow"}
-  }
+    where: { primaryColor: "yellow" },
+  },
 }))
 export class Brands extends Model<Brands> {
   @Column({
     allowNull: false,
     autoIncrement: true,
     primaryKey: true,
-    type: DataType.INTEGER.UNSIGNED
+    type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;
 
@@ -49,11 +46,8 @@ export class Brands extends Model<Brands> {
   @Column
   logo!: string;
 
-
   @Column
   image!: string;
-
-
 
   @Column
   storyText!: string;
@@ -64,14 +58,8 @@ export class Brands extends Model<Brands> {
   @Column
   storyCover!: string;
 
-
   @Column
-  popularity!: boolean;
-
-  @Column
-  new!: boolean;
-
-
+  featured!: boolean;
 
   @Column({
     type: DataType.TEXT,
@@ -88,13 +76,8 @@ export class Brands extends Model<Brands> {
   })
   metaDescription!: string;
 
-
   @Column
   active!: boolean;
-
-
-
-
 
   @Column
   createdBy!: number;

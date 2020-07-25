@@ -30,11 +30,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       storyCover: {
         type: DataTypes.STRING,
       },
-      popularity: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      new: {
+      featured: {
         type: DataTypes.BOOLEAN,
         default: false,
       },

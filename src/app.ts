@@ -1,11 +1,13 @@
 import express from "express";
-import compression from "compression";  // compresses requests
+import compression from "compression"; // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
 import lusca from "lusca";
 import cors from "cors";
 import "./db/db";
-import routes from "./routes";
+import routes from "./routes/controllPanel.routes";
+import websiteRoutes from "./routes/website.routes";
+
 // import config from "./config/config";
 // import mongo from "connect-mongo";
 // import path from "path";
@@ -15,9 +17,6 @@ import routes from "./routes";
 // import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
 // const MongoStore = mongo(session);
-
-
-
 
 // API keys and Passport configuration
 // import * as passportConfig from "./util/passport";
@@ -36,14 +35,13 @@ const app = express();
 //     // process.exit();
 // });
 
-
-
 // Express configuration
 app.use(cors());
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session({
+app.use(
+  session({
     resave: true,
     saveUninitialized: true,
     secret: "config.secret",
@@ -51,7 +49,8 @@ app.use(session({
     //     url: mongoUrl,
     //     autoReconnect: true
     // })
-}));
+  })
+);
 // app.use(passport.initialize());
 // app.use(passport.session());
 app.use(lusca.xframe("SAMEORIGIN"));
@@ -79,11 +78,10 @@ app.use(lusca.xssProtection(true));
 //     express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
 // );
 
-
 /**
  * API routes.
  */
 
 app.use(routes);
-
+app.use("/api", websiteRoutes);
 export default app;

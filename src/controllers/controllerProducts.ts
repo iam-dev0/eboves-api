@@ -14,6 +14,7 @@ import Categories from "../models/Categories";
 import Suppliers from "../models/Supplier";
 import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
 import ProductVariationsImages from "../models/ProductVariationImages";
+import moment from "moment";
 
 export interface SearchParams {
   sorter?: string;
@@ -460,5 +461,111 @@ export const getProductFullInfo = async (
 
   return res.json({
     data: result,
+  });
+};
+
+//----------------------------------------Website's Controllers----------------------//
+/**
+      {
+        model: Categories.scope("website"),
+        include: [
+          {
+            model: Categories.scope("website"),
+            as: "parent",
+            include: [{ model: Categories.scope("website"), as: "parent" }],
+          },
+        ],
+      },
+ */
+
+export const getMainTabs = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const featured = Products.scope("websiteListing").findAll({
+    include: [
+      {
+        model: ProductVariations.scope("websiteListing"),
+        include: [{ model: Attributes }],
+      },
+    ],
+    where: { featured: true },
+    limit: 10,
+  });
+
+  const onSale = Products.scope("websiteListing").findAll({
+    include: [
+      {
+        model: ProductVariations.scope("websiteListing"),
+        required: true,
+        where: {
+          discountEndTime: {
+            [Op.gte]: moment().format("YYYY-MM-DD hh:mm:ss"),
+          },
+        },
+        include: [{ model: Attributes }],
+      },
+    ],
+    limit: 10,
+  });
+
+  const topRated = Products.scope("websiteListing").findAll({
+    include: [
+      {
+        model: ProductVariations.scope("websiteListing"),
+        include: [{ model: Attributes }],
+      },
+    ],
+    where: { topRated: true },
+    limit: 10,
+  });
+
+  const result = await Promise.all([
+    featured,
+    topRated,
+    onSale,
+  ]).then(([featured, topRated, onSale]) => ({ featured, topRated, onSale }));
+
+  return res.json({
+    data: result,
+  });
+};
+
+export const getTopSeller = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const params: SearchParams = req.query;
+
+  const data = await Products.scope("websiteListing").findAndCountAll({
+    include: [
+      {
+        model: Categories.scope("website"),
+        include: [
+          {
+            model: Categories.scope("website"),
+            as: "parent",
+            include: [{ model: Categories.scope("website"), as: "parent" }],
+          },
+        ],
+      },
+      {
+        model: ProductVariations.scope("websiteListing"),
+        include: [{ model: Attributes }],
+        where: { bestSeller: true },
+      },
+    ],
+    limit: parseInt(params.pageSize || "20"),
+    offset:
+      parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
+      parseInt(params.pageSize || "20"),
+  });
+
+  return res.json({
+    current: parseInt(params.current || "1"),
+    data: data.rows,
+    pageSize: params.pageSize,
+    success: true,
+    total: data.count,
   });
 };

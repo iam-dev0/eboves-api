@@ -98,7 +98,8 @@ export const getNestedCategories = async (
     include: [
       {
         model: Categories.scope("basic"),
-        include: [{ model: Categories.scope("basic") }],
+        as: "childrens",
+        include: [{ model: Categories.scope("basic"), as: "childrens" }],
       },
     ],
   });
@@ -186,7 +187,6 @@ export const toggleActiveStatus = async (
 
   return res.json({ success: true, data });
 };
-
 
 export const bulkDelete = async (
   req: Request,

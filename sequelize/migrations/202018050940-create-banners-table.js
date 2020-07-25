@@ -16,31 +16,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.BOOLEAN,
         default: false,
       },
-      createdBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-
-      updatedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      deletedBy: {
-        allowNull: true,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
     },
     {
       charset: "utf8",

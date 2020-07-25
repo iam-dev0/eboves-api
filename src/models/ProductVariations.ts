@@ -8,14 +8,12 @@ import {
   Default,
   AllowNull,
   HasMany,
-  HasOne,
   BelongsTo,
   BelongsToMany,
   Unique,
 } from "sequelize-typescript";
 import Products from "./Products";
 import ProductVariationAttributeValues from "./ProductVariationAttributeValues";
-import ProductAttributes, { ProductAttribute } from "./ProductAttributes";
 import ProductVariationsBarcodes from "./ProductVariationBarcodes";
 import ProductVariationsImages from "./ProductVariationImages";
 import Attributes from "./Attributes";
@@ -30,6 +28,22 @@ import Attributes from "./Attributes";
 @Scopes({
   basic: {
     attributes: ["id", "name", "slug"],
+  },
+  websiteListing: {
+    attributes: [
+      "id",
+      "mainImage",
+      "virtualQuantity",
+      "price",
+      "bestSeller",
+      "discountPercentage",
+      "discountPrice",
+      "discountStartTime",
+      "discountEndTime",
+      "trending",
+      "preOrder",
+    ],
+    where: { active: true },
   },
 })
 export class ProductVariations extends Model<ProductVariations> {
@@ -99,9 +113,19 @@ export class ProductVariations extends Model<ProductVariations> {
   @Default(false)
   @Column
   trending!: boolean;
+
   @Default(false)
   @Column
   bestSeller!: boolean;
+
+  @Default(false)
+  @Column
+  featured!: boolean;
+
+  @Default(false)
+  @Column
+  topRated!: boolean;
+  
   @Default(false)
   @Column
   preOrder!: boolean;

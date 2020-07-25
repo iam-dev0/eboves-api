@@ -1,4 +1,3 @@
-import uuid from "uuid";
 import * as gcs from "@google-cloud/storage";
 import path from "path";
 import config from "../config";
@@ -30,7 +29,7 @@ const sendUploadToGCS = async (req, res, next) => {
   blob
     .createWriteStream({
       resumable: false,
-      predefinedAcl: "publicRead",
+      // predefinedAcl: "publicRead",
       metadata: {
         contentType: req.file.mimetype,
       },

@@ -20,7 +20,11 @@ import { literal } from "sequelize";
 })
 @Scopes({
   basic: {
-    attributes: ["id", "name", "slug","type"],
+    attributes: ["id", "name", "slug", "type"],
+  },
+  website: {
+    attributes: ["id", "name", "type"],
+    where: { active: true },
   },
 })
 export class Attributes extends Model<Attributes> {
@@ -47,7 +51,6 @@ export class Attributes extends Model<Attributes> {
   })
   type!: string;
 
- 
   @Default(true)
   @Column
   active!: boolean;

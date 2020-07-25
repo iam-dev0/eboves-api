@@ -16,6 +16,7 @@ module.exports.up = (queryInterface, DataTypes) => {
           model: "products",
         },
       },
+      mainImage: DataTypes.TEXT,
       slug: {
         unique: true,
         type: DataTypes.STRING,
@@ -52,6 +53,14 @@ module.exports.up = (queryInterface, DataTypes) => {
         default: false,
       },
       bestSeller: {
+        type: DataTypes.BOOLEAN,
+        default: false,
+      },
+      topRated: {
+        type: DataTypes.BOOLEAN,
+        default: false,
+      },
+      featured: {
         type: DataTypes.BOOLEAN,
         default: false,
       },

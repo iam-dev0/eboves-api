@@ -10,6 +10,8 @@ import {
   updateProduct,
   getProductFullInfo,
   bulkDelete,
+  getMainTabs,
+  getTopSeller,
 } from "../controllers/controllerProducts";
 const app = express();
 
@@ -27,5 +29,9 @@ app.get("/:pid/variation/:vid", getVaraition);
 
 app.put("/:id/status", toggleProductActiveStatus);
 app.put("/:pid/variation/:vid/status", toggleProductActiveStatus);
+//------------------------------------------Website Api---------------------//
+export const WebsiteApp = express();
+WebsiteApp.get("/main-tabs", getMainTabs);
+WebsiteApp.get("/top-sellers", getTopSeller);
 
 export default app;

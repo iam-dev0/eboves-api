@@ -8,6 +8,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
+      mainImage: DataTypes.TEXT,
       sku: {
         unique: true,
         type: DataTypes.STRING,
@@ -35,7 +36,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       description: DataTypes.TEXT,
       descriptionImage: DataTypes.STRING,
-      howToUse:DataTypes.TEXT,
+      howToUse: DataTypes.TEXT,
       name: DataTypes.STRING,
       productCode: {
         unique: true,
@@ -50,6 +51,10 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DECIMAL,
         default: 0,
       },
+      bestSeller: DataTypes.BOOLEAN,
+      topRated: DataTypes.BOOLEAN,
+      featured: DataTypes.BOOLEAN,
+   
       metaTitle: DataTypes.TEXT,
       metaKeywords: DataTypes.TEXT,
       metaDescription: DataTypes.TEXT,

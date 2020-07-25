@@ -2,6 +2,7 @@ import Brands from "../models/Brands";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { Op, literal } from "sequelize";
+import { param } from "jquery";
 
 export interface SearchParams {
   sorter?: string;
@@ -10,6 +11,7 @@ export interface SearchParams {
   createdAt?: string;
   pageSize?: string;
   current?: string;
+  featured?: string;
 }
 
 export const getBrands = async (
@@ -38,18 +40,22 @@ export const getBrands = async (
       sorting[1].toLowerCase() === "ascend" ? "ASC" : "DESC",
     ]);
   }
+  if (params.featured)
+    where = { ...where, featured: params.featured.toLowerCase() === "true" };
 
-  const data = await Brands.scope("basic").findAll({ where, order });
+  const data = await Brands.scope("website").findAll({
+    where,
+    order,
+    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
+  });
   return res.status(httpStatus.OK).json({ data });
 };
-
-
 
 export const getBrand = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const {id}: any = req.params;
+  const { id }: any = req.params;
 
   const data = await Brands.findByPk(id);
 
@@ -58,7 +64,6 @@ export const getBrand = async (
   });
 };
 
-
 export const create = async (
   req: Request,
   res: Response
@@ -66,8 +71,11 @@ export const create = async (
   let values = req.body;
   values = {
     ...values,
-    logo: values.logo && values.logo.length>0? values.logo[0]?.url : null,
-    storyCover: values.storyCover && values.storyCover.length>0 ? values.storyCover[0]?.url : null,
+    logo: values.logo && values.logo.length > 0 ? values.logo[0]?.url : null,
+    storyCover:
+      values.storyCover && values.storyCover.length > 0
+        ? values.storyCover[0]?.url
+        : null,
     createdBy: 1,
     updatedBy: 1,
   };
@@ -80,9 +88,6 @@ export const create = async (
   return res.status(httpStatus.CREATED).json({ data });
 };
 
-
-
-
 export const update = async (
   req: Request,
   res: Response
@@ -91,12 +96,15 @@ export const update = async (
   let values = req.body;
   values = {
     ...values,
-    logo: values.logo && values.logo.length>0? values.logo[0]?.url : null,
-    storyCover: values.storyCover && values.storyCover.length>0 ? values.storyCover[0]?.url : null,
+    logo: values.logo && values.logo.length > 0 ? values.logo[0]?.url : null,
+    storyCover:
+      values.storyCover && values.storyCover.length > 0
+        ? values.storyCover[0]?.url
+        : null,
     createdBy: 1,
     updatedBy: 1,
   };
-  const data = await Brands.update(values,{where:{id}}).catch((err) =>
+  const data = await Brands.update(values, { where: { id } }).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       message: err.message,
     })
@@ -104,7 +112,6 @@ export const update = async (
 
   return res.status(httpStatus.OK).json({ data });
 };
-
 
 export const bulkDelete = async (
   req: Request,
@@ -121,8 +128,6 @@ export const bulkDelete = async (
   return res.status(httpStatus.OK).send();
 };
 
-
-
 export const toggleActiveStatus = async (
   req: Request,
   res: Response
@@ -136,7 +141,6 @@ export const toggleActiveStatus = async (
 
   return res.json({ success: true, data });
 };
-
 
 export const togglePopularStatus = async (
   req: Request,

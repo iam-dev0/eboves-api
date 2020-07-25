@@ -13,6 +13,7 @@ import {
   ForeignKey,
   BelongsToMany,
   BelongsTo,
+  HasOne,
 } from "sequelize-typescript";
 import ProductsImages from "./ProductImages";
 import ProductAttribute from "./ProductAttributes";
@@ -23,10 +24,25 @@ import Categories from "./Categories";
 import Suppliers from "./Supplier";
 
 @DefaultScope(() => ({
-  attributes:{exclude:["deletedBy","createdBy","updatedBy","deletedAt"]},
+  attributes: { exclude: ["deletedBy", "createdBy", "updatedBy", "deletedAt"] },
 }))
 @Scopes(() => ({
   full: { attributes: { exclude: ["deletedAt"] } },
+
+  websiteListing: {
+    attributes: [
+      "id",
+      "name",
+      "mainImage",
+      "bestSeller",
+      "featured",
+      "topRated",
+      "rating",
+      "commentsCount",
+    ],
+    include: [{ model: Brands.scope("website") }],
+    where: { active: true },
+  },
 }))
 @Table({
   defaultScope: {
@@ -81,11 +97,51 @@ export class Products extends Model<Products> {
   images!: ProductsImages[];
 
   @BelongsTo(() => Categories)
-  category!: Categories;
+  Category!: Categories;
+
   @BelongsTo(() => Suppliers)
   supplier!: Suppliers;
   @BelongsTo(() => Brands)
   brand!: Brands;
+
+  @Default("eboves")
+  @Column({
+    type: DataType.ENUM,
+    values: ["eboves", "supplier"],
+  })
+  productType!: string;
+
+  @Column
+  mainImage!: string;
+
+  @Column
+  description!: string;
+
+  @Column
+  descriptionImage!: string;
+
+  @Column({ type: DataType.TEXT })
+  howToUse!: string;
+
+  @Default(false)
+  @Column
+  active!: boolean;
+
+  @Default(false)
+  @Column
+  bestSeller!: boolean;
+  @Default(false)
+  @Column
+  featured!: boolean;
+  @Default(false)
+  @Column
+  topRated!: boolean;
+
+  @Column
+  commentsCount!: number;
+
+  @Column({ type: DataType.DECIMAL })
+  rating!: number;
 
   @Column({
     type: DataType.TEXT,
@@ -101,32 +157,6 @@ export class Products extends Model<Products> {
     type: DataType.TEXT,
   })
   metaDescription!: string;
-
-  @Default("eboves")
-  @Column({
-    type: DataType.ENUM,
-    values: ["eboves", "supplier"],
-  })
-  productType!: string;
-
-  @Column
-  description!: string;
-
-  @Column
-  descriptionImage!: string;
-
-  @Column({ type: DataType.TEXT })
-  howToUse!: string;
-
-  @Default(false)
-  @Column
-  active!: boolean;
-
-  @Column
-  commentsCount!: number;
-
-  @Column({ type: DataType.DECIMAL })
-  rating!: number;
 
   @Column
   createdBy!: number;
