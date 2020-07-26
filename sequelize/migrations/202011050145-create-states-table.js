@@ -15,7 +15,7 @@ module.exports.up = (queryInterface, DataTypes) => {
           key: "id",
           model: "countries",
         },
-        onDelete:"CASCADE"
+        onDelete: "CASCADE",
       },
       name: {
         allowNull: false,
@@ -31,7 +31,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        allowNull: true,
         type: DataTypes.DATE,
       },
     },

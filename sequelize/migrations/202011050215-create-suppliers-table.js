@@ -9,7 +9,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       cityId: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,6 +16,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       companyName: {
+        allowNull: false,
         type: DataTypes.STRING,
         comment: "Company Name",
       },
@@ -30,32 +30,33 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.STRING,
       },
       description: {
-        allowNull: true,
         type: DataTypes.STRING,
         comment: "Company description",
       },
+      name: {
+        type: DataTypes.STRING,
+        comment: "Contact Name",
+      },
       website: {
-        allowNull: true,
+        isUrl: true,  
         type: DataTypes.STRING,
         comment: "Company official website",
       },
       email: {
-        allowNull: true,
+        isEmail: true, 
         type: DataTypes.STRING,
         comment: "Contact person email",
       },
       phone: {
-        allowNull: true,
+        allowNull: false,
         type: DataTypes.STRING,
         comment: "Contact person phone",
       },
       warehouseAddress: {
-        allowNull: true,
         type: DataTypes.STRING,
         comment: "warehouse Address",
       },
       warehouseCityId: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -63,9 +64,9 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       commissionPercentage: {
-        allowNull: true,
         type: DataTypes.FLOAT,
         comment: "It is commission percentage decided with local supplier",
+        default: 0,
       },
       local: {
         type: DataTypes.BOOLEAN,
@@ -111,7 +112,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        allowNull: true,
+        
         type: DataTypes.DATE,
       },
     },

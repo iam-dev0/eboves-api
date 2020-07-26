@@ -7,6 +7,9 @@ import {
   DeletedAt,
   CreatedAt,
   ForeignKey,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 import Countries from "./Countries";
 
@@ -18,10 +21,10 @@ import Countries from "./Countries";
   tableName: "Cities",
 })
 export class Cities extends Model<Cities> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

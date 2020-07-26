@@ -7,6 +7,9 @@ import {
   UpdatedAt,
   DeletedAt,
   CreatedAt,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 
 @Table({
@@ -29,10 +32,10 @@ import {
   },
 }))
 export class Brands extends Model<Brands> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

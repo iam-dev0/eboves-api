@@ -9,7 +9,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       fromUserId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,7 +17,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       toUserId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

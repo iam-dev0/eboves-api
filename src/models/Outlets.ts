@@ -8,6 +8,9 @@ import {
   CreatedAt,
   Scopes,
   Default,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 
 @Table({
@@ -23,10 +26,10 @@ import {
   },
 })
 export class Outlets extends Model<Outlets> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

@@ -8,6 +8,9 @@ import {
   CreatedAt,
   Scopes,
   Default,
+  AutoIncrement,
+  PrimaryKey,
+  AllowNull,
 } from "sequelize-typescript";
 import { literal } from "sequelize";
 
@@ -28,10 +31,10 @@ import { literal } from "sequelize";
   },
 })
 export class Attributes extends Model<Attributes> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

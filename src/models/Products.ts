@@ -14,6 +14,9 @@ import {
   BelongsToMany,
   BelongsTo,
   HasOne,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 import ProductsImages from "./ProductImages";
 import ProductAttribute from "./ProductAttributes";
@@ -52,10 +55,10 @@ import Suppliers from "./Supplier";
   tableName: "Products",
 })
 export class Products extends Model<Products> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

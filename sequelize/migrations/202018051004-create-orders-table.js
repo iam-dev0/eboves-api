@@ -9,7 +9,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       outletId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,7 +17,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       cityId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -25,7 +25,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       courierId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -33,7 +33,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       customerId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -41,7 +41,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       customerAddressId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -269,7 +269,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       deletedBy: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -326,7 +326,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        allowNull: true,
+        
         type: DataTypes.DATE,
       },
     },

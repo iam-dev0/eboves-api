@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
-const { stringGenerator ,randomArrayElement,getrandomBoolean} = require("../../dist/util/index");
+const {
+  stringGenerator,
+  previousRandomDate,
+  randomArrayElement,
+  getrandomBoolean,
+} = require("../../dist/util/index");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     /*
@@ -25,23 +30,23 @@ module.exports = {
 
     const brands = [];
     [...Array(Math.floor(Math.random() * 100))].map(() =>
-    brands.push({
+      brands.push({
         name: stringGenerator(Math.floor(Math.random() * 2) + 1),
-        slug: stringGenerator(Math.floor(Math.random() * 2) + 1),
+        slug: stringGenerator(1),
         logo: "https://via.placeholder.com/150x200",
         image: "https://via.placeholder.com/1080x720",
         storyText: stringGenerator(Math.floor(Math.random() * 15) + 1),
         storyTextColor: ["#eeee", "#ffff"][Math.floor(Math.random * 1)],
         storyCover: "https://via.placeholder.com/1080x720",
-        featured: getrandomBoolean(.9),
-        active: getrandomBoolean(.1),
+        featured: getrandomBoolean(0.9),
+        active: getrandomBoolean(0.1),
         metaTitle: stringGenerator(Math.floor(Math.random() * 15) + 1),
         metaKeywords: stringGenerator(Math.floor(Math.random() * 15) + 1),
         metaDescription: stringGenerator(Math.floor(Math.random() * 15) + 1),
         createdBy: randomArrayElement(users[0]).id,
         updatedBy: randomArrayElement(users[0]).id,
         deletedBy: null,
-        createdAt: new Date(),
+        createdAt: previousRandomDate(),
         updatedAt: new Date(),
       })
     );

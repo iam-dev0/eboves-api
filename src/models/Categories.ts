@@ -13,6 +13,9 @@ import {
   AfterDestroy,
   HasOne,
   BelongsTo,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 
 @Table({
@@ -32,10 +35,10 @@ import {
   },
 })
 export class Categories extends Model<Categories> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

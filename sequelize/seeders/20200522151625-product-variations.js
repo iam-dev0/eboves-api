@@ -3,6 +3,8 @@
 const {
   stringGenerator,
   randomArrayElement,
+  previousRandomDate,
+  uniqeString,
   getrandomBoolean,
 } = require("../../dist/util/index");
 
@@ -29,7 +31,7 @@ module.exports = {
       [...Array(Math.floor(Math.random() * 10)+1)].map(() =>
         vps.push({
           productId: product.id,
-          sku:  stringGenerator(Math.floor(Math.random() * 10) + 1,true),
+          sku: uniqeString(),
           slug: stringGenerator(Math.floor(Math.random() * 10) + 1,true).replace(/\s/g,"-"),
           shortDescription: stringGenerator(Math.floor(Math.random() * 50) + 1),
           virtualQuantity: Math.floor(Math.random() * 100) + 10,
@@ -49,7 +51,7 @@ module.exports = {
           updatedBy: randomArrayElement(users[0]).id,
           deletedBy: null,
           deletedBy: null,
-          createdAt: new Date(),
+          createdAt: previousRandomDate(),
           updatedAt: new Date(),
         })
       )

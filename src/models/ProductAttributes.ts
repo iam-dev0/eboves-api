@@ -5,6 +5,9 @@ import {
   Table,
   ForeignKey,
   BelongsTo,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 import Products from "./Products";
 import Attributes from "./Attributes";
@@ -18,10 +21,10 @@ import Attributes from "./Attributes";
   tableName: "product_attribute",
 })
 export class ProductAttribute extends Model<ProductAttribute> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

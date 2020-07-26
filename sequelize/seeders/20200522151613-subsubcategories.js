@@ -31,7 +31,7 @@ module.exports = {
         categories.push({
           categoryId: categroy.id,
           name: stringGenerator(Math.floor(Math.random() * 2) + 1),
-          slug: stringGenerator(Math.floor(Math.random() * 10) + 1, true).replace(/\s/g,"-"),
+          slug: stringGenerator(2, true).replace(/\s/g,"-"),
           image: null,
           displayOrder: null,
           storyText: stringGenerator(Math.floor(Math.random() * 10) + 1),

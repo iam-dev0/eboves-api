@@ -5,6 +5,9 @@ import {
   Table,
   ForeignKey,
   BelongsTo,
+  AllowNull,
+  AutoIncrement,
+  PrimaryKey,
 } from "sequelize-typescript";
 import ProductVariations from "./ProductVariations";
 import Attributes from "./Attributes";
@@ -16,13 +19,11 @@ import Attributes from "./Attributes";
   timestamps: false,
   tableName: "product_variation_attribute_values",
 })
-export class ProductVariationAttributeValues extends Model<
-  ProductVariationAttributeValues
-> {
+export class ProductVariationAttributeValues extends Model< ProductVariationAttributeValues> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

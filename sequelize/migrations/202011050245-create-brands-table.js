@@ -62,7 +62,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       deletedBy: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

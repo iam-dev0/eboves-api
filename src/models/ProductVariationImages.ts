@@ -4,6 +4,9 @@ import {
     Model,
     Table,
     ForeignKey,
+    PrimaryKey,
+    AllowNull,
+    AutoIncrement,
   } from "sequelize-typescript";
 import Products from "./Products";
 import ProductVariations from "./ProductVariations";
@@ -26,11 +29,11 @@ import ProductVariations from "./ProductVariations";
     tableName: "product_variation_images"
   })
   export class ProductVariationsImages extends Model<ProductVariationsImages> {
+    @AllowNull(false)
+    @PrimaryKey
+    @AutoIncrement
     @Column({
-      allowNull: false,
-      autoIncrement: true,
-      primaryKey: true,
-      type: DataType.INTEGER.UNSIGNED
+      type: DataType.INTEGER.UNSIGNED,
     })
     id!: number;
     

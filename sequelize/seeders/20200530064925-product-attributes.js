@@ -1,10 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
-const {
-  stringGenerator,
-  randomArrayElement,
-  getrandomBoolean,
-} = require("../../dist/util/index");
+const { randomArrayElement } = require("../../dist/util/index");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     /*

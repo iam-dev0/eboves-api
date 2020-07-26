@@ -7,6 +7,12 @@ import {
   UpdatedAt,
   DeletedAt,
   CreatedAt,
+  Unique,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
+  IsEmail,
+  IsUrl,
 } from "sequelize-typescript";
 
 @Table({
@@ -17,18 +23,20 @@ import {
   tableName: "Suppliers",
 })
 export class Suppliers extends Model<Suppliers> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;
 
-  @Column({ unique: true })
+  @Unique
+  @Column
   slug!: string;
 
-  @Column({ unique: true })
+  @Unique
+  @Column
   code!: string;
 
   @Column
@@ -37,9 +45,11 @@ export class Suppliers extends Model<Suppliers> {
   @Column
   description!: string;
 
+  @IsUrl
   @Column
   website!: string;
 
+  @IsEmail
   @Column
   email!: string;
 

@@ -9,7 +9,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       orderProductVariationId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,7 +17,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       purchaseOrderId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

@@ -9,7 +9,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       brandId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,7 +17,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       orderId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -25,7 +25,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       productId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -33,7 +33,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       productVariationid: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -41,7 +41,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       supplierId: {
-        allowNull: true,
+        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

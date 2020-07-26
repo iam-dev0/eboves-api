@@ -9,7 +9,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       outletId: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,7 +16,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       supplierId: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -29,7 +27,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         comment: "Company Name",
       },
       lastName: {
-        allowNull: true,
         type: DataTypes.STRING,
       },
       slug: {
@@ -37,25 +34,20 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.STRING,
       },
       designation: {
-        allowNull: true,
         type: DataTypes.STRING,
       },
       email: {
-        allowNull: true,
         type: DataTypes.STRING,
         comment: "Contact person email",
       },
       emailVerifyAt: {
-        allowNull: true,
         type: DataTypes.DATE,
       },
       phone: {
-        allowNull: true,
         type: DataTypes.STRING,
         comment: "Contact person phone",
       },
       phoneVerifyAt: {
-        allowNull: true,
         type: DataTypes.DATE,
       },
       password: {
@@ -64,46 +56,40 @@ module.exports.up = (queryInterface, DataTypes) => {
       gender: {
         type: DataTypes.ENUM(["male", "female", "other"]),
       },
-
       DOB: {
         type: DataTypes.DATE,
       },
       image: {
-        allowNull: true,
         type: DataTypes.STRING,
       },
       active: {
         type: DataTypes.BOOLEAN,
         default: true,
       },
-
       createdBy: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "users",
         },
-        onDelete:"No Action"
+        onDelete: "No Action",
       },
 
       updatedBy: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "users",
         },
-        onDelete:"No Action"
+        onDelete: "No Action",
       },
       deletedBy: {
-        allowNull: true,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "users",
         },
-        onDelete:"No Action"
+        onDelete: "No Action",
       },
 
       createdAt: {
@@ -115,7 +101,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        allowNull: true,
         type: DataTypes.DATE,
       },
     },

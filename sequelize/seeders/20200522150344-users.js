@@ -1,6 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
-const { stringGenerator,getrandomBoolean } = require("../../dist/util/index");
+const {
+  stringGenerator,
+  getrandomBoolean,
+  randomUser,
+} = require("../../dist/util/index");
+const { random } = require("lodash");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     /*
@@ -22,20 +27,21 @@ module.exports = {
     );
 
     const users = [];
-    [...Array(Math.floor(Math.random() * 10) + 5)].map(() =>
+    [...Array(Math.floor(Math.random() * 10) + 5)].map(() => {
+      const user=randomUser();
       users.push({
-        outletId:  country[0][0].outletId,
+        outletId: country[0][0].outletId,
         supplierId: null,
-        firstName: stringGenerator(Math.floor(Math.random() * 2) + 1),
-        lastName: stringGenerator(Math.floor(Math.random() * 2) + 1),
+        firstName: user.name.split(" ")[0],
+        lastName: user.name.split(" ")[1],
         designation: stringGenerator(Math.floor(Math.random() * 2) + 1),
         slug: stringGenerator(Math.floor(Math.random() * 2) + 1),
         image: "https://via.placeholder.com/150",
-        email: "emial@gmail.com",
+        email: user.email,
         password: stringGenerator(Math.floor(Math.random() * 2) + 1, true),
-        phone: "03103983048",
+        phone:user.phone,
         gender: ["male", "female"][Math.floor(Math.random * 1)],
-        active: getrandomBoolean(.1),
+        active: getrandomBoolean(0.1),
         DOB: new Date(),
         createdBy: null,
         updatedBy: null,
@@ -44,8 +50,8 @@ module.exports = {
         emailVerifyAt: new Date(),
         createdAt: new Date(),
         updatedAt: new Date(),
-      })
-    );
+      });
+    });
     return queryInterface.bulkInsert("users", users);
   },
 

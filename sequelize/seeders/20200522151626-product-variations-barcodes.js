@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 "use strict";
 const {
-  stringGenerator,
   randomArrayElement,
-  getrandomBoolean,
+  uniqeString,
+  previousRandomDate,
 } = require("../../dist/util/index");
 
 module.exports = {
@@ -29,12 +29,12 @@ module.exports = {
       [...Array(Math.floor(Math.random() * 3) + 1)].map(() =>
         vps.push({
           productVariationId: product.id,
-          barcode: stringGenerator(Math.floor(Math.random() * 10) + 1, true),
+          barcode: uniqeString(),
           supplierPrice: Math.floor(Math.random() * 10000) + 100,
           createdBy: randomArrayElement(users[0]).id,
           updatedBy: randomArrayElement(users[0]).id,
           deletedBy: null,
-          createdAt: new Date(),
+          createdAt: previousRandomDate(),
           updatedAt: new Date(),
         })
       )

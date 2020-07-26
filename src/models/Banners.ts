@@ -5,6 +5,9 @@ import {
   Table,
   Default,
   Scopes,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 
 @Table({
@@ -18,10 +21,10 @@ import {
   },
 })
 export class Banners extends Model<Banners> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;

@@ -4,7 +4,10 @@ const {
   stringGenerator,
   randomArrayElement,
   getrandomBoolean,
+  previousRandomDate,
+  uniqeString,
 } = require("../../dist/util/index");
+
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     /*
@@ -35,19 +38,13 @@ module.exports = {
         supplierId: randomArrayElement(suppliers[0]).id,
         mainImage: "https://via.placeholder.com/720x720",
         productType: randomArrayElement(["eboves", "supplier"]),
-        sku: stringGenerator(Math.floor(Math.random() * 10) + 1, true).replace(
-          /\s/g,
-          "-"
-        ),
+        sku: uniqeString(),
         name: stringGenerator(Math.floor(Math.random() * 10) + 1),
         description: stringGenerator(Math.floor(Math.random() * 100) + 1),
         descriptionImage: "https://via.placeholder.com/1080x720",
         howToUse: stringGenerator(Math.floor(Math.random() * 100) + 1),
         productCode: stringGenerator(Math.floor(Math.random() * 10) + 1),
-        slug: stringGenerator(Math.floor(Math.random() * 10) + 1).replace(
-          /\s/g,
-          "-"
-        ),
+        slug: stringGenerator(Math.floor(Math.random() * 10) + 1).replace(/\s/g, "-" ),
         price: Math.floor(Math.random() * 10000) + 100,
         commentsCount: Math.floor(Math.random() * 100) + 1,
         rating: Math.floor(Math.random() * 5),
@@ -61,7 +58,7 @@ module.exports = {
         createdBy: randomArrayElement(users[0]).id,
         updatedBy: randomArrayElement(users[0]).id,
         deletedBy: null,
-        createdAt: new Date(),
+        createdAt: previousRandomDate(),
         updatedAt: new Date(),
       })
     );

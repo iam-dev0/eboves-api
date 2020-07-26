@@ -9,6 +9,9 @@ import {
   UpdatedAt,
   DeletedAt,
   Default,
+  AllowNull,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 
 import ProductVariations from "./ProductVariations";
@@ -21,8 +24,16 @@ import ProductVariations from "./ProductVariations";
   timestamps: true,
   tableName: "product_variation_barcodes",
 })
-export class ProductVariationsBarcodes extends Model<ProductVariationsBarcodes> {
-
+export class ProductVariationsBarcodes extends Model<
+  ProductVariationsBarcodes
+> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
+  @Column({
+    type: DataType.INTEGER.UNSIGNED,
+  })
+  id!: number;
 
   @ForeignKey(() => ProductVariations)
   @Column

@@ -11,6 +11,8 @@ import {
   BelongsTo,
   BelongsToMany,
   Unique,
+  PrimaryKey,
+  AutoIncrement,
 } from "sequelize-typescript";
 import Products from "./Products";
 import ProductVariationAttributeValues from "./ProductVariationAttributeValues";
@@ -47,10 +49,10 @@ import Attributes from "./Attributes";
   },
 })
 export class ProductVariations extends Model<ProductVariations> {
+  @AllowNull(false)
+  @PrimaryKey
+  @AutoIncrement
   @Column({
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
     type: DataType.INTEGER.UNSIGNED,
   })
   id!: number;
