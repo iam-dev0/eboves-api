@@ -10,9 +10,8 @@ import path from "path";
 //   }
 // });
 
-
 // Check File Type
-function checkFileType(file, cb){
+function checkFileType(file, cb) {
   // Allowed ext
   const filetypes = /jpeg|jpg|png|gif|jfif|octet-stream/;
   // Check ext
@@ -20,22 +19,19 @@ function checkFileType(file, cb){
   // Check mime
   const mimetype = filetypes.test(file.mimetype);
 
-  if(mimetype && extname){
-    return cb(null,true);
+  if (mimetype && extname) {
+    return cb(null, true);
   } else {
     cb("Error: Images Only!");
   }
 }
 
-
-export const upload= multer({
+export const upload = multer({
   storage: multer.memoryStorage(),
-  fileSize: 10 * 1024 * 1024, // Maximum file size is 10MB
+  limits: { fileSize: 10 * 1024 * 1024 }, // Maximum file size is 10MB
   // fileFilter: function(req, file, cb){
   //   checkFileType(file, cb);
   // }
 });
 
-
-
-export default  upload;
+export default upload;
