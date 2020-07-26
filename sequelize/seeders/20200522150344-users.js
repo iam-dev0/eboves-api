@@ -5,7 +5,6 @@ const {
   getrandomBoolean,
   randomUser,
 } = require("../../dist/util/index");
-const { random } = require("lodash");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     /*
