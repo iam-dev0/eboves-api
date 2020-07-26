@@ -7,7 +7,7 @@ import {
   toggleActiveStatus,
   uploadImage,
   bulkDelete,
-  togglePopularStatus,
+  toggleFeaturedStatus,
 } from "../controllers/controllerBrands";
 import sendUploadToGCS from "../google/ImageUploaderMiddleware";
 import upload from "../Middlewares/multer";
@@ -22,7 +22,7 @@ app.delete("/", bulkDelete);
 
 app.put("/toggle-active/:id", toggleActiveStatus);
 
-app.put("/toggle-populary/:id", togglePopularStatus);
+app.put("/toggle-featured/:id", toggleFeaturedStatus);
 
 app.post("/upload", upload.single("file"), sendUploadToGCS, uploadImage);
 

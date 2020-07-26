@@ -57,6 +57,9 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   id!: number;
 
+  @Column
+  mainImage!: string;
+
   @ForeignKey(() => Products)
   @AllowNull(false)
   @Column({
@@ -75,9 +78,11 @@ export class ProductVariations extends Model<ProductVariations> {
 
   @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
   attributeValues!: Attributes[];
-
+ 
+  @Unique
   @Column
   slug!: string;
+
   @Column({
     type: DataType.TEXT,
   })
@@ -91,6 +96,7 @@ export class ProductVariations extends Model<ProductVariations> {
     type: DataType.INTEGER.UNSIGNED,
   })
   virtualQuantity!: number;
+
   @Column({
     type: DataType.DECIMAL,
   })

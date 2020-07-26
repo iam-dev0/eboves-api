@@ -7,6 +7,7 @@ import {
     PrimaryKey,
     AllowNull,
     AutoIncrement,
+    IsUrl,
   } from "sequelize-typescript";
 import Products from "./Products";
   
@@ -40,6 +41,8 @@ import Products from "./Products";
     @Column
     productId!: number;
 
+
+    @IsUrl
     @Column
     image!: string;
   }

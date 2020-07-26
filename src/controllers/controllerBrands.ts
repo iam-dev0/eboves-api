@@ -43,7 +43,7 @@ export const getBrands = async (
   if (params.featured)
     where = { ...where, featured: params.featured.toLowerCase() === "true" };
 
-  const data = await Brands.scope("website").findAll({
+  const data = await Brands.scope("basic").findAll({
     where,
     order,
     limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
@@ -142,14 +142,14 @@ export const toggleActiveStatus = async (
   return res.json({ success: true, data });
 };
 
-export const togglePopularStatus = async (
+export const toggleFeaturedStatus = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
   const { id } = req.params;
 
   const data = Brands.update(
-    { popularity: literal("NOT popularity") },
+    { featured: literal("NOT featured") },
     { where: { id: id } }
   );
 

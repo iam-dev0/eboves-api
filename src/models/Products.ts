@@ -17,6 +17,8 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
+  IsUrl,
+  Unique,
 } from "sequelize-typescript";
 import ProductsImages from "./ProductImages";
 import ProductAttribute from "./ProductAttributes";
@@ -63,8 +65,12 @@ export class Products extends Model<Products> {
   })
   id!: number;
 
+  @IsUrl
   @Column
   name!: string;
+
+  @Column
+  mainImage!: string;
 
   @ForeignKey(() => Categories)
   @Column
@@ -78,16 +84,12 @@ export class Products extends Model<Products> {
   @Column
   supplierId!: number;
 
-  @Column({
-    unique: false,
-    type: DataType.STRING,
-  })
+  @Unique
+  @Column
   productCode!: string;
 
-  @Column({
-    unique: false,
-    type: DataType.STRING,
-  })
+  @Unique
+  @Column
   slug!: string;
 
   @BelongsToMany(() => Attributes, () => ProductAttribute)
@@ -113,9 +115,6 @@ export class Products extends Model<Products> {
     values: ["eboves", "supplier"],
   })
   productType!: string;
-
-  @Column
-  mainImage!: string;
 
   @Column
   description!: string;
