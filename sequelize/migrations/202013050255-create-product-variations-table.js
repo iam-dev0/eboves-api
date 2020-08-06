@@ -31,7 +31,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         default: 0,
       },
       price: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       discountPercentage: {
@@ -39,7 +39,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         default: 0,
       },
       discountPrice: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       discountStartTime: {

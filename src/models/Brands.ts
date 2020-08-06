@@ -10,6 +10,7 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
+  IsUrl,
 } from "sequelize-typescript";
 
 @Table({
@@ -26,10 +27,7 @@ import {
   website: {
     attributes: ["id", "name", "slug"],
     where: { active: true },
-  },
-  extends: {
-    where: { primaryColor: "yellow" },
-  },
+  }
 }))
 export class Brands extends Model<Brands> {
   @AllowNull(false)
@@ -46,9 +44,11 @@ export class Brands extends Model<Brands> {
   @Column
   name!: string;
 
+  @IsUrl
   @Column
   logo!: string;
 
+  @IsUrl
   @Column
   image!: string;
 
@@ -57,7 +57,8 @@ export class Brands extends Model<Brands> {
 
   @Column
   storyTextColor!: string;
-
+  
+  @IsUrl
   @Column
   storyCover!: string;
 

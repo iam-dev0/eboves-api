@@ -16,6 +16,7 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
+  IsUrl,
 } from "sequelize-typescript";
 
 @Table({
@@ -59,6 +60,7 @@ export class Categories extends Model<Categories> {
   @Column
   name!: string;
 
+  @IsUrl
   @Column
   image!: string;
 
@@ -71,6 +73,7 @@ export class Categories extends Model<Categories> {
   @Column
   storyTextColor!: string;
 
+  @IsUrl
   @Column
   storyCover!: string;
 

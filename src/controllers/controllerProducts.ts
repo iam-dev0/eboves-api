@@ -430,7 +430,7 @@ export const getProductFullInfo = async (
 ): Promise<Response> => {
   const { id } = req.params;
 
-  const result = await Products.scope("full").findByPk(id, {
+  const result = await Products.findByPk(id, {
     include: [
       {
         model: ProductVariations,
@@ -486,7 +486,7 @@ export const getMainTabs = async (
     include: [
       {
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }],
+        include: [{ model: Attributes }, { model: ProductVariationsImages }],
       },
     ],
     where: { featured: true },
@@ -503,7 +503,7 @@ export const getMainTabs = async (
             [Op.gte]: moment().format("YYYY-MM-DD hh:mm:ss"),
           },
         },
-        include: [{ model: Attributes }],
+        include: [{ model: Attributes }, { model: ProductVariationsImages }],
       },
     ],
     limit: 10,
@@ -513,7 +513,7 @@ export const getMainTabs = async (
     include: [
       {
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }],
+        include: [{ model: Attributes }, { model: ProductVariationsImages }],
       },
     ],
     where: { topRated: true },
@@ -551,7 +551,7 @@ export const getTopSeller = async (
       },
       {
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }],
+        include: [{ model: Attributes }, { model: ProductVariationsImages }],
         where: { bestSeller: true },
       },
     ],

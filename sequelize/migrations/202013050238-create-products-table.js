@@ -48,7 +48,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.STRING,
       },
       price: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       bestSeller: DataTypes.BOOLEAN,

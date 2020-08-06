@@ -38,6 +38,8 @@ import Attributes from "./Attributes";
       "virtualQuantity",
       "price",
       "bestSeller",
+      "topRated",
+      "featured",
       "discountPercentage",
       "discountPrice",
       "discountStartTime",
@@ -98,7 +100,7 @@ export class ProductVariations extends Model<ProductVariations> {
   virtualQuantity!: number;
 
   @Column({
-    type: DataType.DECIMAL,
+    type: DataType.FLOAT,
   })
   price!: number;
 
@@ -110,7 +112,7 @@ export class ProductVariations extends Model<ProductVariations> {
 
   @Default(0)
   @Column({
-    type: DataType.DECIMAL,
+    type: DataType.FLOAT,
   })
   discountPrice!: number;
 

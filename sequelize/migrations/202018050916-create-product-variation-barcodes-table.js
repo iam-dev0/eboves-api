@@ -24,7 +24,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       supplierPrice: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.FLOAT,
       },
       active: {
         type: DataTypes.BOOLEAN,

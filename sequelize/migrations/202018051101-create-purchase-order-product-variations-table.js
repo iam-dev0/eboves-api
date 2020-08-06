@@ -25,10 +25,10 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       requestedQuantity: DataTypes.INTEGER.UNSIGNED,
-      requestedPrice: DataTypes.DECIMAL,
+      requestedPrice: DataTypes.FLOAT,
 
       receivedQuantity: DataTypes.INTEGER.UNSIGNED,
-      receivedPrice: DataTypes.DECIMAL,
+      receivedPrice: DataTypes.FLOAT,
 
       requestedBarcode: DataTypes.STRING,
       barcode: DataTypes.STRING,

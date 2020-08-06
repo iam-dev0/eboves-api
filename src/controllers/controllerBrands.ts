@@ -163,3 +163,43 @@ export const uploadImage = async (
   const data = req.file;
   return res.status(httpStatus.OK).json({ data });
 };
+
+
+
+//------------------------------------------Website Controllers--------------------------//
+export const getBrandsWebsite = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const params: SearchParams = req.query;
+
+  let where = {};
+  const order: any = [];
+
+  if (params.name)
+    where = {
+      ...where,
+      name: {
+        [Op.like]: `${params.name}%`,
+      },
+    };
+  if (params.active)
+    where = { ...where, active: params.active.toLowerCase() === "true" };
+  if (params.createdAt) where = { ...where, createdAt: params.createdAt };
+  if (params.sorter) {
+    const sorting = params.sorter.split("_");
+    order.push([
+      sorting[0],
+      sorting[1].toLowerCase() === "ascend" ? "ASC" : "DESC",
+    ]);
+  }
+  if (params.featured)
+    where = { ...where, featured: params.featured.toLowerCase() === "true" };
+
+  const data = await Brands.scope("website").findAll({
+    where,
+    order,
+    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
+  });
+  return res.status(httpStatus.OK).json({ data });
+};

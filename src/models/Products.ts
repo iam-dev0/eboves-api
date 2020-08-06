@@ -32,8 +32,6 @@ import Suppliers from "./Supplier";
   attributes: { exclude: ["deletedBy", "createdBy", "updatedBy", "deletedAt"] },
 }))
 @Scopes(() => ({
-  full: { attributes: { exclude: ["deletedAt"] } },
-
   websiteListing: {
     attributes: [
       "id",
@@ -65,7 +63,6 @@ export class Products extends Model<Products> {
   })
   id!: number;
 
-  @IsUrl
   @Column
   name!: string;
 
@@ -142,7 +139,7 @@ export class Products extends Model<Products> {
   @Column
   commentsCount!: number;
 
-  @Column({ type: DataType.DECIMAL })
+  @Column({ type: DataType.FLOAT })
   rating!: number;
 
   @Column({

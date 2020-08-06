@@ -8,6 +8,7 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
+  IsUrl,
 } from "sequelize-typescript";
 
 @Table({
@@ -32,9 +33,11 @@ export class Banners extends Model<Banners> {
   @Column
   title!: string;
 
+  @IsUrl
   @Column
   image!: string;
 
+  @IsUrl
   @Column
   href!: string;
 

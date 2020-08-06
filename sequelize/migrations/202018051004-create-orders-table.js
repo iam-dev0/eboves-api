@@ -120,19 +120,19 @@ module.exports.up = (queryInterface, DataTypes) => {
       /*Prices*/
       discountedPercentage: DataTypes.INTEGER.UNSIGNED,
       discountedAmount: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       shippingCharges: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       tax: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       prepaid: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       paymentMethod: {

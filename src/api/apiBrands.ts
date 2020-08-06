@@ -8,6 +8,7 @@ import {
   uploadImage,
   bulkDelete,
   toggleFeaturedStatus,
+  getBrandsWebsite,
 } from "../controllers/controllerBrands";
 import sendUploadToGCS from "../google/ImageUploaderMiddleware";
 import upload from "../Middlewares/multer";
@@ -28,6 +29,6 @@ app.post("/upload", upload.single("file"), sendUploadToGCS, uploadImage);
 
 //--------------------Website Api-----------------------------------------------//
 export const WebsiteApp = express();
-WebsiteApp.get("/", getBrands);
+WebsiteApp.get("/", getBrandsWebsite);
 
 export default app;

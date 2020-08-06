@@ -49,11 +49,11 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       actualAmount: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       supplierPrice: {
-        type: DataTypes.DECIMAL,
+        type: DataTypes.FLOAT,
         default: 0,
       },
       discountedPercentage: {

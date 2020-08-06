@@ -9,7 +9,6 @@ import {
     AutoIncrement,
     IsUrl,
   } from "sequelize-typescript";
-import Products from "./Products";
 import ProductVariations from "./ProductVariations";
   
   
