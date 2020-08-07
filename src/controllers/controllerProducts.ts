@@ -9,12 +9,13 @@ import Brands from "../models/Brands";
 import Attributes from "../models/Attributes";
 import httpStatus from "http-status";
 import ProductVariations from "../models/ProductVariations";
-import { CreateVariationHelper } from "../util/helpers";
+import { CreateVariationHelper, prepareWhere } from "../util/helpers";
 import Categories from "../models/Categories";
 import Suppliers from "../models/Supplier";
 import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
 import ProductVariationsImages from "../models/ProductVariationImages";
 import moment from "moment";
+
 
 export interface SearchParams {
   sorter?: string;
@@ -531,34 +532,78 @@ export const getMainTabs = async (
   });
 };
 
-export const getTopSeller = async (
+export interface QureyParams {
+  brandSlug?: number;
+  categorySlug?: string;
+  subCategorySlug?: string;
+  subSubcategorySlug?: string;
+  bestSeller?: string;
+  trending?: string;
+  topRated?: string;
+  featured?: string;
+  pvTrending?: string;
+  pvTopRated?: string;
+  pvFeatured?: string;
+  productType?: string;
+  pricelte?: string;
+  pricegte?: string;
+  pageSize?: string;
+  current?: string;
+}
+
+export const getWebsiteProducts = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const params: SearchParams = req.query;
+  const params: QureyParams = req.query;
 
-  const data = await Products.scope("websiteListing").findAndCountAll({
+  const { pWhere, pvWhere }: any = prepareWhere(params);
+
+  const data = await Products.scope("websiteListing").findAll({
+    attributes: {
+      include: [
+        [sequelize.fn("COUNT", sequelize.col("variations.id")), "count"],
+      ],
+    },
     include: [
       {
         model: Categories.scope("website"),
+        where: params.subSubcategorySlug
+          ? { slug: params.subSubcategorySlug }
+          : {},
         include: [
           {
             model: Categories.scope("website"),
+            where: params.subCategorySlug
+              ? { slug: params.subCategorySlug }
+              : {},
             as: "parent",
-            include: [{ model: Categories.scope("website"), as: "parent" }],
+            include: [
+              {
+                model: Categories.scope("website"),
+                as: "parent",
+                where: params.categorySlug ? { slug: params.categorySlug } : {},
+              },
+            ],
           },
         ],
       },
       {
+        model: Brands.scope("website"),
+        where: params.brandSlug ? { slug: params.brandSlug } : {},
+      },
+      {
         model: ProductVariations.scope("websiteListing"),
+        where: pvWhere,
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
-        where: { bestSeller: true },
       },
     ],
-    limit: parseInt(params.pageSize || "20"),
-    offset:
-      parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
-      parseInt(params.pageSize || "20"),
+    limit: parseInt(params.pageSize || "100"),
+    // offset:
+    //   parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
+    //   parseInt(params.pageSize || "20"),
+
+    where: pWhere,
   });
 
   return res.json({

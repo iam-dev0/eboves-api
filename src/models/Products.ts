@@ -43,7 +43,6 @@ import Suppliers from "./Supplier";
       "rating",
       "commentsCount",
     ],
-    include: [{ model: Brands.scope("website") }],
     where: { active: true },
   },
 }))

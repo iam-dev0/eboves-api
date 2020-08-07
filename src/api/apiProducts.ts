@@ -11,7 +11,7 @@ import {
   getProductFullInfo,
   bulkDelete,
   getMainTabs,
-  getTopSeller,
+  getWebsiteProducts,
 } from "../controllers/controllerProducts";
 const app = express();
 
@@ -32,6 +32,6 @@ app.put("/:pid/variation/:vid/status", toggleProductActiveStatus);
 //------------------------------------------Website Api---------------------//
 export const WebsiteApp = express();
 WebsiteApp.get("/main-tabs", getMainTabs);
-WebsiteApp.get("/top-sellers", getTopSeller);
+WebsiteApp.get("/", getWebsiteProducts);
 
 export default app;
