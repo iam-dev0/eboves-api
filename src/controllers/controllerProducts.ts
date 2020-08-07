@@ -596,9 +596,9 @@ export const getWebsiteProducts = async (
     ],
     limit: parseInt(params.pageSize || "100"),
     distinct:true,
-    // offset:
-    //   parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
-    //   parseInt(params.pageSize || "20"),
+    offset:
+      parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
+      parseInt(params.pageSize || "20"),
     where: pWhere,
   });
 
