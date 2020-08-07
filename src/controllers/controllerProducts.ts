@@ -15,7 +15,7 @@ import Suppliers from "../models/Supplier";
 import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
 import ProductVariationsImages from "../models/ProductVariationImages";
 import moment from "moment";
-
+import { param } from "jquery";
 
 export interface SearchParams {
   sorter?: string;
@@ -559,12 +559,7 @@ export const getWebsiteProducts = async (
 
   const { pWhere, pvWhere }: any = prepareWhere(params);
 
-  const data = await Products.scope("websiteListing").findAll({
-    attributes: {
-      include: [
-        [sequelize.fn("COUNT", sequelize.col("variations.id")), "count"],
-      ],
-    },
+  const data = await Products.scope("websiteListing").findAndCountAll({
     include: [
       {
         model: Categories.scope("website"),
@@ -596,13 +591,14 @@ export const getWebsiteProducts = async (
         model: ProductVariations.scope("websiteListing"),
         where: pvWhere,
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        // where: { bestSeller: true },
       },
     ],
     limit: parseInt(params.pageSize || "100"),
+    distinct:true,
     // offset:
     //   parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
     //   parseInt(params.pageSize || "20"),
-
     where: pWhere,
   });
 
