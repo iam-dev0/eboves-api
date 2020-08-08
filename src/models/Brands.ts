@@ -22,12 +22,12 @@ import {
 })
 @Scopes(() => ({
   basic: {
-    attributes: ["id", "name", "active","logo" ,"createdAt", "featured"],
+    attributes: ["id", "name", "active", "createdAt", "featured"],
   },
   website: {
-    attributes: ["id", "name", "slug"],
+    attributes: ["id", "name", "logo", "slug"],
     where: { active: true },
-  }
+  },
 }))
 export class Brands extends Model<Brands> {
   @AllowNull(false)
@@ -57,7 +57,7 @@ export class Brands extends Model<Brands> {
 
   @Column
   storyTextColor!: string;
-  
+
   @IsUrl
   @Column
   storyCover!: string;
