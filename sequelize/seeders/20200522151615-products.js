@@ -42,7 +42,7 @@ module.exports = {
         name: stringGenerator(Math.floor(Math.random() * 10) + 1),
         description: stringGenerator(Math.floor(Math.random() * 100) + 1),
         descriptionImage: "https://via.placeholder.com/1080x720",
-        howToUse: stringGenerator(Math.floor(Math.random() * 100) + 1),
+        additionalInformation: stringGenerator(Math.floor(Math.random() * 100) + 1),
         productCode: stringGenerator(Math.floor(Math.random() * 10) + 1),
         slug: stringGenerator(Math.floor(Math.random() * 10) + 1).replace(/\s/g, "-" ),
         price: Math.floor(Math.random() * 10000) + 100,

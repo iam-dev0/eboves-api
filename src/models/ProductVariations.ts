@@ -63,7 +63,7 @@ export class ProductVariations extends Model<ProductVariations> {
   mainImage!: string;
 
   @ForeignKey(() => Products)
-  @AllowNull(false)
+  // @AllowNull(false)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
   })

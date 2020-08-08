@@ -5,7 +5,6 @@ import {
   getBrand,
   update,
   toggleActiveStatus,
-  uploadImage,
   bulkDelete,
   toggleFeaturedStatus,
   getBrandsWebsite,
@@ -25,7 +24,6 @@ app.put("/toggle-active/:id", toggleActiveStatus);
 
 app.put("/toggle-featured/:id", toggleFeaturedStatus);
 
-app.post("/upload", upload.single("file"), sendUploadToGCS, uploadImage);
 
 //--------------------Website Api-----------------------------------------------//
 export const WebsiteApp = express();

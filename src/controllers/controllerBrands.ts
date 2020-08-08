@@ -156,13 +156,6 @@ export const toggleFeaturedStatus = async (
   return res.json({ success: true, data });
 };
 
-export const uploadImage = async (
-  req: Request | any,
-  res: Response
-): Promise<Response> => {
-  const data = req.file;
-  return res.status(httpStatus.OK).json({ data });
-};
 
 
 

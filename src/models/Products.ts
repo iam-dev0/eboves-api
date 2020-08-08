@@ -119,7 +119,7 @@ export class Products extends Model<Products> {
   descriptionImage!: string;
 
   @Column({ type: DataType.TEXT })
-  howToUse!: string;
+  additionalInformation!: string;
 
   @Default(false)
   @Column

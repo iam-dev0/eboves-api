@@ -36,7 +36,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       description: DataTypes.TEXT,
       descriptionImage: DataTypes.STRING,
-      howToUse: DataTypes.TEXT,
+      additionalInformation: DataTypes.TEXT,
       name: DataTypes.STRING,
       productCode: {
         unique: true,

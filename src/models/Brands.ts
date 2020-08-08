@@ -22,7 +22,7 @@ import {
 })
 @Scopes(() => ({
   basic: {
-    attributes: ["id", "name", "active", "createdAt", "featured"],
+    attributes: ["id", "name", "active","logo" ,"createdAt", "featured"],
   },
   website: {
     attributes: ["id", "name", "slug"],

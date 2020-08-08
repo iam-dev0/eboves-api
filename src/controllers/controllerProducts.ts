@@ -9,13 +9,13 @@ import Brands from "../models/Brands";
 import Attributes from "../models/Attributes";
 import httpStatus from "http-status";
 import ProductVariations from "../models/ProductVariations";
-import { CreateVariationHelper, prepareWhere } from "../util/helpers";
+import { prepareWhere } from "../util/helpers";
 import Categories from "../models/Categories";
 import Suppliers from "../models/Supplier";
 import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
 import ProductVariationsImages from "../models/ProductVariationImages";
 import moment from "moment";
-import { param } from "jquery";
+import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
 
 export interface SearchParams {
   sorter?: string;
@@ -47,8 +47,10 @@ export const getProducts = async (
   res: Response
 ): Promise<Response> => {
   const params: SearchParams = req.query;
+
   let where = {};
   const order: any = [];
+
   if (params.name) {
     where = {
       ...where,
@@ -80,27 +82,42 @@ export const getProducts = async (
     ]);
   }
 
-  const data = await Products.findAndCountAll({
+  const count = await Products.count({
     include: [
       {
         model: ProductVariations,
-        attributes: ["id", "sku", "price"] /*limit:1*/,
+        attributes: ["id", "price"],
       },
-    ], // For now as bug in sequlize
-    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
+    ],
+    distinct: true,
+    where,
+  });
+
+  const data = await Products.findAll({
+    attributes: ["id", "name", "productType", "sku", "active", "createdAt"],
+    include: [
+      {
+        model: ProductVariations,
+        attributes: ["id", "price"],
+      },
+    ],
+    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // Sequelize Bug
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
       parseInt(params.pageSize || "20"),
     where,
+    // distinct: true,
     order,
+    group: ["products.id"],
+    // subQuery: false,
   });
 
   return res.json({
     current: params.current,
-    data: data.rows,
+    data: data,
     pageSize: params.pageSize,
     success: true,
-    total: data.count,
+    total: count,
   });
 };
 
@@ -135,33 +152,33 @@ export const createProduct = async (
     productType,
     categoryId,
     description,
-    howToUse,
+    additionalInformation,
     metaTitle,
     metaKeywords,
     metaDescription,
-    images,
+    images = [],
     attributes,
   }: any = req.body;
 
   try {
     const result = await myconnect.transaction(async (t) => {
-      const product = await Products.create(
-        {
-          name,
-          supplierId,
-          brandId,
-          productType,
-          categoryId,
-          description,
-          howToUse,
-          metaTitle,
-          metaKeywords,
-          metaDescription,
-          createdBy: 1, // Hardcord for now
-          updatedBy: 1, // Hardcord for now
-        },
-        { transaction: t }
-      );
+      const productData = {
+        name,
+        supplierId,
+        brandId,
+        productType,
+        categoryId,
+        description,
+        additionalInformation,
+        metaTitle,
+        mainImage: images[0]?.url,
+        metaKeywords,
+        metaDescription,
+        createdBy: 1, // Hardcord for now
+        updatedBy: 1, // Hardcord for now
+      };
+
+      const product = await Products.create(productData, { transaction: t });
 
       if (attributes?.length > 0) {
         const attrs = attributes.map((i: any) => ({
@@ -174,13 +191,13 @@ export const createProduct = async (
         });
       }
 
-      if (images?.length > 0) {
+      if (images?.length > 1) {
         const imgs = images.map((i: any) => ({
           image: i.url,
           productId: product.id,
         }));
 
-        product.images = await ProductsImages.bulkCreate(imgs, {
+        product.images = await ProductsImages.bulkCreate(imgs.shift(), {
           fields: ["productId", "image"],
           transaction: t,
         });
@@ -212,7 +229,7 @@ export const updateProduct = async (
     productType,
     categoryId,
     description,
-    howToUse,
+    additionalInformation,
     metaTitle,
     metaKeywords,
     metaDescription,
@@ -223,23 +240,25 @@ export const updateProduct = async (
 
   try {
     const result = await myconnect.transaction(async (t) => {
-      const product = await Products.update(
-        {
-          name,
-          supplierId,
-          brandId,
-          productType,
-          categoryId,
-          description,
-          howToUse,
-          metaTitle,
-          metaKeywords,
-          metaDescription,
-          createdBy: 1, // Hardcord for now
-          updatedBy: 1, // Hardcord for now
-        },
-        { where: { id }, transaction: t }
-      );
+      const productData = {
+        name,
+        supplierId,
+        brandId,
+        productType,
+        categoryId,
+        description,
+        additionalInformation,
+        metaTitle,
+        mainImage: images[0] ? images[0].url : null,
+        metaKeywords,
+        metaDescription,
+        createdBy: 1, // Hardcord for now
+        updatedBy: 1, // Hardcord for now
+      };
+      const product = await Products.update(productData, {
+        where: { id },
+        transaction: t,
+      });
 
       if (attributes?.length > 0) {
         await ProductAttributes.destroy({
@@ -258,17 +277,18 @@ export const updateProduct = async (
         });
       }
 
-      if (images?.length > 0) {
-        await ProductsImages.destroy({
-          where: { productId: id },
-          transaction: t,
-        });
+      await ProductsImages.destroy({
+        where: { productId: id },
+        transaction: t,
+      });
+
+      if (images?.length > 1) {
         const imgs = images.map((i: any) => ({
           image: i.url,
           productId: id,
         }));
 
-        await ProductsImages.bulkCreate(imgs, {
+        await ProductsImages.bulkCreate(imgs.shift(), {
           fields: ["productId", "image"],
           transaction: t,
         });
@@ -300,7 +320,75 @@ export const createVariations = async (
     const result = await myconnect.transaction(async (t) => {
       const promises: Promise<unknown>[] = [];
       for (const variation of variations) {
-        promises.push(CreateVariationHelper(variation, id, t));
+        const {
+          sku,
+          price,
+          shortDescription,
+          images,
+          barcodes,
+          attributes,
+        } = variation;
+
+        promises.push(
+          new Promise(async (resolve, reject) => {
+            const pvDate = {
+              productId: id,
+              sku,
+              price,
+              mainImage: images[0]?.url,
+              shortDescription,
+              createdBy: 1,
+              updatedBy: 1,
+            };
+            try {
+              const DV = await ProductVariations.create(pvDate);
+
+              if (attributes?.length > 0) {
+                const attr = attributes.map((i: any) => ({
+                  attributeId: i.id,
+                  alt: i.alt,
+                  value: i.value,
+                  productVariationId: DV.id,
+                }));
+
+                await ProductVariationAttributeValues.bulkCreate(attr, {
+                  transaction: t,
+                });
+              }
+
+              if (images?.length > 1) {
+                const imgs = images.map((i: any) => ({
+                  image: i.url,
+                  productVariationId: DV.id,
+                }));
+
+                await ProductVariationsImages.bulkCreate(imgs.shift(), {
+                  fields: ["productVariationId", "image"],
+                  transaction: t,
+                });
+              }
+
+              if (barcodes?.length > 0) {
+                const bars = barcodes.map((i: any) => ({
+                  barcode: i.barcode,
+                  supplierPrice: i.supplierPrice,
+                  productVariationId: DV.id,
+                  createdBy: 1,
+                  updatedBy: 1,
+                }));
+
+                await ProductVariationsBarcodes.bulkCreate(bars, {
+                  transaction: t,
+                });
+              }
+            } catch (error) {
+              reject(error);
+              return;
+            }
+
+            resolve();
+          })
+        );
       }
 
       const vs = await Promise.all(promises).then((values) => {
@@ -486,8 +574,13 @@ export const getMainTabs = async (
   const featured = Products.scope("websiteListing").findAll({
     include: [
       {
+        required:true,
         model: ProductVariations.scope("websiteListing"),
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
+      },
+      {
+        model: Brands.scope("website"),
+        required: true,
       },
     ],
     where: { featured: true },
@@ -506,6 +599,10 @@ export const getMainTabs = async (
         },
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
       },
+      {
+        model: Brands.scope("website"),
+        required: true,
+      },
     ],
     limit: 10,
   });
@@ -513,8 +610,13 @@ export const getMainTabs = async (
   const topRated = Products.scope("websiteListing").findAll({
     include: [
       {
+        required:true,
         model: ProductVariations.scope("websiteListing"),
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
+      },
+      {
+        model: Brands.scope("website"),
+        required: true,
       },
     ],
     where: { topRated: true },
@@ -563,12 +665,14 @@ export const getWebsiteProducts = async (
     include: [
       {
         model: Categories.scope("website"),
+        required: true,
         where: params.subSubcategorySlug
           ? { slug: params.subSubcategorySlug }
           : {},
         include: [
           {
             model: Categories.scope("website"),
+            required: true,
             where: params.subCategorySlug
               ? { slug: params.subCategorySlug }
               : {},
@@ -576,6 +680,7 @@ export const getWebsiteProducts = async (
             include: [
               {
                 model: Categories.scope("website"),
+                required: true,
                 as: "parent",
                 where: params.categorySlug ? { slug: params.categorySlug } : {},
               },
@@ -585,17 +690,18 @@ export const getWebsiteProducts = async (
       },
       {
         model: Brands.scope("website"),
+        required: true,
         where: params.brandSlug ? { slug: params.brandSlug } : {},
       },
       {
         model: ProductVariations.scope("websiteListing"),
+        required: true,
         where: pvWhere,
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
-        // where: { bestSeller: true },
+        include: [{ model: Attributes }],
       },
     ],
     limit: parseInt(params.pageSize || "100"),
-    distinct:true,
+    distinct: true,
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
       parseInt(params.pageSize || "20"),
