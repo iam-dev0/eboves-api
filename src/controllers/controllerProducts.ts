@@ -335,7 +335,7 @@ export const createVariations = async (
               productId: id,
               sku,
               price,
-              mainImage: images[0]?.url,
+              mainImage: images[0] ? images[0].url : null,
               shortDescription,
               createdBy: 1,
               updatedBy: 1,
@@ -460,20 +460,59 @@ export const getVaraitions = async (
 
   const result = await ProductVariations.findAll({
     where: { productId: Pid },
-    attributes: {
-      include: [
-        "id",
-        "sku",
-        "active",
-        "createdAt",
-        "price",
-        [
-          sequelize.fn(
-            "product_variation_name",
-            sequelize.col("ProductVariations.id")
-          ),
-          "name",
-        ],
+    attributes: [
+      "id",
+      "sku",
+      "active",
+      "createdAt",
+      "price",
+      [
+        sequelize.fn(
+          "product_variation_name",
+          sequelize.col("ProductVariations.id")
+        ),
+        "name",
+      ],
+    ],
+  });
+
+  return res.json({
+    data: result,
+  });
+};
+
+export const searchVariations = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { name, pageSize }: any = req.query;
+
+  const result = await ProductVariations.findAll({
+    attributes: [
+      "id",
+      "sku",
+      [
+        sequelize.fn(
+          "product_variation_name",
+          sequelize.col("ProductVariations.id")
+        ),
+        "name",
+      ],
+    ],
+    include: [{ required: true, model: Products, attributes: ["id", "name"] }],
+    limit: parseInt(pageSize || "20"),
+    where: {
+      [Op.or]: [
+        {
+          "$product.name$": {
+            [Op.like]: `${name}%`,
+          },
+        },
+        {
+          sku: {
+            [Op.like]: `${name}%`,
+          },
+        },
       ],
     },
   });
@@ -574,7 +613,7 @@ export const getMainTabs = async (
   const featured = Products.scope("websiteListing").findAll({
     include: [
       {
-        required:true,
+        required: true,
         model: ProductVariations.scope("websiteListing"),
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
       },
@@ -610,7 +649,7 @@ export const getMainTabs = async (
   const topRated = Products.scope("websiteListing").findAll({
     include: [
       {
-        required:true,
+        required: true,
         model: ProductVariations.scope("websiteListing"),
         include: [{ model: Attributes }, { model: ProductVariationsImages }],
       },

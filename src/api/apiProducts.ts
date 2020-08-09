@@ -12,6 +12,7 @@ import {
   bulkDelete,
   getMainTabs,
   getWebsiteProducts,
+  searchVariations,
 } from "../controllers/controllerProducts";
 const app = express();
 
@@ -23,6 +24,8 @@ app.put("/:id", updateProduct);
 app.delete("/", bulkDelete);
 
 app.post("/:id/variations", createVariations);
+
+app.get("/search/variations", searchVariations);
 
 app.get("/:Pid/variations", getVaraitions);
 app.get("/:pid/variation/:vid", getVaraition);

@@ -9,7 +9,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       productId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,6 +16,11 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       mainImage: DataTypes.TEXT,
+      mainBarcode: {
+        unique: true,
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
       slug: {
         unique: true,
         type: DataTypes.STRING,
@@ -90,7 +94,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       deletedBy: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -106,7 +109,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        
         type: DataTypes.DATE,
       },
     },

@@ -9,7 +9,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       outletId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,7 +16,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       productVariationId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -25,19 +23,23 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       supplierId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "suppliers",
         },
       },
+      supplierPrice: {
+        allowNull: false,
+        type: DataTypes.FLOAT,
+      },
+
       availableQuantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
       bookedQuantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
       dispatchedQuantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
       deliveredQuantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
-      damagedQuantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
-      inTransitTquantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
+      returnedQuantity: { type: DataTypes.INTEGER.UNSIGNED, default: 0 },
+
       active: {
         type: DataTypes.BOOLEAN,
         default: false,
@@ -60,7 +62,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       deletedBy: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -76,7 +77,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        
         type: DataTypes.DATE,
       },
     },

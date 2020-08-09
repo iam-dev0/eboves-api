@@ -8,8 +8,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      productVariationId: {
-        
+      productVariationId: {    
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -22,10 +21,10 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      supplierPrice: {
-        allowNull: false,
-        type: DataTypes.FLOAT,
-      },
+      // supplierPrice: {
+      //   allowNull: false,
+      //   type: DataTypes.FLOAT,
+      // },
       active: {
         type: DataTypes.BOOLEAN,
         default: false,
