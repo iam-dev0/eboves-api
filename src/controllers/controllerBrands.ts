@@ -156,9 +156,6 @@ export const toggleFeaturedStatus = async (
   return res.json({ success: true, data });
 };
 
-
-
-
 //------------------------------------------Website Controllers--------------------------//
 export const getBrandsWebsite = async (
   req: Request,
@@ -195,4 +192,25 @@ export const getBrandsWebsite = async (
     limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
   });
   return res.status(httpStatus.OK).json({ data });
+};
+
+export const getBrandWebsite = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { slug } = req.params;
+  const data = await Brands.findOne({
+    attributes: {
+      exclude: [
+         "active",
+        "createdBy",
+        "updatedBy",
+        "deletedBy",
+        "createdAt",
+        "updatedAt",
+      ],
+    },
+    where: { slug, active: true },
+  });
+  return res.json({ data });
 };

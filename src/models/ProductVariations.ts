@@ -19,6 +19,7 @@ import ProductVariationAttributeValues from "./ProductVariationAttributeValues";
 import ProductVariationsBarcodes from "./ProductVariationBarcodes";
 import ProductVariationsImages from "./ProductVariationImages";
 import Attributes from "./Attributes";
+import Stocks from "./Stocks";
 
 @Table({
   defaultScope: {
@@ -61,6 +62,8 @@ export class ProductVariations extends Model<ProductVariations> {
 
   @Column
   mainImage!: string;
+  @Column
+  mainBarcode!: string;
 
   @ForeignKey(() => Products)
   // @AllowNull(false)
@@ -81,6 +84,9 @@ export class ProductVariations extends Model<ProductVariations> {
   @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
   attributeValues!: Attributes[];
  
+  @HasMany(() => Stocks)
+  stocks!: Stocks[];
+
   @Unique
   @Column
   slug!: string;
@@ -103,6 +109,12 @@ export class ProductVariations extends Model<ProductVariations> {
     type: DataType.FLOAT,
   })
   price!: number;
+
+  @Column({
+    type: DataType.FLOAT,
+  })
+  supplierPrice!: number;
+
 
   @Default(0)
   @Column({
@@ -149,7 +161,7 @@ export class ProductVariations extends Model<ProductVariations> {
   @Column
   updatedBy!: number;
   @Column
-  DeletedBy!: number;
+  deletedBy!: number;
 }
 
 export default ProductVariations;

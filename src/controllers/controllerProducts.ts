@@ -16,6 +16,7 @@ import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
 import ProductVariationsImages from "../models/ProductVariationImages";
 import moment from "moment";
 import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
+import Stocks from "../models/Stocks";
 
 export interface SearchParams {
   sorter?: string;
@@ -171,7 +172,7 @@ export const createProduct = async (
         description,
         additionalInformation,
         metaTitle,
-        mainImage: images[0]?.url,
+        mainImage: images ? images[0]?.url : null,
         metaKeywords,
         metaDescription,
         createdBy: 1, // Hardcord for now
@@ -249,7 +250,7 @@ export const updateProduct = async (
         description,
         additionalInformation,
         metaTitle,
-        mainImage: images[0] ? images[0].url : null,
+        mainImage: images ? images[0]?.url : null,
         metaKeywords,
         metaDescription,
         createdBy: 1, // Hardcord for now
@@ -324,6 +325,7 @@ export const createVariations = async (
           sku,
           price,
           shortDescription,
+          supplierPrice,
           images,
           barcodes,
           attributes,
@@ -335,7 +337,9 @@ export const createVariations = async (
               productId: id,
               sku,
               price,
-              mainImage: images[0] ? images[0].url : null,
+              supplierPrice,
+              mainImage: images ? images[0]?.url : null,
+              mainBarcode: barcodes ? barcodes[0]?.barcodes : sku,
               shortDescription,
               createdBy: 1,
               updatedBy: 1,
@@ -368,16 +372,15 @@ export const createVariations = async (
                 });
               }
 
-              if (barcodes?.length > 0) {
+              if (barcodes?.length > 1) {
                 const bars = barcodes.map((i: any) => ({
                   barcode: i.barcode,
-                  supplierPrice: i.supplierPrice,
                   productVariationId: DV.id,
                   createdBy: 1,
                   updatedBy: 1,
                 }));
 
-                await ProductVariationsBarcodes.bulkCreate(bars, {
+                await ProductVariationsBarcodes.bulkCreate(bars.shift(), {
                   transaction: t,
                 });
               }
@@ -485,12 +488,13 @@ export const searchVariations = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { name, pageSize }: any = req.query;
+  const { name, pageSize, outletId }: any = req.query;
 
   const result = await ProductVariations.findAll({
     attributes: [
       "id",
       "sku",
+      "supplierPrice",
       [
         sequelize.fn(
           "product_variation_name",
@@ -498,8 +502,21 @@ export const searchVariations = async (
         ),
         "name",
       ],
+
+      [
+        sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
+        "availableQuantity",
+      ],
     ],
-    include: [{ required: true, model: Products, attributes: ["id", "name"] }],
+    include: [
+      { required: true, model: Products, attributes: ["id", "name"] },
+      {
+        model: Stocks,
+
+        where: outletId ? { outletId } : {},
+        attributes: [],
+      },
+    ],
     limit: parseInt(pageSize || "20"),
     where: {
       [Op.or]: [
@@ -515,6 +532,9 @@ export const searchVariations = async (
         },
       ],
     },
+    raw: true,
+    subQuery: false,
+    group: "id",
   });
 
   return res.json({

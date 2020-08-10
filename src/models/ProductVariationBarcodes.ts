@@ -43,8 +43,6 @@ export class ProductVariationsBarcodes extends Model<
   @Column
   barcode!: string;
 
-  @Column
-  supplierPrice!: number;
 
   @Default(true)
   @Column

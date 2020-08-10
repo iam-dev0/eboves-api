@@ -66,7 +66,7 @@ export class Outlets extends Model<Outlets> {
   @Column
   updatedBy!: number;
   @Column
-  DeletedBy!: number;
+  deletedBy!: number;
 
   @CreatedAt
   @Column

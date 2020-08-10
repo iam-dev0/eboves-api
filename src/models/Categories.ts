@@ -98,7 +98,7 @@ export class Categories extends Model<Categories> {
   @Column
   updatedBy!: number;
   @Column
-  DeletedBy!: number;
+  deletedBy!: number;
 
   @CreatedAt
   @Column

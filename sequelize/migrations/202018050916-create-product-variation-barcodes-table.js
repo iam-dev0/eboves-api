@@ -30,7 +30,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         default: false,
       },
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -39,15 +39,14 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
 
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "users",
         },
       },
-      deletedBy: {
-        
+      deletedBy: {      
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -59,11 +58,10 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       updatedAt: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.DATE,
       },
-      deletedAt: {
-        
+      deletedAt: { 
         type: DataTypes.DATE,
       },
     },

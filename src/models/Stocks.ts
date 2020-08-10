@@ -8,29 +8,22 @@ import {
   CreatedAt,
   Scopes,
   Default,
-  AutoIncrement,
-  PrimaryKey,
   AllowNull,
+  PrimaryKey,
+  AutoIncrement,
+  ForeignKey,
 } from "sequelize-typescript";
-import { literal } from "sequelize";
+import ProductVariations from "./ProductVariations";
 
 @Table({
   defaultScope: {
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Attributes",
+  tableName: "stocks",
 })
-@Scopes({
-  basic: {
-    attributes: ["id", "name", "slug", "type"],
-  },
-  website: {
-    attributes: ["id", "name", "type"],
-    where: { active: true },
-  },
-})
-export class Attributes extends Model<Attributes> {
+
+export class Stocks extends Model<Stocks> {
   @AllowNull(false)
   @PrimaryKey
   @AutoIncrement
@@ -39,24 +32,33 @@ export class Attributes extends Model<Attributes> {
   })
   id!: number;
 
-  @Column({ unique: true })
-  slug!: string;
-
   @Column
-  name!: string;
+  outletId!: number;
 
+  @ForeignKey(()=>ProductVariations)
   @Column
-  unit!: string;
+  productVariationId!: number;
+  @Column
+  supplierId!: number;
+
 
   @Column({
-    type: DataType.ENUM,
-    values: ["text", "image"],
+    type: DataType.FLOAT,
   })
-  type!: string;
+  supplierPrice!: number;
+
+  @Column({
+    type: DataType.INTEGER.UNSIGNED,
+  })
+  availableQuantity!: number;
+
+
 
   @Default(true)
   @Column
   active!: boolean;
+
+ 
 
   @Column
   createdBy!: number;
@@ -78,4 +80,4 @@ export class Attributes extends Model<Attributes> {
   deletedAt!: Date;
 }
 
-export default Attributes;
+export default Stocks;

@@ -7,7 +7,9 @@ import {
   getNestedCategories,
   getCategory,
   toggleActiveStatus,
+  getCategoriessWebsite,
   bulkDelete,
+  getCategoryWebsite,
 } from "../controllers/controllerCategories";
 const app = express();
 
@@ -22,4 +24,13 @@ app.put("/:id", update);
 
 app.get("/childs/:categoryId", getSubCategories);
 app.delete("/", bulkDelete);
+
+
+//--------------------Website Api-----------------------------------------------//
+export const WebsiteApp = express();
+WebsiteApp.get("/", getCategoriessWebsite);
+WebsiteApp.get("/:slug", getCategoryWebsite);
+
+
+
 export default app;

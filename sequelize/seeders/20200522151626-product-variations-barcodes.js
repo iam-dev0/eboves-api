@@ -30,7 +30,6 @@ module.exports = {
         vps.push({
           productVariationId: product.id,
           barcode: uniqeString(),
-          supplierPrice: Math.floor(Math.random() * 10000) + 100,
           createdBy: randomArrayElement(users[0]).id,
           updatedBy: randomArrayElement(users[0]).id,
           deletedBy: null,

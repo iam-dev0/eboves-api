@@ -8,6 +8,7 @@ import {
   bulkDelete,
   toggleFeaturedStatus,
   getBrandsWebsite,
+  getBrandWebsite,
 } from "../controllers/controllerBrands";
 import sendUploadToGCS from "../google/ImageUploaderMiddleware";
 import upload from "../Middlewares/multer";
@@ -28,5 +29,5 @@ app.put("/toggle-featured/:id", toggleFeaturedStatus);
 //--------------------Website Api-----------------------------------------------//
 export const WebsiteApp = express();
 WebsiteApp.get("/", getBrandsWebsite);
-
+WebsiteApp.get("/:slug", getBrandWebsite);
 export default app;

@@ -24,14 +24,14 @@ module.exports.up = (queryInterface, DataTypes) => {
           model: "cities",
         },
       },
-      courierId: {
+      // courierId: {
         
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "couriers",
-        },
-      },
+      //   type: DataTypes.INTEGER.UNSIGNED,
+      //   references: {
+      //     key: "id",
+      //     model: "couriers",
+      //   },
+      // },
       customerId: {
         
         type: DataTypes.INTEGER.UNSIGNED,

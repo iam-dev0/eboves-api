@@ -202,3 +202,41 @@ export const bulkDelete = async (
 
   return res.status(httpStatus.OK).send();
 };
+
+//------------------------------------------Website Controllers--------------------------//
+export const getCategoriessWebsite = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const data = await Categories.scope("website").findAll({
+    include: [
+      {
+        model: Categories.scope("website"),
+        as: "childrens",
+        include: [{ model: Categories.scope("website"), as: "childrens" }],
+      },
+    ],
+  });
+  return res.json({ data });
+};
+
+export const getCategoryWebsite = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { slug } = req.params;
+  const data = await Categories.findOne({
+    attributes: {
+      exclude: [
+        "active",
+        "createdBy",
+        "updatedBy",
+        "deletedBy",
+        "createdAt",
+        "updatedAt",
+      ],
+    },
+    where: { slug, active: true },
+  });
+  return res.json({ data });
+};

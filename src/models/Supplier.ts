@@ -78,7 +78,7 @@ export class Suppliers extends Model<Suppliers> {
   // @Column
   // updatedBy!: number;
   // @Column
-  // DeletedBy!: number;
+  // deletedBy!: number;
 
   @CreatedAt
   @Column
