@@ -2,9 +2,26 @@ pipeline {
   agent any
   stages {
     stage('Prepare Workplace') {
-      steps {
-        echo 'prepaing'
-        sh 'yarn'
+      parallel {
+        stage('Prepare Workplace') {
+          steps {
+            echo 'prepaing'
+            sh 'yarn'
+          }
+        }
+
+        stage('sad') {
+          steps {
+            echo 'hello'
+          }
+        }
+
+        stage('asd') {
+          steps {
+            echo 'hello'
+          }
+        }
+
       }
     }
 
