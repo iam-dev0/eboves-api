@@ -21,8 +21,8 @@ pipeline {
     stage('deploy') {
       steps {
         when {
-           expression {
-              return params.node_env != 'stage';
+           expression  {
+              choice == 'stage'
              }
         }
         echo 'deploying'
