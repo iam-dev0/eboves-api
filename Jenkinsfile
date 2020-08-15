@@ -4,6 +4,8 @@ pipeline {
     stage('Prepare Workplace') {
       steps {
         echo 'prepaing'
+        sh 'node -v'
+        sh 'yarn'
       }
     }
 
