@@ -4,6 +4,10 @@ pipeline {
     stage('Prepare Workplace') {
       parallel {
         stage('Prepare Workplace') {
+          when {
+            expression:{ env.node_env=='production'
+            }
+          }
           steps {
             echo 'prepaing'
             sh 'yarn'
@@ -11,6 +15,10 @@ pipeline {
         }
 
         stage('sad') {
+           when {
+            expression:{ env.node_env=='stagging'
+            }
+          }
           steps {
             echo 'hello'
           }
