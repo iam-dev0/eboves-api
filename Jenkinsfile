@@ -26,7 +26,7 @@ pipeline {
             rm -rf /var/www/StagingServer/API/*
             \'
 
-            rsync -avz -O -e ssh dist/ cdjenkins@172.104.186.220:/var/www/StagingServer/API
+            rsync -avz -O --no-perms -e ssh dist/ cdjenkins@172.104.186.220:/var/www/StagingServer/API
             '''
       }
     }
