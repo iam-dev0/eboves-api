@@ -1,88 +1,32 @@
-#!/usr/bin/env groovy
-
 pipeline {
   agent any
 
-  environment {
-    VALUE_ONE = '1'
-    VALUE_TWO = '2'
-    VALUE_THREE = '3'
+  parameters {
+    choice(name: 'node_env', choices: ['stage', 'pro', 'dev'], description: 'Server envrinoment')
   }
 
   stages {
-
-    // skip a stage while creating the pipeline
-    stage("A stage to be skipped") {
-      when {
-        expression {
-          false
-        } //skip this stage
-      }
+    stage('Prepare Workspace') {
       steps {
-        echo 'This step will never be run'
+        sh 'yarn'
       }
     }
 
-    // Execute when branch = 'master'
-    stage("BASIC WHEN - Branch") {
-      when {
-        branch 'master'
-      }
+    stage('build') {
       steps {
-        echo 'BASIC WHEN - Master Branch!'
+        sh 'yarn build'
       }
     }
 
-    // Expression based when example with AND
-    stage('WHEN EXPRESSION with AND') {
+    stage('deploy') {
       when {
-        expression {
-          VALUE_ONE == '1' && VALUE_THREE == '3'
-        }
+        params.node_env == 'stage'
       }
       steps {
-        echo 'WHEN with AND expression works!'
+        echo 'deploying'
       }
     }
 
-    // Expression based when example
-    stage('WHEN EXPRESSION with OR') {
-      when {
-        expression {
-          VALUE_ONE == '1' || VALUE_THREE == '2'
-        }
-      }
-      steps {
-        echo 'WHEN with OR expression works!'
-      }
-    }
-
-    // When - AllOf Example
-    stage("AllOf") {
-      when {
-        allOf {
-          environment name: 'VALUE_ONE', value: '1'
-          environment name: 'VALUE_TWO', value: '2'
-        }
-      }
-      steps {
-        echo "AllOf Works!!"
-      }
-    }
-
-    // When - Not AnyOf Example
-    stage("Not AnyOf") {
-      when {
-        not {
-          anyOf {
-            branch "development"
-            environment name: 'VALUE_TWO', value: '4'
-          }
-        }
-      }
-      steps {
-        echo "Not AnyOf - Works!"
-      }
-    }
   }
+
 }
