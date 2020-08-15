@@ -38,4 +38,7 @@ pipeline {
     }
 
   }
+  environment {
+    node_env = 'stagging'
+  }
 }
