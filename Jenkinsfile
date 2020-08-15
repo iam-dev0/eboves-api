@@ -22,7 +22,7 @@ pipeline {
       steps {
         when {
            expression  {
-              choice == 'stage'
+              params.node_env == 'stage'
              }
         }
         echo 'deploying'
