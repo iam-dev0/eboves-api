@@ -1,5 +1,9 @@
 pipeline {
   agent any
+  
+  environment {
+    node_env = 'stagging'
+  }
   stages {
     stage('Prepare Workplace') {
       parallel {
@@ -46,7 +50,5 @@ pipeline {
     }
 
   }
-  environment {
-    node_env = 'stagging'
-  }
+
 }
