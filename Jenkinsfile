@@ -1,6 +1,7 @@
 pipeline {
   agent any
   stages {
+    when { branch 'master' }
     stage('Prepare Workplace') {
       steps {
         echo 'prepaing'
