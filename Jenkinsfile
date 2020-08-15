@@ -20,11 +20,9 @@ pipeline {
 
     stage('deploy') {
       steps {
-        when {
-           expression  {
-              params.node_env == 'stage'
-             }
-        }
+        when {  
+           params.node_env == 'stage'  
+            }
         echo 'deploying'
       }
     }
