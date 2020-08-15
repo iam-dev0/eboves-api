@@ -23,11 +23,11 @@ pipeline {
       steps {
         echo 'deploying'
         sh '''ssh cdjenkins@172.104.186.220 \'
-rm -rf /var/www/StagingServer/API/*
-\'
+            rm -rf /var/www/StagingServer/API/*
+            \'
 
-rsync -avz -e ssh dist/ cdjenkins@172.104.186.220:/var/www/StagingServer/API
-'''
+            rsync -avz -O -e ssh dist/ cdjenkins@172.104.186.220:/var/www/StagingServer/API
+            '''
       }
     }
 
