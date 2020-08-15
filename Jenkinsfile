@@ -5,7 +5,7 @@ pipeline {
       parallel {
         stage('Prepare Workplace') {
           when {
-            expression:{ env.node_env=='production'
+            expression:{ node_env=='production'
             }
           }
           steps {
@@ -16,7 +16,7 @@ pipeline {
 
         stage('sad') {
            when {
-            expression:{ env.node_env=='stagging'
+            expression:{ node_env=='stagging'
             }
           }
           steps {
