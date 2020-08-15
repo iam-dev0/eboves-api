@@ -1,6 +1,6 @@
 module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
-    "purchase_order_product_variations",
+    "stock_movement_variations",
     {
       id: {
         allowNull: false,
@@ -8,33 +8,32 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      purchaseOrderId: {
-        
+      stockMovementId: {
+        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
-          model: "purchase_orders",
+          model: "stock_movement",
         },
       },
       productVariationId: {
-        
+        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "product_variations",
         },
       },
+      
       requestedQuantity: DataTypes.INTEGER.UNSIGNED,
       requestedPrice: DataTypes.FLOAT,
 
       receivedQuantity: DataTypes.INTEGER.UNSIGNED,
       receivedPrice: DataTypes.FLOAT,
 
-      requestedBarcode: DataTypes.STRING,
-      barcode: DataTypes.STRING,
 
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -42,7 +41,14 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
+        type: DataTypes.INTEGER.UNSIGNED,
+        references: {
+          key: "id",
+          model: "users",
+        },
+      },
+      deletedBy: {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -50,14 +56,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
 
-      deletedBy: {
-        
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
@@ -66,8 +64,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.DATE,
       },
-      deletedAt: {
-        
+      deletedAt: {   
         type: DataTypes.DATE,
       },
     },
@@ -78,4 +75,4 @@ module.exports.up = (queryInterface, DataTypes) => {
 };
 
 module.exports.down = (queryInterface) =>
-  queryInterface.dropTable("purchase_order_product_variations");
+  queryInterface.dropTable("stock_movement_variations");

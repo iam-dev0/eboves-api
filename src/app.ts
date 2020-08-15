@@ -7,6 +7,7 @@ import cors from "cors";
 import "./db/db";
 import routes from "./routes/controllPanel.routes";
 import websiteRoutes from "./routes/website.routes";
+import path from "path";
 
 // import passport from "passport";
 
@@ -51,9 +52,7 @@ app.use(lusca.xssProtection(true));
 //     next();
 // });
 
-// app.use(
-//     express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
-// );
+app.use(express.static("public"));
 
 /**
  * API routes.

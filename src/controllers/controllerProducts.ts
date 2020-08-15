@@ -206,14 +206,14 @@ export const createProduct = async (
       return product;
     });
 
-    return res.status(status.CREATED).json({
+    return res.status(httpStatus.CREATED).json({
       data: result,
     });
   } catch (error) {
     // If the execution reaches this line, an error occurred.
     // The transaction has already been rolled back automatically by Sequelize!
     console.log(error);
-    return res.status(status.INTERNAL_SERVER_ERROR).json({
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
       error: error,
     });
   }

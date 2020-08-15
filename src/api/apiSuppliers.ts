@@ -1,16 +1,16 @@
 import express from "express";
 import {
-  getSuppliers,
+  getAll,
   create,
   update,
   bulkDelete,
   toggleActiveStatus,
-  getBrand,
+  getOne,
 } from "../controllers/controllerSuppliers";
 const app = express();
 
-app.get("/", getSuppliers);
-app.get("/:id", getBrand);
+app.get("/", getAll);
+app.get("/:id", getOne);
 app.post("/", create);
 app.put("/:id", update);
 app.delete("/", bulkDelete);

@@ -10,8 +10,7 @@ import {
   getBrandsWebsite,
   getBrandWebsite,
 } from "../controllers/controllerBrands";
-import sendUploadToGCS from "../google/ImageUploaderMiddleware";
-import upload from "../Middlewares/multer";
+
 const app = express();
 
 app.get("/", getBrands);

@@ -1,6 +1,6 @@
 module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
-    "purchase_orders",
+    "stock_movement",
     {
       id: {
         allowNull: false,
@@ -9,7 +9,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       outletId: {
-        
+        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,57 +17,55 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       supplierId: {
-        
+        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "suppliers",
         },
       },
-      name: DataTypes.STRING,
-      batch: DataTypes.STRING,
-      email: DataTypes.STRING,
+      supplierInvoiceNumber: DataTypes.STRING,
+      delieveryDate: DataTypes.DATE,
+      orderNumber: { type: DataTypes.STRING, unique: true },
       note: DataTypes.TEXT,
-      statue: {
+
+      status: {
         type: DataTypes.ENUM([
-          "pending",
-          "under_processing",
-          "canceled",
-          "closed",
+          "open",
+          "stockOrdered",
+          "stockReceived",
+          "stockReturned",
         ]),
-        default: "pending",
+        default: "draft",
       },
 
-      whPurchaseOrder: { type: DataTypes.BOOLEAN, default: true },
-      procurement: { type: DataTypes.BOOLEAN, default: true },
-      draft: { type: DataTypes.BOOLEAN, default: true },
+      // underProcessingBy: {
+      //   allowNull: false,
+      //   type: DataTypes.INTEGER.UNSIGNED,
+      //   references: {
+      //     key: "id",
+      //     model: "users",
+      //   },
+      // },
 
-      underProcessingBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
+      // canceledBy: {
+      //   allowNull: false,
+      //   type: DataTypes.INTEGER.UNSIGNED,
+      //   references: {
+      //     key: "id",
+      //     model: "users",
+      //   },
+      // },
 
-      canceledBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
+      // closedBy: {
+      //   allowNull: false,
+      //   type: DataTypes.INTEGER.UNSIGNED,
+      //   references: {
+      //     key: "id",
+      //     model: "users",
+      //   },
+      // },
 
-      closedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
       createdBy: {
         allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
@@ -94,7 +92,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        
         type: DataTypes.DATE,
       },
     },
@@ -104,4 +101,5 @@ module.exports.up = (queryInterface, DataTypes) => {
   );
 };
 
-module.exports.down = (queryInterface) => queryInterface.dropTable("purchase_orders");
+module.exports.down = (queryInterface) =>
+  queryInterface.dropTable("stock_movement");

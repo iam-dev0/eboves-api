@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { literal } from "sequelize";
 
-export const getSuppliers = async (
+export const getAll = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
@@ -14,7 +14,7 @@ export const getSuppliers = async (
   return res.json({ data });
 };
 
-export const getBrand = async (
+export const getOne = async (
   req: Request,
   res: Response
 ): Promise<Response> => {

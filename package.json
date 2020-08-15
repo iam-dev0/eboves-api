@@ -42,6 +42,7 @@
         "express-session": "^1.16.2",
         "express-validator": "^6.2.0",
         "fbgraph": "^1.4.4",
+        "html-pdf": "^2.2.0",
         "http-status": "^1.4.2",
         "lodash": "^4.17.15",
         "lusca": "^1.6.1",
