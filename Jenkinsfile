@@ -1,18 +1,20 @@
 pipeline {
   agent any
   
+  parameters{
+  choice(name:'node_env',choices:['stage','pro','dev'],defaultValue:'stage', description:'Server envrinoment')
+  }
  
   stages {
     stage('Prepare Workplace') {
           steps {
-            echo 'hello'
-          }
-        
+            sh 'yarn'
+          }  
     }
 
     stage('build') {
       steps {
-        echo 'building'
+        sh 'yarn build'
       }
     }
 
