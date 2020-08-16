@@ -23,6 +23,7 @@ pipeline {
       steps {
         echo 'deploying'
         sh '''ssh cdjenkins@172.104.186.220 \'
+              cd /var/www/StagingServer/api
               git stash
               git pull
               yarn
