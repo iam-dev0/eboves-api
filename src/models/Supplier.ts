@@ -20,7 +20,7 @@ import {
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Suppliers",
+  tableName: "suppliers",
 })
 export class Suppliers extends Model<Suppliers> {
   @AllowNull(false)

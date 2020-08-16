@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import { databaseInfo } from "../config";
 
-
+console.log("trying to connected using:",databaseInfo);
 const sequelize = new Sequelize({
     dialect: "mysql",
     dialectOptions: {
@@ -9,6 +9,7 @@ const sequelize = new Sequelize({
         multipleStatements: true
     },
     port: databaseInfo.port,
+    host:databaseInfo.host,
     username: databaseInfo.user,
     password: databaseInfo.password,
     database: databaseInfo.name,

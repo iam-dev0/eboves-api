@@ -18,7 +18,7 @@ import {
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Outlets",
+  tableName: "outlets",
 })
 @Scopes({
   basic: {

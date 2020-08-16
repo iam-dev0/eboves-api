@@ -18,7 +18,7 @@ import Countries from "./Countries";
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Cities",
+  tableName: "cities",
 })
 export class Cities extends Model<Cities> {
   @AllowNull(false)

@@ -51,7 +51,7 @@ import Suppliers from "./Supplier";
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Products",
+  tableName: "products",
 })
 export class Products extends Model<Products> {
   @AllowNull(false)
