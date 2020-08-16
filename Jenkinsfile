@@ -16,7 +16,7 @@ pipeline {
     stage('deploy') {
       when {
         expression {
-          params.node_env == 'dev'
+          BRANCH_NAME == 'dev'
         }
 
       }
@@ -34,8 +34,5 @@ pipeline {
       }
     }
 
-  }
-  parameters {
-    choice(name: 'node_env', choices: ['dev', 'pro', 'stage'], description: 'Server envrinoment')
   }
 }
