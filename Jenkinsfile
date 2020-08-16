@@ -29,7 +29,7 @@ pipeline {
               yarn
               yarn build
 
-
+              pm2 restart devapi
             \'
             '''
       }
