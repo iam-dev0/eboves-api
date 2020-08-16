@@ -16,23 +16,26 @@ pipeline {
     stage('deploy') {
       when {
         expression {
-          params.node_env == 'stage'
+          params.node_env == 'dev'
         }
 
       }
       steps {
         echo 'deploying'
         sh '''ssh cdjenkins@172.104.186.220 \'
-            rm -rf /var/www/StagingServer/API/*
-            \'
+              git stash
+              git pull
+              yarn
+              yarn build
 
-            rsync -avz -O --no-perms -e ssh dist/ cdjenkins@172.104.186.220:/var/www/StagingServer/API
+
+            \'
             '''
       }
     }
 
   }
   parameters {
-    choice(name: 'node_env', choices: ['stage', 'pro', 'dev'], description: 'Server envrinoment')
+    choice(name: 'node_env', choices: ['dev', 'pro', 'stage'], description: 'Server envrinoment')
   }
 }
