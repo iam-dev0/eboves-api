@@ -775,3 +775,78 @@ export const getWebsiteProducts = async (
     total: data.count,
   });
 };
+
+export const getWebsiteProduct = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { slug } = req.params;
+
+  const result = await Products.findOne({
+    include: [
+      {
+        required: true,
+        model: ProductVariations,
+        where: { active: true },
+        attributes: [
+          "id",
+          "mainImage",
+          "mainBarcode",
+          "slug",
+          "shortDescription",
+          "virtualQuantity",
+          "sku",
+          "price",
+          "discountPrice",
+          "discountPercentage",
+          "discountStartTime",
+          "discountEndTime",
+          "bestSeller",
+          "preOrder",
+          "topRated",
+          [
+            sequelize.fn("SUM", sequelize.col("availableQuantity")),
+            "availableQuantity",
+          ],
+        ],
+        include: [
+          // { required: false, model: ProductVariationsBarcodes },
+          { required: false, model: Attributes, where: { active: true } },
+          { required: false, model: ProductVariationsImages },
+          {
+            required: false,
+            model: Stocks,
+            attributes: [],
+          },
+        ],
+      },
+      { model: ProductsImages },
+      { model: Attributes },
+      { model: Brands, attributes: ["id", "slug", "name", "logo", "image"] },
+    ],
+    attributes: [
+      "id",
+      "slug",
+      "mainImage",
+      "productCode",
+      "description",
+      "additionalInformation",
+      "rating",
+      "commentsCount",
+      "metaTitle",
+      "metaKeywords",
+      "metaDescription",
+    ],
+    group: ["variations.id", "variations.stocks.productVariationId"],
+    where: { active: true, slug },
+  }).then((data) => {
+    return {
+      ...data?.get(),
+      variations: data?.variations.map((v) => v.toJSON()),
+    };
+  });
+
+  return res.json({
+    data: result,
+  });
+};

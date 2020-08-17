@@ -13,6 +13,7 @@ import {
   getMainTabs,
   getWebsiteProducts,
   searchVariations,
+  getWebsiteProduct,
 } from "../controllers/controllerProducts";
 const app = express();
 
@@ -36,5 +37,5 @@ app.put("/:pid/variation/:vid/status", toggleProductActiveStatus);
 export const WebsiteApp = express();
 WebsiteApp.get("/main-tabs", getMainTabs);
 WebsiteApp.get("/", getWebsiteProducts);
-
+WebsiteApp.get("/:slug",getWebsiteProduct);
 export default app;

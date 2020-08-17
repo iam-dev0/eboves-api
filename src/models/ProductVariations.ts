@@ -83,7 +83,7 @@ export class ProductVariations extends Model<ProductVariations> {
 
   @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
   attributeValues!: Attributes[];
- 
+
   @HasMany(() => Stocks)
   stocks!: Stocks[];
 
@@ -114,7 +114,6 @@ export class ProductVariations extends Model<ProductVariations> {
     type: DataType.FLOAT,
   })
   supplierPrice!: number;
-
 
   @Default(0)
   @Column({
@@ -147,7 +146,7 @@ export class ProductVariations extends Model<ProductVariations> {
   @Default(false)
   @Column
   topRated!: boolean;
-  
+
   @Default(false)
   @Column
   preOrder!: boolean;
@@ -162,6 +161,21 @@ export class ProductVariations extends Model<ProductVariations> {
   updatedBy!: number;
   @Column
   deletedBy!: number;
+
+  toJSON(): any {
+    const data = this.get();
+    for (const x in data) {
+      if (x === "availableQuantity") {
+        if (data["availableQuantity"]) {
+          data[x] = parseInt(data[x]) + data["virtualQuantity"];
+        } else {
+          data[x] = data["virtualQuantity"];
+        }
+      }
+    }
+    delete data["virtualQuantity"];
+    return data;
+  }
 }
 
 export default ProductVariations;
