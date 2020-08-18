@@ -27,29 +27,14 @@ export interface StockStructure {
   variations?: StockVariationStructure[];
 }
 
-// export const getAll = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   const data = await Suppliers.findAll({
-//     attributes: ["id", "active", "createdAt", ["companyName", "name"]],
-//   });
+export const getAll = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const data = await StockMovement.findAll();
 
-//   return res.json({ data });
-// };
-
-// export const getOne = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   const { id }: any = req.params;
-
-//   const data = await Suppliers.findByPk(id);
-
-//   return res.json({
-//     data: data,
-//   });
-// };
+  return res.json({ data });
+};
 
 export const createStockOrder = async (
   req: Request,

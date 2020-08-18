@@ -850,3 +850,46 @@ export const getWebsiteProduct = async (
     data: result,
   });
 };
+
+export const getStock = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { slugs }: any = req.query;
+
+  const ArrayOfSlug = slugs.split(",");
+  if (ArrayOfSlug.length < 0)
+    return res
+      .status(httpStatus.BAD_REQUEST)
+      .json({ error: "Sorry Invalid Parameters" });
+
+  const result = await ProductVariations.findAll({
+    attributes: [
+      "id",
+      "sku",
+      "virtualQuantity",
+      [
+        sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
+        "availableQuantity",
+      ],
+    ],
+    include: [
+      {
+        model: Stocks,
+
+        // where: outletId ? { outletId } : {},
+        attributes: [],
+      },
+    ],
+
+    where: {
+      slug: ArrayOfSlug,
+    },
+    subQuery: false,
+    group: "id",
+  }).then((variations) => variations.map((v) => v.toJSON()));
+
+  return res.json({
+    data: result,
+  });
+};
