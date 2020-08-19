@@ -35,6 +35,7 @@ import Stocks from "./Stocks";
   websiteListing: {
     attributes: [
       "id",
+      "slug",
       "mainImage",
       "virtualQuantity",
       "price",

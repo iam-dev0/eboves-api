@@ -109,7 +109,7 @@ export const getProducts = async (
     where,
     // distinct: true,
     order,
-    group: ["products.id"],
+    group: ["Products.id"],
     // subQuery: false,
   });
 

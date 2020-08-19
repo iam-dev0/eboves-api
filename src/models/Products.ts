@@ -36,6 +36,7 @@ import Suppliers from "./Supplier";
     attributes: [
       "id",
       "name",
+      "slug",
       "mainImage",
       "bestSeller",
       "featured",
@@ -51,7 +52,7 @@ import Suppliers from "./Supplier";
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Products",
+  tableName: "products",
 })
 export class Products extends Model<Products> {
   @AllowNull(false)
@@ -98,7 +99,7 @@ export class Products extends Model<Products> {
   images!: ProductsImages[];
 
   @BelongsTo(() => Categories)
-  Category!: Categories;
+  category!: Categories;
 
   @BelongsTo(() => Suppliers)
   supplier!: Suppliers;

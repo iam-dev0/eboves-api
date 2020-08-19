@@ -19,7 +19,7 @@ import { literal } from "sequelize";
     attributes: { exclude: ["deletedAt"] },
   },
   paranoid: true,
-  tableName: "Attributes",
+  tableName: "attributes",
 })
 @Scopes({
   basic: {
