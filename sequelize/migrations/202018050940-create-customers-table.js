@@ -8,17 +8,12 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      firstname: DataTypes.STRING,
-      firstname: DataTypes.STRING,
+      firstName: DataTypes.STRING,
+      lastName: DataTypes.STRING,
       username: {
         type: DataTypes.STRING,
         unique: true,
       },
-      slug: {
-        unique: true,
-        type: DataTypes.STRING,
-      },
-
       password: DataTypes.STRING,
       image: DataTypes.STRING,
       dob: DataTypes.DATE,
@@ -26,11 +21,13 @@ module.exports.up = (queryInterface, DataTypes) => {
         unique: true,
         type: DataTypes.STRING,
       },
+
       emailVerificationCode: DataTypes.STRING,
       passwordResetCode: DataTypes.STRING,
       phoneVerificationCode: DataTypes.STRING,
       emailVerifiedAt: DataTypes.DATE,
       phoneVerifiedAt: DataTypes.DATE,
+
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE,
@@ -40,7 +37,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        
         type: DataTypes.DATE,
       },
     },

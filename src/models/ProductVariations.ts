@@ -44,6 +44,7 @@ import Stocks from "./Stocks";
       "featured",
       "discountPercentage",
       "discountPrice",
+      "discountReason",
       "discountStartTime",
       "discountEndTime",
       "trending",
@@ -128,9 +129,14 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   discountPrice!: number;
 
+  @Column
   discountStartTime!: Date;
-
+  
+  @Column
   discountEndTime!: Date;
+
+  @Column({type:DataType.TEXT})
+  discountReason!: string;
 
   @Default(false)
   @Column
@@ -162,6 +168,8 @@ export class ProductVariations extends Model<ProductVariations> {
   updatedBy!: number;
   @Column
   deletedBy!: number;
+
+  availableQuantity=0; // Test Not Production
 
   toJSON(): any {
     const data = this.get();

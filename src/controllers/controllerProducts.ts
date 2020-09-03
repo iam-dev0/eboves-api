@@ -394,10 +394,7 @@ export const createVariations = async (
         );
       }
 
-      const vs = await Promise.all(promises).then((values) => {
-        // console.log(values);
-        return values;
-      });
+      const vs = await Promise.all(promises);
       return vs;
     });
     return res.status(httpStatus.CREATED).json({ data: result });

@@ -72,10 +72,20 @@ export class StockMovement extends Model<StockMovement> {
   @Column({ type: DataType.TEXT })
   note!: string;
 
-  @Default("open")
+  @Default("OPEN")
   @Column({
     type: DataType.ENUM,
-    values: ["open", "stockOrdered", "stockReceived", "stockReturned"],
+    values: [
+      "OPEN",
+      "RETURN_OPEN",
+      "SENT",
+      "DISPATCHED",
+      "RETURN_SENT",
+      "RECEIVED",
+      "OVERDUE",
+      "CANCELED",
+      "RECEIVE_FAIL",
+    ],
   })
   status!: string;
 

@@ -2,7 +2,7 @@ import Brands from "../models/Brands";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { Op, literal } from "sequelize";
-import { param } from "jquery";
+
 
 export interface SearchParams {
   sorter?: string;

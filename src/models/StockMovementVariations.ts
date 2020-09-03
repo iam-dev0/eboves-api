@@ -7,16 +7,13 @@ import {
   DeletedAt,
   CreatedAt,
   BelongsTo,
-  Default,
   AutoIncrement,
   PrimaryKey,
   AllowNull,
   ForeignKey,
-  HasOne,
 } from "sequelize-typescript";
 import StockMovement from "./StockMovement";
 import ProductVariations from "./ProductVariations";
-
 
 @Table({
   defaultScope: {
@@ -25,8 +22,6 @@ import ProductVariations from "./ProductVariations";
   paranoid: true,
   tableName: "stock_movement_variations",
 })
-
-
 export class StockMovementVariations extends Model<StockMovementVariations> {
   @AllowNull(false)
   @PrimaryKey
@@ -50,7 +45,7 @@ export class StockMovementVariations extends Model<StockMovementVariations> {
   })
   productVariationId!: number;
 
-  @BelongsTo(()=>ProductVariations)
+  @BelongsTo(() => ProductVariations)
   variation!: ProductVariations;
 
   @Column({

@@ -9,113 +9,52 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       outletId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
-          model: "orders",
+          model: "outlets",
         },
       },
-      cityId: {
-        
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "cities",
-        },
-      },
-      // courierId: {
-        
-      //   type: DataTypes.INTEGER.UNSIGNED,
-      //   references: {
-      //     key: "id",
-      //     model: "couriers",
-      //   },
-      // },
+
       customerId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "customers",
         },
       },
-      customerAddressId: {
-        
+      shippingInformationId: {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
-          model: "customer_addresses",
+          model: "shipping_information",
         },
       },
+
       source: DataTypes.STRING,
-      orderId: DataTypes.INTEGER.UNSIGNED,
+
       orderNumber: {
         unique: true,
-        type: DataTypes.INTEGER.UNSIGNED,
+        type: DataTypes.STRING,
       },
 
-      firstName: DataTypes.STRING,
-      lastName: DataTypes.STRING,
-      phone: DataTypes.STRING,
-      address: DataTypes.STRING,
-
-      courierStatus: DataTypes.STRING,
-      trackingNumber: DataTypes.STRING,
-
-      confirmed: {
+      stockOrderer: {
         type: DataTypes.BOOLEAN,
         default: false,
       },
 
-      refunded: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      toBeRefunded: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      supplierOrder: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      returnFirstAttempt: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
       status: {
         type: DataTypes.ENUM([
-          "pending",
-          "assign_to_supplier",
-          "in_transit",
-          "in_house",
-          "out_of_stock",
-          "dispatched",
-          "delivered",
-          "canceled",
-          "pending_return",
-          "returned",
+          "PENDING",
+          "CONFIRMED",
+          "CANCELED",
+          "OUT_OF_STOCK",
+          "DISPATCHED",
+          "DELIEVERED",
+          "RETURNED",
         ]),
-        default: "pending",
+        default: "PENDING",
       },
-      returnSecondAttempt: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      print: {
-        type: DataTypes.BOOLEAN,
-        default: false,
-      },
-      createdAt: {
-        allowNull: false,
-        type: DataTypes.DATE,
-      },
-
-      remarksByCustomer: DataTypes.TEXT,
-      remarksByCsr: DataTypes.TEXT,
-      remarksByWarehouse: DataTypes.TEXT,
-      remarksByCourier: DataTypes.TEXT,
 
       /*Prices*/
       discountedPercentage: DataTypes.INTEGER.UNSIGNED,
@@ -123,145 +62,44 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.FLOAT,
         default: 0,
       },
+
       shippingCharges: {
-        type: DataTypes.FLOAT,
+        type: DataTypes.INTEGER.UNSIGNED,
         default: 0,
       },
       tax: {
         type: DataTypes.FLOAT,
         default: 0,
       },
-      prepaid: {
-        type: DataTypes.FLOAT,
-        default: 0,
-      },
-      paymentMethod: {
-        type: DataTypes.ENUM([
-          "by_hand",
-          "cash_on_delivery",
-          "credit_card",
-          "bank_transfer",
-          "loyalty_points",
-          "partial_loyalty_points",
-        ]),
-        default: "cash_on_delivery",
-      },
-      paymentReferenceNo: DataTypes.TEXT,
+
+      // remarksByCustomer: DataTypes.TEXT,
+      // remarksByCsr: DataTypes.TEXT,
+      // remarksByWarehouse: DataTypes.TEXT,
 
       discountReason: DataTypes.TEXT,
       shippingChargesRemovedReason: DataTypes.TEXT,
       returnReason: DataTypes.TEXT,
       cancelReason: DataTypes.TEXT,
 
-      /*Action By*/
-      confirmedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
+      paymentMethod: {
+        type: DataTypes.ENUM([
+          "CASH_ON_DELIEVERY",
+          "CREDIT_CARD",
+          "BANK_TRANSFER",
+        ]),
+        default: "CASH_ON_DELIEVERY",
       },
 
-      assignToSupplierBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      inTransitBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      inHouseBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      outOfStockBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      dispatchedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      deliveredBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      canceledBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      pendingReturnBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      returnedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      discountedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      deliveryChargesRemovedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
+      paymentReferenceNo: DataTypes.TEXT,
+
       createdBy: {
-        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "users",
         },
       },
-
       updatedBy: {
-        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -269,7 +107,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       deletedBy: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -277,45 +114,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       /*Action At*/
-
-      confirmedAt: {
-        // allowNull: false,
-        type: DataTypes.DATE,
-      },
-
-      assignToSupplierAt: {
-        type: DataTypes.DATE,
-      },
-      inTransitAt: {
-        type: DataTypes.DATE,
-      },
-      inHouseAt: {
-        type: DataTypes.DATE,
-      },
-      outOfStockAT: {
-        type: DataTypes.DATE,
-      },
-      dispatchedAt: {
-        type: DataTypes.DATE,
-      },
-      deliveredAt: {
-        type: DataTypes.DATE,
-      },
-      canceledAt: {
-        type: DataTypes.DATE,
-      },
-      pendingReturnAt: {
-        type: DataTypes.DATE,
-      },
-      returnedAt: {
-        type: DataTypes.DATE,
-      },
-      discountedAt: {
-        type: DataTypes.DATE,
-      },
-      deliveryChargesRemovedAt: {
-        type: DataTypes.DATE,
-      },
 
       createdAt: {
         allowNull: false,
@@ -326,7 +124,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.DATE,
       },
       deletedAt: {
-        
         type: DataTypes.DATE,
       },
     },
