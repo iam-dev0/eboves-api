@@ -795,7 +795,7 @@ export const getWebsiteProduct = async (
     ],
     include: [
       { model: ProductsImages },
-      // { model: Attributes, attributes: ["id", "name", "type"] },
+      { model: Attributes, attributes: ["id", "name", "type"] },
       {
         model: Brands,
         where: { active: true },
