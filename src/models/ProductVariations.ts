@@ -83,8 +83,8 @@ export class ProductVariations extends Model<ProductVariations> {
   @HasMany(() => ProductVariationsImages)
   images!: ProductVariationsImages[];
 
-  @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
-  attributeValues!: Attributes[];
+  @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues )
+  attributes!: Attributes[];
 
   @HasMany(() => Stocks)
   stocks!: Stocks[];
@@ -137,6 +137,9 @@ export class ProductVariations extends Model<ProductVariations> {
 
   @Column({type:DataType.TEXT})
   discountReason!: string;
+
+  @Column({type:DataType.TEXT})
+  discountType!: string;
 
   @Default(false)
   @Column

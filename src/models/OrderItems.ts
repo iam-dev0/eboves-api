@@ -92,21 +92,21 @@ export class OrderItems extends Model<OrderItems> {
   })
   quantity!: number;
 
-  // @Default("PENDING")
-  // @Column({
-  //   type: DataType.ENUM,
-  //   values: [
-  //     "PENDING",
-  //     "CONFIRMED",
-  //     "IN HOUSE",
-  //     "OUT OF STOCK",
-  //     "DISPATCH",
-  //     "DELIEVERED",
-  //     "CANCELTED",
-  //     "RETURNED",
-  //   ],
-  // })
-  // status!: string;
+  @Default("PENDING")
+  @Column({
+    type: DataType.ENUM,
+    values: [
+      "PENDING",
+      "CONFIRMED",
+      "IN HOUSE",
+      "OUT OF STOCK",
+      "DISPATCH",
+      "DELIEVERED",
+      "CANCELTED",
+      "RETURNED",
+    ],
+  })
+  status!: string;
 
   @Column
   createdBy!: number;

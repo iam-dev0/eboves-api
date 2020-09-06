@@ -20,6 +20,8 @@ interface ShippingInformationStructure {
 
 interface OrderStucture {
   shippingInfo: ShippingInformationStructure;
+  source: string;
+  shippingMethod?: string;
   cart: { id: number; quantity: number }[];
   variations: any;
 }
@@ -38,7 +40,25 @@ export const getOne = async (
 ): Promise<Response> => {
   const { id }: any = req.params;
 
-  const data = await Orders.findByPk(id);
+  const data = await Orders.findByPk(id, {
+    include: [
+      {
+        model: OrderItems,
+        attributes: {
+          include: [
+            [
+              sequelize.fn(
+                "product_variation_name",
+                sequelize.col("products.productVariationId")
+              ),
+              "name",
+            ],
+          ],
+        },
+      },
+      { model: ShippingInformation },
+    ],
+  });
 
   return res.json({
     data: data,
@@ -51,6 +71,7 @@ export const create = async (
   next: NextFunction
 ) => {
   const { shippingInfo, source, variations }: OrderStucture = req.body;
+  const { name, email, phone, cityId, address } = shippingInfo;
   let total = 0,
     actualAmount = 0,
     discountedPercentage = 0,
@@ -78,12 +99,18 @@ export const create = async (
     .transaction(async (t) => {
       const result = await ShippingInformation.create(
         {
-          ...shippingInfo,
+          firstName: name,
+          lastName: name,
+          email,
+          phone,
+          cityId,
+          address,
           order: {
             shippingCharges: 200,
             discountedPercentage,
             discountedAmount,
-            source: "source",
+            amount: actualAmount,
+            source,
             outletId: 1, //-------Hard corded right now
             products: variations.map(
               ({

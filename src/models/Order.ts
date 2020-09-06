@@ -7,6 +7,7 @@ import {
   DeletedAt,
   CreatedAt,
   Scopes,
+  BelongsTo,
   Default,
   AutoIncrement,
   PrimaryKey,
@@ -15,6 +16,7 @@ import {
   ForeignKey,
   BeforeCreate,
   HasMany,
+  HasOne,
 } from "sequelize-typescript";
 import ShippingInformation from "./ShippingInformation";
 import OrderItems from "./OrderItems";
@@ -105,6 +107,14 @@ export class Orders extends Model<Orders> {
   })
   discountedPercentage!: number;
 
+
+  
+  @Default(0)
+  @Column({
+    type: DataType.INTEGER.UNSIGNED,
+  })
+  amount!: number;
+
   @Default(0)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
@@ -114,6 +124,8 @@ export class Orders extends Model<Orders> {
   @HasMany(()=>OrderItems)
   products!: OrderItems[];
 
+  @BelongsTo(()=>ShippingInformation)
+  shippingInfo!: ShippingInformation;
 
 
   @Column({ type: DataType.TEXT })

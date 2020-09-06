@@ -57,6 +57,10 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
 
       /*Prices*/
+      amount: {
+        type: DataTypes.FLOAT,
+        default: 0,
+      },
       discountedPercentage: DataTypes.INTEGER.UNSIGNED,
       discountedAmount: {
         type: DataTypes.FLOAT,

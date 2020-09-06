@@ -780,47 +780,6 @@ export const getWebsiteProduct = async (
   const { slug } = req.params;
 
   const result = await Products.findOne({
-    include: [
-      {
-        required: true,
-        model: ProductVariations,
-        where: { active: true },
-        attributes: [
-          "id",
-          "mainImage",
-          "mainBarcode",
-          "slug",
-          "shortDescription",
-          "virtualQuantity",
-          "sku",
-          "price",
-          "discountPrice",
-          "discountPercentage",
-          "discountStartTime",
-          "discountEndTime",
-          "bestSeller",
-          "preOrder",
-          "topRated",
-          [
-            sequelize.fn("SUM", sequelize.col("availableQuantity")),
-            "availableQuantity",
-          ],
-        ],
-        include: [
-          // { required: false, model: ProductVariationsBarcodes },
-          { required: false, model: Attributes, where: { active: true } },
-          { required: false, model: ProductVariationsImages },
-          {
-            required: false,
-            model: Stocks,
-            attributes: [],
-          },
-        ],
-      },
-      { model: ProductsImages },
-      { model: Attributes },
-      { model: Brands, attributes: ["id", "slug", "name", "logo", "image"] },
-    ],
     attributes: [
       "id",
       "slug",
@@ -834,12 +793,72 @@ export const getWebsiteProduct = async (
       "metaKeywords",
       "metaDescription",
     ],
-    group: ["variations.id", "variations.stocks.productVariationId"],
-    where: { active: true, slug },
+    include: [
+      { model: ProductsImages },
+      // { model: Attributes, attributes: ["id", "name", "type"] },
+      {
+        model: Brands,
+        where: { active: true },
+        attributes: ["id", "slug", "name", "logo", "image"],
+      },
+      {
+        model: Categories,
+        where: { active: true },
+        attributes: ["id", "slug", "name", "image"],
+      },
+      {
+        model: ProductVariations,
+        where: { active: true },
+        attributes: [
+          "id",
+          "mainImage",
+          "mainBarcode",
+          "slug",
+          "shortDescription",
+          "virtualQuantity",
+          "sku",
+          "price",
+          "discountPrice",
+          "discountType",
+          "discountReason",
+          "discountPercentage",
+          "discountStartTime",
+          "discountEndTime",
+          "bestSeller",
+          "preOrder",
+          "topRated",
+        ],
+        include: [
+          {
+            model: Attributes,
+            where: { active: true },
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+          {
+            model: Stocks,
+            attributes: ["id", "availableQuantity"],
+          },
+        ],
+      },
+    ],
+    where: { slug },
   }).then((data) => {
     return {
       ...data?.get(),
-      variations: data?.variations.map((v) => v.toJSON()),
+      variations: data?.variations?.map((vs) => {
+        let sum = 0;
+        vs?.stocks?.forEach((item) => (sum = sum + item.availableQuantity));
+        delete vs.get()["stocks"];
+        return {
+          ...vs.get(),
+          availableQuantity: sum ? sum : 0,
+        };
+      }),
     };
   });
 
