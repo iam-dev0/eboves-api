@@ -25,7 +25,7 @@ import {
     attributes: ["id", "name", "active", "createdAt", "featured"],
   },
   website: {
-    attributes: ["id", "name", "slug", "logo", "image"],
+    attributes: ["id", "name", "logo", "slug"],
     where: { active: true },
   },
 }))
