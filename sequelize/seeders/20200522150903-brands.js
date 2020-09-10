@@ -29,11 +29,11 @@ module.exports = {
     const users = await queryInterface.sequelize.query("select * from users;");
 
     const brands = [];
-    [...Array(Math.floor(Math.random() * 100))].map(() =>
+    [...Array(20)].map(() =>
       brands.push({
         name: stringGenerator(Math.floor(Math.random() * 2) + 1),
         slug: stringGenerator(1),
-        logo: "https://via.placeholder.com/150x200",
+        logo: "https://via.placeholder.com/100x50",
         image: "https://via.placeholder.com/1080x720",
         storyText: stringGenerator(Math.floor(Math.random() * 15) + 1),
         storyTextColor: ["#eeee", "#ffff"][Math.floor(Math.random * 1)],
