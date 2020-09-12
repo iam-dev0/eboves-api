@@ -77,11 +77,11 @@ export class Orders extends Model<Orders> {
     values: [
       "PENDING",
       "CONFIRMED",
-      "IN HOUSE",
-      "OUT OF STOCK",
+      "IN_HOUSE",
+      "OUT_OF_STOCK",
       "DISPATCH",
       "DELIEVERED",
-      "CANCELTED",
+      "CANCELED",
       "RETURNED",
     ],
   })
@@ -107,8 +107,6 @@ export class Orders extends Model<Orders> {
   })
   discountedPercentage!: number;
 
-
-  
   @Default(0)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
@@ -120,13 +118,12 @@ export class Orders extends Model<Orders> {
     type: DataType.INTEGER.UNSIGNED,
   })
   discountedAmount!: number;
-  
-  @HasMany(()=>OrderItems)
+
+  @HasMany(() => OrderItems)
   products!: OrderItems[];
 
-  @BelongsTo(()=>ShippingInformation)
+  @BelongsTo(() => ShippingInformation)
   shippingInfo!: ShippingInformation;
-
 
   @Column({ type: DataType.TEXT })
   discountReason!: string;
@@ -172,10 +169,14 @@ export class Orders extends Model<Orders> {
     // this will also be called when an instance is created
     switch (instance.source) {
       case "WEBSITE_DESKTOP":
-        instance.orderNumber = `WD-${instance.outletId}-${instance.id}`;
+        instance.orderNumber = `WD-${instance.outletId}-${
+          !order ? 0 : order.id + 1
+        }`;
         break;
       case "WEBSITE_MOBILE":
-        instance.orderNumber = `WM-${instance.outletId}-${instance.id}`;
+        instance.orderNumber = `WM-${instance.outletId}-${
+          !order ? 0 : order.id + 1
+        }`;
         break;
       default:
         instance.orderNumber = `BO-${instance.outletId}-${

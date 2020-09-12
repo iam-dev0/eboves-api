@@ -12,8 +12,11 @@ import {
   PrimaryKey,
   AllowNull,
   ForeignKey,
+  BelongsTo,
+  HasOne,
 } from "sequelize-typescript";
 import Orders from "./Order";
+import ProductVariations from "./ProductVariations";
 
 @Table({
   defaultScope: {
@@ -40,7 +43,7 @@ export class OrderItems extends Model<OrderItems> {
   })
   id!: number;
 
-  @ForeignKey(()=>Orders)
+  @ForeignKey(() => Orders)
   // @AllowNull(false)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
@@ -53,10 +56,14 @@ export class OrderItems extends Model<OrderItems> {
   })
   productId!: number;
 
+  @ForeignKey(() => ProductVariations)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
   })
   productVariationid!: number;
+
+  @BelongsTo(() => ProductVariations)
+  variation!: ProductVariations;
 
   @Column({
     type: DataType.INTEGER.UNSIGNED,

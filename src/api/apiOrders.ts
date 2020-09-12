@@ -1,11 +1,11 @@
 import express from "express";
-import { create,checkStock, getAll,getOne } from "../controllers/controllerOrders";
+import { create,checkStock, getAll,getOne, updateStatus } from "../controllers/controllerOrders";
 
 const app = express();
 app.get("/",getAll);
 app.post("/place-order",checkStock, create);
 app.get("/:id", getOne);
-
+app.put("/", updateStatus);
 
 
 //---------------------------------Website Route----------//

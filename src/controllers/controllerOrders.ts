@@ -55,9 +55,20 @@ export const getOne = async (
             ],
           ],
         },
+        include: [{ model: ProductVariations, attributes: ["sku"] }],
       },
       { model: ShippingInformation },
     ],
+  }).then((data) => {
+    return {
+      ...data?.get(),
+      products: data?.products.map((p) => {
+        return {
+          ...p.get(),
+          sku: p.variation.get().sku,
+        };
+      }),
+    };
   });
 
   return res.json({
@@ -76,6 +87,7 @@ export const create = async (
     actualAmount = 0,
     discountedPercentage = 0,
     discountedAmount = 0;
+  const discountReason: string[] = [];
 
   for (const p of variations) {
     total = total + p.price;
@@ -86,13 +98,15 @@ export const create = async (
     ) {
       actualAmount =
         actualAmount + (p.price - (p.price / 100) * p.discountPercentage);
+      discountReason.push(p.discountReason);
     } else {
       actualAmount = actualAmount + p.price;
     }
   }
+
   if (total !== actualAmount) {
     discountedAmount = total - actualAmount;
-    discountedPercentage = (actualAmount / total) * 100;
+    discountedPercentage = 100 - (actualAmount / total) * 100;
   }
 
   return await myconnect
@@ -110,6 +124,7 @@ export const create = async (
             discountedPercentage,
             discountedAmount,
             amount: actualAmount,
+            discountReason: discountReason.join(),
             source,
             outletId: 1, //-------Hard corded right now
             products: variations.map(
@@ -121,7 +136,7 @@ export const create = async (
                 discountEndTime,
                 supplierPrice,
                 discountPercentage,
-                dicountReason,
+                discountReason,
                 quantity,
               }) => {
                 if (
@@ -135,7 +150,7 @@ export const create = async (
                     supplierPrice,
                     discountedPercentage: discountPercentage,
                     sellingPrice: (price / 100) * (100 - discountPercentage),
-                    dicountReason,
+                    discountReason,
                     quantity,
                   };
 
@@ -179,6 +194,22 @@ export const update = async (
   return res.status(httpStatus.OK).json({ data });
 };
 
+export const updateStatus = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const { status, ids } = req.body;
+  return await Orders.update({ status }, { where: { id: ids } })
+    .then((data) => {
+      return res.status(httpStatus.OK).json({ success: true, data });
+    })
+    .catch((err) =>
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+        message: err.message,
+      })
+    );
+};
+
 //------------------------Middlewares--------------------//
 export const checkStock = async (
   req: Request,
@@ -195,7 +226,7 @@ export const checkStock = async (
       // "supplierId",
       "price",
       "discountPercentage",
-      // "discountReason",
+      "discountReason",
       "discountStartTime",
       "discountEndTime",
       [

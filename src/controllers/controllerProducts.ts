@@ -753,7 +753,16 @@ export const getWebsiteProducts = async (
         model: ProductVariations.scope("websiteListing"),
         required: true,
         where: pvWhere,
-        include: [{ model: Attributes }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+        ],
       },
     ],
     limit: parseInt(params.pageSize || "100"),
@@ -782,6 +791,7 @@ export const getWebsiteProduct = async (
   const result = await Products.findOne({
     attributes: [
       "id",
+      "name",
       "slug",
       "mainImage",
       "productCode",
@@ -794,7 +804,7 @@ export const getWebsiteProduct = async (
       "metaDescription",
     ],
     include: [
-      { model: ProductsImages },
+      // { model: ProductsImages },
       { model: Attributes, attributes: ["id", "name", "type"] },
       {
         model: Brands,
@@ -831,7 +841,7 @@ export const getWebsiteProduct = async (
         include: [
           {
             model: Attributes,
-            where: { active: true },
+            // where: { active: true },
             attributes: ["id", "name", "type"],
             through: {
               attributes: ["id", "alt", "value"],
@@ -856,6 +866,7 @@ export const getWebsiteProduct = async (
         delete vs.get()["stocks"];
         return {
           ...vs.get(),
+          images: vs.images?.map((item) => item.image),
           availableQuantity: sum ? sum : 0,
         };
       }),

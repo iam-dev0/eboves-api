@@ -9,6 +9,7 @@ import AttributesRoutes from "../api/apiAttributes";
 import OutletsRoutes from "../api/apiOutlets";
 import StocksRoutes from "../api/apiStockMovement";
 import OrderRoutes from "../api/apiOrders";
+import userRoutes from "../api/apiUser";
 import sendUploadToGCS from "../google/ImageUploaderMiddleware";
 import upload from "../Middlewares/multer";
 
@@ -21,7 +22,7 @@ app.use("/attributes", AttributesRoutes);
 app.use("/outlets", OutletsRoutes);
 app.use("/stocks", StocksRoutes);
 app.use("/orders", OrderRoutes);
-
+app.use("/users", userRoutes);
 app.use("/upload", upload.single("file"), sendUploadToGCS);
 
 export default app;
