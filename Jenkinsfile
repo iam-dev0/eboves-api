@@ -26,9 +26,10 @@ pipeline {
               cd /var/www/StagingServer/api
               git stash
               git pull
+              git checkout dev
+              
               yarn
               yarn build
-
               pm2 restart devapi
             \'
             '''
