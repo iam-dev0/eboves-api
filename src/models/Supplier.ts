@@ -45,11 +45,10 @@ export class Suppliers extends Model<Suppliers> {
   @Column
   description!: string;
 
-  @IsUrl
+  
   @Column
   website!: string;
 
-  @IsEmail
   @Column
   email!: string;
 

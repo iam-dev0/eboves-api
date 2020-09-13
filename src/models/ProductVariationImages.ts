@@ -41,7 +41,7 @@ import ProductVariations from "./ProductVariations";
     @Column
     productVariationId!: number;
 
-    @IsUrl
+    
     @Column
     image!: string;
   }

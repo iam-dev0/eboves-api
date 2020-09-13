@@ -33,11 +33,10 @@ export class Banners extends Model<Banners> {
   @Column
   title!: string;
 
-  @IsUrl
+  
   @Column
   image!: string;
 
-  @IsUrl
   @Column
   href!: string;
 
