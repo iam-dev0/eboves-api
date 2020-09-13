@@ -65,7 +65,7 @@ export const getOne = async (
       products: data?.products.map((p) => {
         return {
           ...p.get(),
-          sku: p.variation.get().sku,
+          sku: p.variation.sku,
         };
       }),
     };
