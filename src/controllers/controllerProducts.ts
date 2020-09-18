@@ -991,26 +991,25 @@ export const getStock = async (
     attributes: [
       "id",
       "sku",
-      "virtualQuantity",
-      [
-        sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
-        "availableQuantity",
-      ],
+      ["virtualQuantity", "availableQuantity"],
+      // [
+      //   sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
+      //   "availableQuantity",
+      // ],
     ],
-    include: [
-      {
-        model: Stocks,
+    // include: [
+    //   {
+    //     model: Stocks,
 
-        // where: outletId ? { outletId } : {},
-        attributes: [],
-      },
-    ],
-
+    //     // where: outletId ? { outletId } : {},
+    //     attributes: [],
+    //   },
+    // ],
     where: {
       slug: ArrayOfSlug,
     },
     subQuery: false,
-    group: "id",
+    // group: "id",
   }).then((variations) => variations.map((v) => v.toJSON()));
 
   return res.json({

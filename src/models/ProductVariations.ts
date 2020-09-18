@@ -172,7 +172,7 @@ export class ProductVariations extends Model<ProductVariations> {
   @Column
   deletedBy!: number;
 
-  availableQuantity = 0; // Test Not Production
+  // availableQuantity = 0; // Test Not Production
 
   toJSON(): any {
     const data = this.get();

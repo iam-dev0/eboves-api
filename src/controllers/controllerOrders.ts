@@ -229,51 +229,55 @@ export const checkStock = async (
       "discountReason",
       "discountStartTime",
       "discountEndTime",
+      // [
+      //   sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
+      //   "availableQuantity",
+      // ],
       [
-        sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
+        "virtualQuantity", /// For time Being Since Inventory Management isn't done
         "availableQuantity",
       ],
     ],
-    include: [
-      {
-        model: Stocks,
-        // where: outletId ? { outletId } : {},
-        attributes: [],
-      },
-    ],
+    // include: [
+    //   {
+    //     model: Stocks,
+    //     // where: outletId ? { outletId } : {},
+    //     attributes: [],
+    //   },
+    // ],
     where: {
       id: cart.map((item) => item.id), // Active condition too
     },
-    raw: true,
+    // raw: true,
     subQuery: false,
-    group: "id",
+    // group: "id",
   })
     .then((variations) => {
       return cart.map((item) => {
         const elmt = variations.find((v) => v.id === item.id);
         if (elmt) {
           return {
-            ...elmt,
+            ...elmt.get(),
             quantity: item.quantity,
-            availableQuantity: elmt.availableQuantity,
+            // availableQuantity: elmt.getDataValue("virtualQuantity"),
           };
         }
 
         throw new Error("item not found");
       });
     })
-    .then((v) => {
-      if (v.find((v) => v.quantity > v.availableQuantity))
+    .then((vs) => {
+      if (vs.find((vi) => vi.quantity > vi["availableQuantity"]))
         return res.status(httpStatus.BAD_REQUEST).json({
           success: false,
           error: "Stock Problems",
-          data: v.map((item) => {
-            delete item.supplierPrice;
+          data: vs.map((item) => {
+            delete item["supplierPrice"];
             return item;
           }),
         });
 
-      req.body.variations = v;
+      req.body.variations = vs;
       next();
     })
     .catch(next);
