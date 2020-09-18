@@ -72,7 +72,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       // },
 
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -80,7 +80,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

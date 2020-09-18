@@ -4,7 +4,7 @@ import ProductAttributes from "../models/ProductAttributes";
 import sequelize, { Op } from "sequelize";
 import status from "http-status";
 import myconnect from "../db/db";
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import Brands from "../models/Brands";
 import Attributes from "../models/Attributes";
 import httpStatus from "http-status";
@@ -14,9 +14,11 @@ import Categories from "../models/Categories";
 import Suppliers from "../models/Supplier";
 import ProductVariationsBarcodes from "../models/ProductVariationBarcodes";
 import ProductVariationsImages from "../models/ProductVariationImages";
-import moment from "moment";
+import moment, { defineLocale } from "moment";
 import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
 import Stocks from "../models/Stocks";
+import { cat } from "shelljs";
+import { result } from "lodash";
 
 export interface SearchParams {
   sorter?: string;
@@ -45,8 +47,9 @@ export interface CreateProductBody {
 
 export const getProducts = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const params: SearchParams = req.query;
 
   let where = {};
@@ -83,43 +86,44 @@ export const getProducts = async (
     ]);
   }
 
-  const count = await Products.count({
-    include: [
-      {
-        model: ProductVariations,
-        attributes: ["id", "price"],
-      },
-    ],
-    distinct: true,
-    where,
-  });
+  try {
+    const count = await Products.count({
+      include: [
+        {
+          model: ProductVariations,
+          attributes: [],
+        },
+      ],
+      distinct: true,
+      where,
+    });
 
-  const data = await Products.findAll({
-    attributes: ["id", "name", "productType", "sku", "active", "createdAt"],
-    include: [
-      {
-        model: ProductVariations,
-        attributes: ["id", "price"],
-      },
-    ],
-    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // Sequelize Bug
-    offset:
-      parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
-      parseInt(params.pageSize || "20"),
-    where,
-    // distinct: true,
-    order,
-    group: ["Products.id"],
-    // subQuery: false,
-  });
+    const data = await Products.findAll({
+      attributes: ["id", "name", "productType", "sku", "active", "createdAt"],
+      include: [
+        {
+          model: ProductVariations,
+          attributes: ["id", "price"],
+        },
+      ],
+      limit: params.name ? undefined : parseInt(params.pageSize || "20"), // Sequelize Bug
+      offset:
+        parseInt(params.current || "1") * parseInt(params.pageSize || "20") -
+        parseInt(params.pageSize || "20"),
+      where,
+      order,
+    });
 
-  return res.json({
-    current: params.current,
-    data: data,
-    pageSize: params.pageSize,
-    success: true,
-    total: count,
-  });
+    return res.json({
+      current: params.current,
+      data: data,
+      pageSize: params.pageSize,
+      success: true,
+      total: count,
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const getSingleProduct = async (
@@ -175,8 +179,8 @@ export const createProduct = async (
         mainImage: images ? images[0]?.url : null,
         metaKeywords,
         metaDescription,
-        createdBy: 1, // Hardcord for now
-        updatedBy: 1, // Hardcord for now
+        // createdBy: 1, // Hardcord for now
+        // updatedBy: 1, // Hardcord for now
       };
 
       const product = await Products.create(productData, { transaction: t });
@@ -253,8 +257,8 @@ export const updateProduct = async (
         mainImage: images ? images[0]?.url : null,
         metaKeywords,
         metaDescription,
-        createdBy: 1, // Hardcord for now
-        updatedBy: 1, // Hardcord for now
+        // createdBy: 1, // Hardcord for now
+        // updatedBy: 1, // Hardcord for now
       };
       const product = await Products.update(productData, {
         where: { id },
@@ -341,8 +345,8 @@ export const createVariations = async (
               mainImage: images ? images[0]?.url : null,
               mainBarcode: barcodes ? barcodes[0]?.barcodes : sku,
               shortDescription,
-              createdBy: 1,
-              updatedBy: 1,
+              // createdBy: 1,
+              // updatedBy: 1,
             };
             try {
               const DV = await ProductVariations.create(pvDate);
@@ -376,8 +380,8 @@ export const createVariations = async (
                 const bars = barcodes.map((i: any) => ({
                   barcode: i.barcode,
                   productVariationId: DV.id,
-                  createdBy: 1,
-                  updatedBy: 1,
+                  // createdBy: 1,
+                  // updatedBy: 1,
                 }));
 
                 await ProductVariationsBarcodes.bulkCreate(bars.shift(), {
@@ -426,30 +430,36 @@ export const bulkDelete = async (
 
 export const toggleProductActiveStatus = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const { id } = req.params;
 
-  const data = Products.update(
+  return await Products.update(
     { active: sequelize.literal("NOT active") },
     { where: { id: id } }
-  );
-
-  return res.json({ success: true, data });
+  )
+    .then((data) => {
+      return res.json({ success: true, data });
+    })
+    .catch(next);
 };
 
 export const toggleVariationActiveStatus = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const { vid, pid } = req.params;
 
-  const data = ProductVariations.update(
+  return await ProductVariations.update(
     { active: sequelize.literal("NOT active") },
     { where: { id: vid, productId: pid } }
-  );
-
-  return res.json({ success: true, data });
+  )
+    .then((data) => {
+      return res.json({ success: true, data });
+    })
+    .catch(next);
 };
 
 export const getVaraitions = async (
@@ -483,11 +493,12 @@ export const getVaraitions = async (
 
 export const searchVariations = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const { name, pageSize, outletId }: any = req.query;
 
-  const result = await ProductVariations.findAll({
+  return await ProductVariations.findAll({
     attributes: [
       "id",
       "sku",
@@ -499,19 +510,14 @@ export const searchVariations = async (
         ),
         "name",
       ],
-
-      [
-        sequelize.fn("SUM", sequelize.col("stocks.availableQuantity")),
-        "availableQuantity",
-      ],
     ],
     include: [
-      { required: true, model: Products, attributes: ["id", "name"] },
+      { required: true, model: Products, attributes: [] },
       {
         model: Stocks,
-
+        required: false,
         where: outletId ? { outletId } : {},
-        attributes: [],
+        attributes: ["id", "availableQuantity"],
       },
     ],
     limit: parseInt(pageSize || "20"),
@@ -529,14 +535,25 @@ export const searchVariations = async (
         },
       ],
     },
-    raw: true,
     subQuery: false,
-    group: "id",
-  });
+  })
+    .then((data) => {
+      const result = data.map((v) => ({
+        ...v.get(),
+        availableQuantity: v.stocks.reduce(
+          (result, current) => result + current.availableQuantity,
+          0
+        ),
+      }));
 
-  return res.json({
-    data: result,
-  });
+      return res.json({
+        data: result.map((v) => {
+          delete v.stocks;
+          return v;
+        }),
+      });
+    })
+    .catch(next);
 };
 
 export const getVaraition = async (
@@ -776,9 +793,89 @@ export const getWebsiteProducts = async (
   return res.json({
     current: parseInt(params.current || "1"),
     data: data.rows,
-    pageSize: params.pageSize,
+    pageSize: parseInt(params.pageSize || "20"),
     success: true,
     total: data.count,
+  });
+};
+
+export const getSimilarProducts = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const slug = req.params.slug;
+
+  const product = await Products.findOne({
+    attributes: ["id", "categoryId"],
+    where: { slug },
+    include: [
+      {
+        model: Categories.scope("website"),
+        required: true,
+        include: [
+          {
+            model: Categories.scope("website"),
+            required: true,
+            as: "parent",
+            include: [
+              {
+                model: Categories.scope("website"),
+                required: true,
+                as: "parent",
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  });
+
+  const data = await Products.scope("websiteListing").findAll({
+    include: [
+      {
+        model: Categories.scope("website"),
+        required: true,
+        include: [
+          {
+            model: Categories.scope("website"),
+            required: true,
+            as: "parent",
+            include: [
+              {
+                model: Categories.scope("website"),
+                required: true,
+                as: "parent",
+                where: { id: product?.category.parent.parent.id },
+              },
+            ],
+          },
+        ],
+      },
+      {
+        model: Brands.scope("website"),
+        required: true,
+      },
+      {
+        model: ProductVariations.scope("websiteListing"),
+        required: true,
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+        ],
+      },
+    ],
+    limit: 3,
+    order: myconnect.random(),
+  });
+
+  return res.json({
+    data,
   });
 };
 

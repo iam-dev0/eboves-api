@@ -52,7 +52,7 @@ export class Categories extends Model<Categories> {
   childrens!: Categories[];
 
   @BelongsTo(() => Categories)
-  parent!: Categories[];
+  parent!: Categories;
 
   @Column({ unique: true })
   slug!: string;

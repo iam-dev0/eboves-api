@@ -7,7 +7,7 @@ import cors from "cors";
 import "./db/db";
 import routes from "./routes/controllPanel.routes";
 import websiteRoutes from "./routes/website.routes";
-import path from "path";
+import scraper from "./Scraper";
 
 // import passport from "passport";
 
@@ -58,6 +58,7 @@ app.use(express.static("public"));
  * API routes.
  */
 
+app.use("/scraper",scraper);
 app.use(routes);
 app.use("/api", websiteRoutes);
 export default app;

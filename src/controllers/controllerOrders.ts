@@ -182,8 +182,8 @@ export const update = async (
   let values = req.body;
   values = {
     ...values,
-    createdBy: 1,
-    updatedBy: 1,
+    // createdBy: 1,
+    // updatedBy: 1,
   };
   const data = await Orders.update(values, { where: { id } }).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

@@ -37,7 +37,7 @@ import Stocks from "./Stocks";
       "id",
       "slug",
       "mainImage",
-      "virtualQuantity",
+      ["virtualQuantity", "availableQuantity"], /// Fake for the sake of speed development
       "price",
       "bestSeller",
       "topRated",
@@ -83,7 +83,7 @@ export class ProductVariations extends Model<ProductVariations> {
   @HasMany(() => ProductVariationsImages)
   images!: ProductVariationsImages[];
 
-  @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues )
+  @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
   attributes!: Attributes[];
 
   @HasMany(() => Stocks)
@@ -131,14 +131,14 @@ export class ProductVariations extends Model<ProductVariations> {
 
   @Column
   discountStartTime!: Date;
-  
+
   @Column
   discountEndTime!: Date;
 
-  @Column({type:DataType.TEXT})
+  @Column({ type: DataType.TEXT })
   discountReason!: string;
 
-  @Column({type:DataType.TEXT})
+  @Column({ type: DataType.TEXT })
   discountType!: string;
 
   @Default(false)
@@ -172,7 +172,7 @@ export class ProductVariations extends Model<ProductVariations> {
   @Column
   deletedBy!: number;
 
-  availableQuantity=0; // Test Not Production
+  availableQuantity = 0; // Test Not Production
 
   toJSON(): any {
     const data = this.get();

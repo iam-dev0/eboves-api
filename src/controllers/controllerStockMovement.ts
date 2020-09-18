@@ -36,7 +36,7 @@ export const getAll = async (
   const data = await StockMovement.findAll({
     include: [
       { model: Outlets, attributes: ["id", "name"] },
-      { model: Suppliers, attributes: ["id", "name"] },
+      { model: Suppliers, attributes: ["id", "companyName"] },
       { model: StockMovementVariations, attributes: ["id"] },
     ],
   }).catch((error) =>
@@ -71,8 +71,8 @@ export const createStockOrder = async (
         outletId,
         supplierId,
         supplierInvoiceNumber,
-        createdBy: 1, // Hardcord for now
-        updatedBy: 1, // Hardcord for now
+        // createdBy: 1, // Hardcord for now
+        // updatedBy: 1, // Hardcord for now
       };
 
       const stockrequest = await StockMovement.create(Data, { transaction: t });
@@ -130,8 +130,8 @@ export const receiveStockOrder = async (
         supplierId,
         supplierInvoiceNumber,
         status: "RECEIVED",
-        createdBy: 1, // Hardcord for now
-        updatedBy: 1, // Hardcord for now
+        // createdBy: 1, // Hardcord for now
+        // updatedBy: 1, // Hardcord for now
       };
 
       let stockrequest;
@@ -273,7 +273,7 @@ export const getOne = async (
         ],
       },
       { required: true, model: Outlets, attributes: ["id", "name"] },
-      { required: true, model: Suppliers, attributes: ["id", "name"] },
+      { required: true, model: Suppliers, attributes: ["id", "companyName"] },
     ]
   })
     .then((order) => {
