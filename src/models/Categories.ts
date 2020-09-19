@@ -31,7 +31,7 @@ import {
     attributes: ["id", "name", "active", "createdAt"],
   },
   website: {
-    attributes: ["id", "name", "slug"],
+    attributes: ["id", "name", "slug","image"],
     where: { active: true },
   },
 })

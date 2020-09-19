@@ -7,6 +7,9 @@ import Products from "../models/Products";
 import ProductVariations from "../models/ProductVariations";
 import ProductVariationsImages from "../models/ProductVariationImages";
 import Suppliers from "../models/Supplier";
+import Attributes from "../models/Attributes";
+import ProductAttributes from "../models/ProductAttributes";
+import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
 
 const baseURLforImags =
   "https://eboves.oss-ap-south-1.aliyuncs.com/images/products/";
@@ -55,7 +58,9 @@ const categoryStructure = (rows) => {
       );
 
       if (subIndex > -1) {
-        const subsubIndex = categories[index].childrens[subIndex].childrens.findIndex(
+        const subsubIndex = categories[index].childrens[
+          subIndex
+        ].childrens.findIndex(
           (item) => item.name.toLowerCase() === row[2].toLowerCase()
         );
         if (subsubIndex === -1)
@@ -70,6 +75,24 @@ const categoryStructure = (rows) => {
     }
   });
   return categories;
+};
+
+const attributeStructure = (rows) => {
+  const attribute: any = [];
+  rows.forEach((row) => {
+    const object = {
+      name: row[0],
+      type: row[1],
+      unit: row[2],
+    };
+    if (!attribute.length) attribute.push(object);
+
+    const index = attribute.findIndex(
+      (item) => item.name.toLowerCase() === object.name.toLowerCase()
+    );
+    if (index === -1) attribute.push(object);
+  });
+  return attribute;
 };
 
 app.get("/categories", async (req, res) => {
@@ -100,9 +123,12 @@ app.get("/products", async (req, res) => {
   let suppliers: any[] = [];
   let brands: any[] = [];
   let categories: any[] = [];
+  let attributes: any[] = [];
   try {
     const result = await myconnect.transaction(async (t) => {
       rows.forEach((row) => {
+        if (!row[2]) return;
+
         const object = {
           supplier: row[4],
           brand: row[5],
@@ -113,12 +139,23 @@ app.get("/products", async (req, res) => {
         brands.push(object.brand);
         suppliers.push(object.supplier);
         categories.push([row[6], row[7], row[8]]);
+        if (row[17] && row[17].length > 0)
+          attributes.push([row[17], row[18], row[19], row[20], row[21]]);
+        if (row[17 + 5] && row[17 + 5].length > 0)
+          attributes.push([
+            row[17 + 5],
+            row[18 + 5],
+            row[19 + 5],
+            row[20 + 5],
+            row[21 + 5],
+          ]);
       });
 
       suppliers = [...new Set(suppliers)];
       brands = [...new Set(brands)];
       categories = [...new Set(categories)];
       categories = categoryStructure(categories);
+      attributes = attributeStructure(attributes);
 
       const supplierPromises: Promise<Suppliers>[] = [];
       for (const supplier of suppliers) {
@@ -143,7 +180,6 @@ app.get("/products", async (req, res) => {
           })
         );
       }
-
       const supplierData = await Promise.all(supplierPromises);
 
       const brandPromises: Promise<Brands>[] = [];
@@ -166,11 +202,28 @@ app.get("/products", async (req, res) => {
           })
         );
       }
-
       const brandData = await Promise.all(brandPromises);
 
-      const Categorypromises: Promise<Categories>[] = [];
+      const attributePromises: Promise<Attributes>[] = [];
+      for (const attribute of attributes) {
+        attributePromises.push(
+          new Promise(async (resolve, reject) => {
+            return await Attributes.findOne({
+              where: attribute,
+              transaction: t,
+            })
+              .then((data) => {
+                if (data) return data;
+                return Attributes.create(attribute, { transaction: t });
+              })
+              .then((data) => resolve(data))
+              .catch((err) => reject(err));
+          })
+        );
+      }
+      const attributeData = await Promise.all(attributePromises);
 
+      const Categorypromises: Promise<Categories>[] = [];
       for (const category of categories) {
         Categorypromises.push(
           new Promise(async (resolve, reject) => {
@@ -272,6 +325,8 @@ app.get("/products", async (req, res) => {
       const categoryData = await Promise.all(Categorypromises);
 
       rows.forEach((row) => {
+        if (!row[2]) return;
+
         let vairationImage = [];
         let firstImage: any = null;
 
@@ -287,24 +342,43 @@ app.get("/products", async (req, res) => {
           ?.childrens.find((item) => item.name === row[7])
           ?.childrens.find((item) => item.name === row[8])?.id;
 
+        let attrs: any = [];
+        if (row[17] && row[17].length > 0)
+          attrs.push([row[17], row[18], row[19], row[20], row[21]]);
+        if (row[17 + 5] && row[17 + 5].length > 0)
+          attrs.push([
+            row[17 + 5],
+            row[18 + 5],
+            row[19 + 5],
+            row[20 + 5],
+            row[21 + 5],
+          ]);
+
+        attrs = attrs.map((att) => {
+          return {
+            attributeId: attributeData.find(
+              (item) => item.name.toLowerCase() === att[0].toLowerCase()
+            ),
+            value: att[4],
+            alt: att[5],
+          };
+        });
         const object = {
           productId: row[0],
           productCode: row[1],
           name: row[2],
-          slug:
-            row[2].split(" ").join("-").toLowerCase() +
-            "_" +
-            Math.floor(Math.random() * 100000),
+          slug: row[2].split(" ").join("-").toLowerCase() + "_" + row[11]+ "_"+ Math.floor(Math.random()*100000),
           productType: row[3],
           supplierId: supplierData.find((item) => item.companyName === row[4])
             ?.id,
           brandId: brandData.find((item) => item.name === row[5])?.id,
           categoryId,
           description: row[9],
+          attributes: attrs.map((item) => ({ attributeId: item.attributeId })),
           variations: [
             {
               sku: row[11],
-              slug: row[2].split(" ").join("-").toLowerCase() + "_" + row[11],
+              slug: row[2].split(" ").join("-").toLowerCase() + "_" + row[11]+ Math.floor(Math.random()*100000),
               mainBarcode: row[11] ? row[11] : row[10],
               shortDescription: row[12],
               price: row[13],
@@ -312,6 +386,7 @@ app.get("/products", async (req, res) => {
               virtualQuantity: row[15],
               mainImage: firstImage,
               images: vairationImage.map((img) => ({ image: img })),
+              attributes: attrs,
             },
           ],
         };
@@ -321,7 +396,8 @@ app.get("/products", async (req, res) => {
           return;
         }
         const index = products.findIndex(
-          (item) => item.productId === object.productId
+          (item) =>
+            item.productId === object.productId && object.productId?.length > 0
         );
         if (index > -1) {
           products[index].variations.push(object.variations[0]);
@@ -336,12 +412,20 @@ app.get("/products", async (req, res) => {
           {
             model: ProductVariations,
             as: "variations",
-            include: [{ model: ProductVariationsImages, as: "images" }],
+            include: [
+              { model: ProductVariationsImages, as: "images" },
+              { model: Attributes, as: "attributes" },
+            ],
+          },
+          {
+            model: Attributes,
+            as: "attributes",
           },
         ],
       });
 
       res.json({ result: pds });
+      // throw Error("hello");
     });
   } catch (err) {
     console.error(err);
