@@ -709,6 +709,7 @@ export const getMainTabs = async (
 
 export interface QureyParams {
   brandSlug?: number;
+  search?: number;
   categorySlug?: string;
   subCategorySlug?: string;
   subSubcategorySlug?: string;
@@ -731,7 +732,7 @@ export const getWebsiteProducts = async (
   res: Response
 ): Promise<Response> => {
   const params: QureyParams = req.query;
-
+  const { search }: QureyParams = req.query;
   const { pWhere, pvWhere }: any = prepareWhere(params);
 
   const data = await Products.scope("websiteListing").findAndCountAll({
@@ -787,7 +788,12 @@ export const getWebsiteProducts = async (
     offset:
       parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
       parseInt(params.pageSize || "20"),
-    where: pWhere,
+    where: {
+      name: {
+        [Op.substring]: search,
+      },
+      ...pWhere,
+    },
   });
 
   return res.json({
