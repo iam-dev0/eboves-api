@@ -1,10 +1,5 @@
 import OSS from "ali-oss";
-import { result } from "lodash";
 import httpStatus from "http-status";
-
-// User Logon Name eboves-bucket@5699298335749620.onaliyun.com
-// AccessKey ID LTAI4GAnQkd5wJqFqY4wzxf1
-// AccessKey Secret LZFQWAKFdxxtJ4a480qeoQDWCMo5f1
 
 const client = new OSS({
   region: "oss-ap-south-1",
