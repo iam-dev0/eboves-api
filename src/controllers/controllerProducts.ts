@@ -789,9 +789,11 @@ export const getWebsiteProducts = async (
       parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
       parseInt(params.pageSize || "20"),
     where: {
-      name: {
-        [Op.substring]: search,
-      },
+      name: search
+        ? {
+            [Op.substring]: search,
+          }
+        : {},
       ...pWhere,
     },
   });

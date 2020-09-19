@@ -296,7 +296,7 @@ app.get("/products", async (req, res) => {
 
                       const cts: any = await Promise.all(Categorypromises).then(
                         (data) => {
-                          return { ...subcategorydata, childrens: data };
+                          return { ...subcategorydata.get(), childrens: data };
                         }
                       );
                       resolve(cts);
@@ -310,7 +310,7 @@ app.get("/products", async (req, res) => {
 
               const cts: any = await Promise.all(Categorypromises).then(
                 (data) => {
-                  return { ...categorydata, childrens: data };
+                  return { ...categorydata.get(), childrens: data };
                 }
               );
               resolve(cts);
@@ -338,9 +338,9 @@ app.get("/products", async (req, res) => {
         }
 
         const categoryId = categoryData
-          .find((item) => item.name === row[6])
-          ?.childrens.find((item) => item.name === row[7])
-          ?.childrens.find((item) => item.name === row[8])?.id;
+          .find((item) => item.name.toLowerCase() === row[6].toLowerCase())
+          ?.childrens.find((item) => item.name.toLowerCase() === row[7].toLowerCase())
+          ?.childrens.find((item) => item.name.toLowerCase() === row[8].toLowerCase())?.id;
 
         let attrs: any = [];
         if (row[17] && row[17].length > 0)

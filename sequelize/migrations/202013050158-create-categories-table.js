@@ -27,9 +27,9 @@ module.exports.up = (queryInterface, DataTypes) => {
       image: {
         type: DataTypes.STRING,
       },
-      // clipArt: {
-      //   type: DataTypes.STRING,
-      // },
+      clipArt: {
+        type: DataTypes.STRING,
+      },
       displayOrder: {
         type: DataTypes.INTEGER.UNSIGNED,
       },
