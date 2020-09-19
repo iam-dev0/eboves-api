@@ -732,7 +732,6 @@ export const getWebsiteProducts = async (
   res: Response
 ): Promise<Response> => {
   const params: QureyParams = req.query;
-  const { search }: QureyParams = req.query;
   const { pWhere, pvWhere }: any = prepareWhere(params);
 
   const data = await Products.scope("websiteListing").findAndCountAll({
@@ -789,11 +788,6 @@ export const getWebsiteProducts = async (
       parseInt(params.current || "1") * parseInt(params.pageSize || "100") -
       parseInt(params.pageSize || "20"),
     where: {
-      name: search
-        ? {
-            [Op.substring]: search,
-          }
-        : {},
       ...pWhere,
     },
   });
