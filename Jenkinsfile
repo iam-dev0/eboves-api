@@ -1,18 +1,6 @@
 pipeline {
   agent any
   stages {
-    stage('Prepare Workspace') {
-      steps {
-        sh 'yarn'
-      }
-    }
-
-    stage('build') {
-      steps {
-        sh 'yarn build'
-      }
-    }
-
     stage('deploy dev') {
       when {
         expression {
