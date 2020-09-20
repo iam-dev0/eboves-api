@@ -18,7 +18,6 @@ import moment, { defineLocale } from "moment";
 import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
 import Stocks from "../models/Stocks";
 
-
 export interface SearchParams {
   sorter?: string;
   active?: string;
@@ -771,7 +770,7 @@ export const getWebsiteProducts = async (
         where: pvWhere,
         include: [
           {
-            model: ProductAttributes,
+            model: Attributes,
             attributes: ["id", "name", "type"],
             through: {
               attributes: ["id", "alt", "value"],
@@ -923,7 +922,7 @@ export const getWebsiteProduct = async (
           "mainBarcode",
           "slug",
           "shortDescription",
-          ["virtualQuantity","availableQuantity"],
+          ["virtualQuantity", "availableQuantity"],
           "sku",
           "price",
           "discountPrice",
@@ -956,7 +955,7 @@ export const getWebsiteProduct = async (
     ],
     where: { slug },
   });
-  
+
   // .then((data) => {
   //   return {
   //     ...data?.get(),
