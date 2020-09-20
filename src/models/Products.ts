@@ -92,6 +92,7 @@ export class Products extends Model<Products> {
   @BelongsToMany(() => Attributes, () => ProductAttribute)
   attributes!: Attributes[];
 
+
   @HasMany(() => ProductVariations)
   variations!: ProductVariations[];
 
@@ -175,6 +176,16 @@ export class Products extends Model<Products> {
   @DeletedAt
   @Column
   deletedAt!: Date;
+
+
+
+
+
+
+  //--------------------------------//relations-------------------//
+  
+  @HasMany(() => ProductAttribute)
+  attributesRelation!: ProductAttribute[];
 }
 
 export default Products;

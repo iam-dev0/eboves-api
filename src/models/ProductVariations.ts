@@ -188,6 +188,11 @@ export class ProductVariations extends Model<ProductVariations> {
     delete data["virtualQuantity"];
     return data;
   }
+
+
+  //--------------------------------//relations-------------------//
+  @HasMany(()=> ProductVariationAttributeValues)
+  attributesRelation!: ProductVariationAttributeValues[];
 }
 
 export default ProductVariations;

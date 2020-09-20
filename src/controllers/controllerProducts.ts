@@ -17,8 +17,7 @@ import ProductVariationsImages from "../models/ProductVariationImages";
 import moment, { defineLocale } from "moment";
 import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
 import Stocks from "../models/Stocks";
-import { cat } from "shelljs";
-import { result } from "lodash";
+
 
 export interface SearchParams {
   sorter?: string;
@@ -772,7 +771,7 @@ export const getWebsiteProducts = async (
         where: pvWhere,
         include: [
           {
-            model: Attributes,
+            model: ProductAttributes,
             attributes: ["id", "name", "type"],
             through: {
               attributes: ["id", "alt", "value"],
@@ -924,7 +923,7 @@ export const getWebsiteProduct = async (
           "mainBarcode",
           "slug",
           "shortDescription",
-          "virtualQuantity",
+          ["virtualQuantity","availableQuantity"],
           "sku",
           "price",
           "discountPrice",
@@ -948,29 +947,31 @@ export const getWebsiteProduct = async (
             },
           },
           { model: ProductVariationsImages },
-          {
-            model: Stocks,
-            attributes: ["id", "availableQuantity"],
-          },
+          // {
+          //   model: Stocks,
+          //   attributes: ["id", "availableQuantity"],
+          // },
         ],
       },
     ],
     where: { slug },
-  }).then((data) => {
-    return {
-      ...data?.get(),
-      variations: data?.variations?.map((vs) => {
-        let sum = 0;
-        vs?.stocks?.forEach((item) => (sum = sum + item.availableQuantity));
-        delete vs.get()["stocks"];
-        return {
-          ...vs.get(),
-          images: vs.images?.map((item) => item.image),
-          availableQuantity: sum ? sum : 0,
-        };
-      }),
-    };
   });
+  
+  // .then((data) => {
+  //   return {
+  //     ...data?.get(),
+  //     variations: data?.variations?.map((vs) => {
+  //       let sum = 0;
+  //       vs?.stocks?.forEach((item) => (sum = sum + item.availableQuantity));
+  //       delete vs.get()["stocks"];
+  //       return {
+  //         ...vs.get(),
+  //         images: vs.images?.map((item) => item.image),
+  //         availableQuantity: sum ? sum : 0,
+  //       };
+  //     }),
+  //   };
+  // });
 
   return res.json({
     data: result,

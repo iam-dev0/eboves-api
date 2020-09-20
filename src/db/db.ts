@@ -1,5 +1,5 @@
 import { Sequelize } from "sequelize-typescript";
-import { databaseInfo } from "../config";
+import config, { databaseInfo } from "../config";
 
 console.log("Trying to connect to server using", databaseInfo);
 const sequelize = new Sequelize({
@@ -18,7 +18,9 @@ const sequelize = new Sequelize({
     max: 100,
     min: 0,
   },
-  logging: (...msg) => console.log(msg),
+  logging: (...msg) => {
+    if (config.env === "development") console.log(msg);
+  },
   models: [__dirname + "./../models"],
 });
 

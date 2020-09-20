@@ -10,6 +10,7 @@ import Suppliers from "../models/Supplier";
 import Attributes from "../models/Attributes";
 import ProductAttributes from "../models/ProductAttributes";
 import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
+import { getAttributes } from "sequelize-typescript";
 
 const baseURLforImags =
   "https://eboves.oss-ap-south-1.aliyuncs.com/images/products/";
@@ -76,7 +77,12 @@ const categoryStructure = (rows) => {
   });
   return categories;
 };
-
+const getAttributeValue = (value, type) => {
+  if (type?.toLowerCase() === "image") {
+    return `${baseURLforImags}${value?.trim()}.jpg`;
+  }
+  return value;
+};
 const attributeStructure = (rows) => {
   const attribute: any = [];
   rows.forEach((row) => {
@@ -116,7 +122,7 @@ app.get("/categories", async (req, res) => {
 });
 
 app.get("/products", async (req, res) => {
-  const rows = await readXlsxFile("./src/Scraper/Sabmilygaa.com.xlsx");
+  const rows = await readXlsxFile("./src/Scraper/MrsMohsin.xlsx");
   // skip header
   rows.shift();
   const products: any[] = [];
@@ -333,14 +339,18 @@ app.get("/products", async (req, res) => {
         if (row[16].length > 0) {
           vairationImage = row[16]
             .split(",")
-            .map((name) => `${baseURLforImags}${name}.jpg`);
+            .map((name) => `${baseURLforImags}${name.trim()}.jpg`);
           firstImage = vairationImage.shift();
         }
 
         const categoryId = categoryData
           .find((item) => item.name.toLowerCase() === row[6].toLowerCase())
-          ?.childrens.find((item) => item.name.toLowerCase() === row[7].toLowerCase())
-          ?.childrens.find((item) => item.name.toLowerCase() === row[8].toLowerCase())?.id;
+          ?.childrens.find(
+            (item) => item.name.toLowerCase() === row[7].toLowerCase()
+          )
+          ?.childrens.find(
+            (item) => item.name.toLowerCase() === row[8].toLowerCase()
+          )?.id;
 
         let attrs: any = [];
         if (row[17] && row[17].length > 0)
@@ -355,30 +365,40 @@ app.get("/products", async (req, res) => {
           ]);
 
         attrs = attrs.map((att) => {
+          const myt = attributeData.find(
+            (item) => item.name.toLowerCase() === att[0].toLowerCase()
+          );
           return {
-            attributeId: attributeData.find(
-              (item) => item.name.toLowerCase() === att[0].toLowerCase()
-            ),
-            value: att[4],
-            alt: att[5],
+            attributeId: myt?.id,
+            value: getAttributeValue(att[3], myt?.type),
+            alt: att[4],
           };
         });
         const object = {
           productId: row[0],
           productCode: row[1],
           name: row[2],
-          slug: row[2].split(" ").join("-").toLowerCase() + "_" + row[11]+ "_"+ Math.floor(Math.random()*100000),
+          slug:
+            row[2].split(" ").join("-").toLowerCase() +
+            "_" +
+            row[10] +
+            "_" +
+            Math.floor(Math.random() * 100000),
           productType: row[3],
           supplierId: supplierData.find((item) => item.companyName === row[4])
             ?.id,
           brandId: brandData.find((item) => item.name === row[5])?.id,
           categoryId,
           description: row[9],
-          attributes: attrs.map((item) => ({ attributeId: item.attributeId })),
+          attributesRelation: attrs.map((item) => ({ attributeId: item.attributeId })),
           variations: [
             {
-              sku: row[11],
-              slug: row[2].split(" ").join("-").toLowerCase() + "_" + row[11]+ Math.floor(Math.random()*100000),
+              sku: row[10],
+              slug:
+                row[2].split(" ").join("-").toLowerCase() +
+                "_" +
+                row[10] +
+                Math.floor(Math.random() * 100000),
               mainBarcode: row[11] ? row[11] : row[10],
               shortDescription: row[12],
               price: row[13],
@@ -386,7 +406,7 @@ app.get("/products", async (req, res) => {
               virtualQuantity: row[15],
               mainImage: firstImage,
               images: vairationImage.map((img) => ({ image: img })),
-              attributes: attrs,
+              attributesRelation: attrs,
             },
           ],
         };
@@ -396,8 +416,7 @@ app.get("/products", async (req, res) => {
           return;
         }
         const index = products.findIndex(
-          (item) =>
-            item.productId === object.productId && object.productId?.length > 0
+          (item) => item.productId === object.productId && object.productId
         );
         if (index > -1) {
           products[index].variations.push(object.variations[0]);
@@ -414,12 +433,12 @@ app.get("/products", async (req, res) => {
             as: "variations",
             include: [
               { model: ProductVariationsImages, as: "images" },
-              { model: Attributes, as: "attributes" },
+              { model: ProductVariationAttributeValues, as: "attributesRelation" },
             ],
           },
           {
-            model: Attributes,
-            as: "attributes",
+            model: ProductAttributes,
+            as:"attributesRelation"
           },
         ],
       });
