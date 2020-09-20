@@ -48,7 +48,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         comment: "Contact person email",
       },
       phone: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.STRING,
         comment: "Contact person phone",
       },

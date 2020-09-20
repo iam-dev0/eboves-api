@@ -13,6 +13,10 @@ import {
   getMainTabs,
   getWebsiteProducts,
   searchVariations,
+  getWebsiteProduct,
+  getStock,
+  getSimilarProducts,
+  toggleVariationActiveStatus,
 } from "../controllers/controllerProducts";
 const app = express();
 
@@ -31,10 +35,13 @@ app.get("/:Pid/variations", getVaraitions);
 app.get("/:pid/variation/:vid", getVaraition);
 
 app.put("/:id/status", toggleProductActiveStatus);
-app.put("/:pid/variation/:vid/status", toggleProductActiveStatus);
+app.put("/:pid/variation/:vid/status", toggleVariationActiveStatus);
 //------------------------------------------Website Api---------------------//
 export const WebsiteApp = express();
 WebsiteApp.get("/main-tabs", getMainTabs);
 WebsiteApp.get("/", getWebsiteProducts);
+WebsiteApp.get("/similar-products/:slug", getSimilarProducts);
+WebsiteApp.get("/get-stock",getStock);
+WebsiteApp.get("/:slug",getWebsiteProduct);
 
 export default app;

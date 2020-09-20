@@ -35,14 +35,16 @@ import Stocks from "./Stocks";
   websiteListing: {
     attributes: [
       "id",
+      "slug",
       "mainImage",
-      "virtualQuantity",
+      ["virtualQuantity", "availableQuantity"], /// Fake for the sake of speed development
       "price",
       "bestSeller",
       "topRated",
       "featured",
       "discountPercentage",
       "discountPrice",
+      "discountReason",
       "discountStartTime",
       "discountEndTime",
       "trending",
@@ -82,8 +84,8 @@ export class ProductVariations extends Model<ProductVariations> {
   images!: ProductVariationsImages[];
 
   @BelongsToMany(() => Attributes, () => ProductVariationAttributeValues)
-  attributeValues!: Attributes[];
- 
+  attributes!: Attributes[];
+
   @HasMany(() => Stocks)
   stocks!: Stocks[];
 
@@ -115,7 +117,6 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   supplierPrice!: number;
 
-
   @Default(0)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
@@ -128,9 +129,17 @@ export class ProductVariations extends Model<ProductVariations> {
   })
   discountPrice!: number;
 
+  @Column
   discountStartTime!: Date;
 
+  @Column
   discountEndTime!: Date;
+
+  @Column({ type: DataType.TEXT })
+  discountReason!: string;
+
+  @Column({ type: DataType.TEXT })
+  discountType!: string;
 
   @Default(false)
   @Column
@@ -147,7 +156,7 @@ export class ProductVariations extends Model<ProductVariations> {
   @Default(false)
   @Column
   topRated!: boolean;
-  
+
   @Default(false)
   @Column
   preOrder!: boolean;
@@ -162,6 +171,28 @@ export class ProductVariations extends Model<ProductVariations> {
   updatedBy!: number;
   @Column
   deletedBy!: number;
+
+  // availableQuantity = 0; // Test Not Production
+
+  toJSON(): any {
+    const data = this.get();
+    for (const x in data) {
+      if (x === "availableQuantity") {
+        if (data["availableQuantity"]) {
+          data[x] = parseInt(data[x]) + data["virtualQuantity"];
+        } else {
+          data[x] = data["virtualQuantity"];
+        }
+      }
+    }
+    delete data["virtualQuantity"];
+    return data;
+  }
+
+
+  //--------------------------------//relations-------------------//
+  @HasMany(()=> ProductVariationAttributeValues)
+  attributesRelation!: ProductVariationAttributeValues[];
 }
 
 export default ProductVariations;

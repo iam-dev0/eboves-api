@@ -4,6 +4,13 @@ import { Op } from "sequelize";
 export const prepareWhere = (params: QureyParams): unknown => {
   let pWhere = {};
   let pvWhere = {};
+  if (params.search)
+    pWhere = {
+      ...pWhere,
+      name: {
+        [Op.substring]: params.search,
+      },
+    };
   if (params.bestSeller)
     pWhere = {
       ...pWhere,

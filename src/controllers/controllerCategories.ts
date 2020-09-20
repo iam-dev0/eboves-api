@@ -119,8 +119,8 @@ export const create = async (
       values.storyCover && values.storyCover.length > 0
         ? values.storyCover[0]?.url
         : null,
-    createdBy: 1,
-    updatedBy: 1,
+    // createdBy: 1,
+    // updatedBy: 1,
   };
   const data = await Categories.create(values).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -144,8 +144,8 @@ export const update = async (
       values.storyCover && values.storyCover.length > 0
         ? values.storyCover[0]?.url
         : null,
-    createdBy: 1,
-    updatedBy: 1,
+    // createdBy: 1,
+    // updatedBy: 1,
   };
   const data = await Categories.update(values, { where: { id } }).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -240,3 +240,5 @@ export const getCategoryWebsite = async (
   });
   return res.json({ data });
 };
+
+

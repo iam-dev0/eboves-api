@@ -31,12 +31,17 @@ module.exports.up = (queryInterface, DataTypes) => {
 
       status: {
         type: DataTypes.ENUM([
-          "open",
-          "stockOrdered",
-          "stockReceived",
-          "stockReturned",
+          "OPEN",
+          "RETURN_OPEN",
+          "SENT",
+          "DISPATCHED",
+          "RETURN_SENT",
+          "RECEIVED",
+          "OVERDUE",
+          "CANCELED",
+          "RECEIVE_FAIL",
         ]),
-        default: "draft",
+        default: "OPEN",
       },
 
       // underProcessingBy: {
@@ -67,7 +72,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       // },
 
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -75,7 +80,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

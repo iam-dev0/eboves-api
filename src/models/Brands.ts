@@ -44,11 +44,11 @@ export class Brands extends Model<Brands> {
   @Column
   name!: string;
 
-  @IsUrl
+  
   @Column
   logo!: string;
 
-  @IsUrl
+  
   @Column
   image!: string;
 
@@ -58,7 +58,7 @@ export class Brands extends Model<Brands> {
   @Column
   storyTextColor!: string;
 
-  @IsUrl
+  
   @Column
   storyCover!: string;
 

@@ -1,6 +1,6 @@
 module.exports.up = (queryInterface, DataTypes) => {
   return queryInterface.createTable(
-    "customer_addresses",
+    "shipping_information",
     {
       id: {
         allowNull: false,
@@ -9,7 +9,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
       },
       customerId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -17,18 +16,17 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       cityId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "cities",
         },
       },
-
       firstName: DataTypes.STRING,
       lastName: DataTypes.STRING,
       phone: DataTypes.STRING,
       address: DataTypes.STRING,
+      email: DataTypes.STRING,
     },
     {
       charset: "utf8",
@@ -36,4 +34,5 @@ module.exports.up = (queryInterface, DataTypes) => {
   );
 };
 
-module.exports.down = (queryInterface) => queryInterface.dropTable("customer_addresses");
+module.exports.down = (queryInterface) =>
+  queryInterface.dropTable("shipping_information");

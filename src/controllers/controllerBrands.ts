@@ -2,7 +2,7 @@ import Brands from "../models/Brands";
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import { Op, literal } from "sequelize";
-import { param } from "jquery";
+
 
 export interface SearchParams {
   sorter?: string;
@@ -76,8 +76,8 @@ export const create = async (
       values.storyCover && values.storyCover.length > 0
         ? values.storyCover[0]?.url
         : null,
-    createdBy: 1,
-    updatedBy: 1,
+    // createdBy: 1,
+    // updatedBy: 1,
   };
   const data = await Brands.create(values).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
@@ -101,8 +101,8 @@ export const update = async (
       values.storyCover && values.storyCover.length > 0
         ? values.storyCover[0]?.url
         : null,
-    createdBy: 1,
-    updatedBy: 1,
+    // createdBy: 1,
+    // updatedBy: 1,
   };
   const data = await Brands.update(values, { where: { id } }).catch((err) =>
     res.status(httpStatus.INTERNAL_SERVER_ERROR).json({

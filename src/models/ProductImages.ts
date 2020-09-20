@@ -42,7 +42,7 @@ import Products from "./Products";
     productId!: number;
 
 
-    @IsUrl
+    
     @Column
     image!: string;
   }

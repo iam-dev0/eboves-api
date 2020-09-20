@@ -24,7 +24,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
       perPointToPkr: { type: DataTypes.DOUBLE, default: 1 },
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -32,7 +32,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

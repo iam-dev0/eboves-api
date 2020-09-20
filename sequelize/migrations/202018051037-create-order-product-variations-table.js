@@ -8,16 +8,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         primaryKey: true,
         type: DataTypes.INTEGER.UNSIGNED,
       },
-      brandId: {
-        
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "brands",
-        },
-      },
       orderId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -25,7 +16,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       productId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -33,7 +23,6 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       productVariationid: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -41,18 +30,17 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       supplierId: {
-        
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "suppliers",
         },
       },
-      actualAmount: {
+      supplierPrice: {
         type: DataTypes.FLOAT,
         default: 0,
       },
-      supplierPrice: {
+      sellingPrice: {
         type: DataTypes.FLOAT,
         default: 0,
       },
@@ -60,99 +48,32 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
         default: 0,
       },
+      discountReason: DataTypes.TEXT,
+
       quantity: {
         type: DataTypes.INTEGER.UNSIGNED,
         default: 0,
       },
       status: {
         type: DataTypes.ENUM([
-          "pending",
-          "assign_to_supplier",
-          "in_transit",
-          "in_house",
-          "out_of_stock",
-          "dispatched",
-          "delivered",
-          "canceled",
-          "pending_return",
-          "returned",
+          "PENDING",
+          "CONFIRMED",
+          "CANCELED",
+          "OUT_OF_STOCK",
+          "DISPATCHED",
+          "DELIEVERED",
+          "RETURNED",
         ]),
-        default: "pending",
+        default: "PENDING",
       },
-      damagedQuantity: {
+
+      returedQuantity: {
         type: DataTypes.INTEGER.UNSIGNED,
         default: 0,
       },
-      discountReason: DataTypes.TEXT,
       returnReson: DataTypes.TEXT,
 
-      /*Action By*/
-      assignToSupplierBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      inTransitBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      inHouseBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      outOfStockBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      dispatchedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      deliveredBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      canceledBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      returnedBy: {
-        allowNull: false,
-        type: DataTypes.INTEGER.UNSIGNED,
-        references: {
-          key: "id",
-          model: "users",
-        },
-      },
-      discountedBy: {
-        allowNull: false,
+      createdBy: {
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -160,40 +81,20 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       updatedBy: {
-        allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
           model: "users",
         },
       },
-
-      /*Action By*/
-
-      assignToSupplierAt: {
-        type: DataTypes.DATE,
+      deletedBy: {
+        type: DataTypes.INTEGER.UNSIGNED,
+        references: {
+          key: "id",
+          model: "users",
+        },
       },
-      inTransitAt: {
-        type: DataTypes.DATE,
-      },
-      inHouseAt: {
-        type: DataTypes.DATE,
-      },
-      outOfStockAT: {
-        type: DataTypes.DATE,
-      },
-      dispatchedAt: {
-        type: DataTypes.DATE,
-      },
-      deliveredAt: {
-        type: DataTypes.DATE,
-      },
-      canceledAt: {
-        type: DataTypes.DATE,
-      },
-      returnedAt: {
-        type: DataTypes.DATE,
-      },
+      /*Action At*/
 
       createdAt: {
         allowNull: false,
@@ -203,6 +104,9 @@ module.exports.up = (queryInterface, DataTypes) => {
         allowNull: false,
         type: DataTypes.DATE,
       },
+      deletedAt: {
+        type: DataTypes.DATE,
+      },
     },
     {
       charset: "utf8",
@@ -210,4 +114,5 @@ module.exports.up = (queryInterface, DataTypes) => {
   );
 };
 
-module.exports.down = (queryInterface) => queryInterface.dropTable("order_product_variations");
+module.exports.down = (queryInterface) =>
+  queryInterface.dropTable("order_product_variations");

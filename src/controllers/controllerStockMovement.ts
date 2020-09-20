@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import httpStatus from "http-status";
 import StockMovement from "../models/StockMovement";
 import myconnect from "../db/db";
@@ -10,6 +10,7 @@ import Outlets from "../models/Outlets";
 import Suppliers from "../models/Supplier";
 import pdfStockRequest from "../docs/StockRequest";
 import pdf from "html-pdf";
+import errorHandler from "errorhandler";
 
 export interface StockVariationStructure {
   id: number;
@@ -19,37 +20,33 @@ export interface StockVariationStructure {
 
 export interface StockStructure {
   delieveryDate?: Date;
+  id: string;
   note?: string;
   orderNumber?: string;
-  outletId?: number;
+  outletId: number;
   supplierId?: number;
   supplierInvoiceNumber?: string;
-  variations?: StockVariationStructure[];
+  variations: StockVariationStructure[];
 }
 
-// export const getAll = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   const data = await Suppliers.findAll({
-//     attributes: ["id", "active", "createdAt", ["companyName", "name"]],
-//   });
+export const getAll = async (
+  req: Request,
+  res: Response
+): Promise<Response> => {
+  const data = await StockMovement.findAll({
+    include: [
+      { model: Outlets, attributes: ["id", "name"] },
+      { model: Suppliers, attributes: ["id", "companyName"] },
+      { model: StockMovementVariations, attributes: ["id"] },
+    ],
+  }).catch((error) =>
+    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      error,
+    })
+  );
 
-//   return res.json({ data });
-// };
-
-// export const getOne = async (
-//   req: Request,
-//   res: Response
-// ): Promise<Response> => {
-//   const { id }: any = req.params;
-
-//   const data = await Suppliers.findByPk(id);
-
-//   return res.json({
-//     data: data,
-//   });
-// };
+  return res.json({ data });
+};
 
 export const createStockOrder = async (
   req: Request,
@@ -74,8 +71,8 @@ export const createStockOrder = async (
         outletId,
         supplierId,
         supplierInvoiceNumber,
-        createdBy: 1, // Hardcord for now
-        updatedBy: 1, // Hardcord for now
+        // createdBy: 1, // Hardcord for now
+        // updatedBy: 1, // Hardcord for now
       };
 
       const stockrequest = await StockMovement.create(Data, { transaction: t });
@@ -108,241 +105,281 @@ export const createStockOrder = async (
   }
 };
 
-export const getOne = async (
+export const receiveStockOrder = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { id }: any = req.params;
+  const {
+    id,
+    delieveryDate,
+    note,
+    orderNumber,
+    outletId,
+    supplierId,
+    supplierInvoiceNumber,
+    variations,
+  }: StockStructure = req.body;
 
-  const data = await StockMovement.findByPk(id, {
-    include: [
-      {
-        model: StockMovementVariations,
-        include: [
-          {
-            required: true,
-            model: ProductVariations,
-            attributes: [
-              "sku",
-              [
-                sequelize.fn(
-                  "product_variation_name",
-                  sequelize.col("variations->variation.id")
-                ),
-                "name",
-              ],
-              "price",
-            ],
-            include: [
-              {
-                model: Stocks,
-                as: "stocks",
-                // where:  { outletId:StockMovementVariations } ,
-                attributes: ["id", "availableQuantity"],
-              },
-            ],
-          },
-        ],
-      },
-      { required: true, model: Outlets, attributes: ["id", "name"] },
-      { required: true, model: Suppliers, attributes: ["id", "name"] },
-    ],
-    subQuery: false,
-    plain: true,
-  }).then((order) => {
-    const {
-      createdAt,
-      createdBy,
-      delieveryDate,
-      supplierId,
-      note,
-      orderNumber,
-      outletId,
-      status,
-      supplierInvoiceNumber,
-      updatedAt,
-      variations,
-      supplier,
-      outlet,
-      updatedBy,
-    }: any = order?.toJSON();
-
-    return {
-      createdAt,
-      createdBy,
-      delieveryDate,
-      supplierId,
-      note,
-      orderNumber,
-      outletId,
-      status,
-      supplierInvoiceNumber,
-      updatedAt,
-      updatedBy,
-      supplier,
-      outlet,
-      variations: variations?.map(
-        ({
-          id,
-          requestedQuantity,
-          requestedPrice,
-          receivedQuantity,
-          receivedPrice,
-          variation: { name, price, sku, stocks },
-        }) => {
-          const sum = 0;
-          stocks?.forEach((item) =>
-            item.id === outletId ? sum + item.availableQuantity : null
-          );
-          return {
-            id,
-            requestedQuantity,
-            requestedPrice,
-            receivedQuantity,
-            receivedPrice,
-            name,
-            price,
-            sku,
-            availableQuantity: sum,
-          };
-        }
-      ),
-    };
-  });
-
-  return res.json({
-    data: data,
-  });
-};
-
-export const getPDF = async (req: Request, res: Response): Promise<any> => {
-  const { id }: any = req.params;
-
-  const data = await StockMovement.findByPk(id, {
-    include: [
-      {
-        model: StockMovementVariations,
-        include: [
-          {
-            required: true,
-            model: ProductVariations,
-            attributes: [
-              "sku",
-              [
-                sequelize.fn(
-                  "product_variation_name",
-                  sequelize.col("variations->variation.id")
-                ),
-                "name",
-              ],
-              "price",
-            ],
-            include: [
-              {
-                model: Stocks,
-                as: "stocks",
-                // where:  { outletId:StockMovementVariations } ,
-                attributes: ["id", "availableQuantity"],
-              },
-            ],
-          },
-        ],
-      },
-      { required: true, model: Outlets, attributes: ["id", "name"] },
-      { required: true, model: Suppliers, attributes: ["id", "name"] },
-    ],
-    subQuery: false,
-    plain: true,
-  })
-    .then((order) => {
-      const {
-        createdAt,
-        createdBy,
+  try {
+    const result = await myconnect.transaction(async (t) => {
+      const Data = {
         delieveryDate,
-        supplierId,
         note,
         orderNumber,
         outletId,
-        status,
-        supplierInvoiceNumber,
-        updatedAt,
-        variations,
-        supplier,
-        outlet,
-        updatedBy,
-      }: any = order?.toJSON();
-
-      return {
-        createdAt,
-        createdBy,
-        delieveryDate,
         supplierId,
-        note,
-        orderNumber,
-        outletId,
-        status,
         supplierInvoiceNumber,
-        updatedAt,
-        updatedBy,
-        supplier,
-        outlet,
-        variations: variations?.map(
-          ({
-            id,
-            requestedQuantity,
-            requestedPrice,
-            receivedQuantity,
-            receivedPrice,
-            variation: { name, price, sku, stocks },
-          }) => {
-            const sum = 0;
-            stocks?.forEach((item) =>
-              item.id === outletId ? sum + item.availableQuantity : null
-            );
-            return {
-              id,
-              requestedQuantity,
-              requestedPrice,
-              receivedQuantity,
-              receivedPrice,
-              name,
-              price,
-              sku,
-              availableQuantity: sum,
-            };
-          }
-        ),
+        status: "RECEIVED",
+        // createdBy: 1, // Hardcord for now
+        // updatedBy: 1, // Hardcord for now
       };
-    })
-    .catch((err) => {
-      res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-        message: err.message,
-      });
+
+      let stockrequest;
+      if (id) {
+        stockrequest = await StockMovement.findByPk(id, {
+          transaction: t,
+        }).then(async (item) => {
+          if (!item) {
+            return await StockMovement.create(Data, {
+              transaction: t,
+            });
+          }
+
+          // Item already exists, so we update it
+          return await item.update(Data, { transaction: t });
+        });
+      } else {
+        stockrequest = await StockMovement.create(Data, {
+          transaction: t,
+        });
+      }
+
+      const promises: Promise<unknown>[] = [];
+      for (const { id, quantity, supplierPrice } of variations) {
+        promises.push(
+          new Promise(async (resolve, reject) => {
+            try {
+              const variation = await StockMovementVariations.findOne({
+                where: {
+                  stockMovementId: stockrequest.id,
+                  productVariationId: id,
+                },
+                transaction: t,
+              }).then(async (item) => {
+                if (!item) {
+                  return await StockMovementVariations.create(
+                    {
+                      stockMovementId: stockrequest.id,
+                      productVariationId: id,
+                      receivedQuantity: quantity,
+                      receivedPrice: supplierPrice,
+                    },
+                    { transaction: t }
+                  ).then((item) => ({ item, created: true }));
+                }
+
+                // Item already exists, so we update it
+                return await item
+                  .update(
+                    {
+                      stockMovementId: stockrequest.id,
+                      productVariationId: id,
+                      receivedQuantity: quantity,
+                      receivedPrice: supplierPrice,
+                    },
+                    { transaction: t }
+                  )
+                  .then((item) => ({ item, created: false }));
+              });
+
+              resolve(variation);
+            } catch (error) {
+              reject(error);
+              return;
+            }
+          })
+        );
+      }
+
+      await Promise.all(promises).then(console.log);
+      return stockrequest;
     });
 
-  const PDF: any = await new Promise((resolve, reject) =>
-    pdf
-      .create(pdfStockRequest(data), {})
-      .toFile(
-        `public/pdf/${data ? data.orderNumber : "StockMovement"}.pdf`,
-        (err, file) => {
-          if (err) reject(err);
+    return res.status(httpStatus.CREATED).json({ data: result });
+  } catch (error) {
+    // If the execution reaches this line, an error occurred.
+    // The transaction has already been rolled back automatically by Sequelize!
+    console.log(error);
+    return res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
+      error: error,
+    });
+  }
+};
 
-          resolve(file);
-        }
-      )
-  ).catch((err) =>
-    res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
-      message: err.message,
+export const updateStockOrderStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { status } = req.query;
+  const { id } = req.params;
+
+  return await StockMovement.findByPk(id)
+    .then(async (item) => {
+      if (item) {
+        await item.update({ status }).then((item) => item);
+        return res.json({ success: true, data: item });
+      }
+      throw new Error("Sorry");
     })
-  );
+    .catch(next);
+};
 
-  // console.log(PDF);
+export const getOne = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
 
-  return res
-    .header({ type: "application/pdf" })
-    .status(httpStatus.CREATED)
-    .sendFile(PDF.filename);
+  return await StockMovement.findByPk(id, {
+    include: [
+      {
+        model: StockMovementVariations,
+        include: [
+          {
+            required: true,
+            model: ProductVariations,
+            attributes: [
+              "sku",
+              [
+                sequelize.fn(
+                  "product_variation_name",
+                  sequelize.col("variations->variation.id")
+                ),
+                "name",
+              ],
+              "price",
+            ],
+            include: [
+              {
+                model: Stocks,
+                as: "stocks",
+                // where:  { outletId:StockMovementVariations } ,
+                attributes: ["id", "availableQuantity","outletId"],
+              },
+            ],
+          },
+        ],
+      },
+      { required: true, model: Outlets, attributes: ["id", "name"] },
+      { required: true, model: Suppliers, attributes: ["id", "companyName"] },
+    ]
+  })
+    .then((order) => {
+      return {
+        ...order?.get(),
+        variations: order?.variations?.map((vs) => {
+          let sum = 0;
+          vs.variation?.stocks?.forEach((item) =>
+            item.outletId === order.outletId ? sum=sum + item.availableQuantity : null
+          );
+          return {
+            ...vs.get(),
+            ...vs.variation.get(),
+            availableQuantity: sum,
+          };
+        }),
+      };
+    })
+    .then((result) => {
+      return res.json({
+        data: result,
+      });
+    })
+    .catch(next);
+};
+
+export const getPDF = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { id } = req.params;
+
+  try {
+    const data: any = await StockMovement.findByPk(id, {
+      include: [
+        {
+          model: StockMovementVariations,
+          include: [
+            {
+              required: true,
+              model: ProductVariations,
+              attributes: [
+                "sku",
+                [
+                  sequelize.fn(
+                    "product_variation_name",
+                    sequelize.col("variations->variation.id")
+                  ),
+                  "name",
+                ],
+                "price",
+              ],
+              include: [
+                {
+                  model: Stocks,
+                  as: "stocks",
+                  // where:  { outletId:StockMovementVariations } ,
+                  attributes: ["id", "availableQuantity","outletId"],
+                },
+              ],
+            },
+          ],
+        },
+        { required: true, model: Outlets, attributes: ["id", "name"] },
+        { required: true, model: Suppliers, attributes: ["id", "name"] },
+      ],
+      subQuery: false,
+      plain: true,
+    }).then((order) => {
+      return {
+        ...order?.get(),
+        variations: order?.variations?.map((vs) => {
+          let sum = 0;
+          vs.variation?.stocks?.forEach((item) =>
+            item.id === order.outletId ? sum=sum + item.availableQuantity : null
+          );
+          return {
+            ...vs.get(),
+            ...vs.variation.get(),
+            availableQuantity: sum,
+          };
+        }),
+      };
+    });
+
+    const PDF: any = await new Promise((resolve, reject) =>
+      pdf
+        .create(pdfStockRequest(data), {})
+        .toFile(
+          `public/pdf/${data ? data.orderNumber : "StockMovement"}.pdf`,
+          (err, file) => {
+            if (err) reject(err);
+            resolve(file);
+          }
+        )
+    );
+
+    // console.log(PDF);
+    return res
+      .header({ type: "application/pdf" })
+      .status(httpStatus.CREATED)
+      .sendFile(PDF.filename);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // export const update = async (

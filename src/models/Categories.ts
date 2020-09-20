@@ -31,7 +31,7 @@ import {
     attributes: ["id", "name", "active", "createdAt"],
   },
   website: {
-    attributes: ["id", "name", "slug"],
+    attributes: ["id", "name", "slug","image"],
     where: { active: true },
   },
 })
@@ -52,7 +52,7 @@ export class Categories extends Model<Categories> {
   childrens!: Categories[];
 
   @BelongsTo(() => Categories)
-  parent!: Categories[];
+  parent!: Categories;
 
   @Column({ unique: true })
   slug!: string;
@@ -60,7 +60,7 @@ export class Categories extends Model<Categories> {
   @Column
   name!: string;
 
-  @IsUrl
+  
   @Column
   image!: string;
 
@@ -73,7 +73,7 @@ export class Categories extends Model<Categories> {
   @Column
   storyTextColor!: string;
 
-  @IsUrl
+  
   @Column
   storyCover!: string;
 

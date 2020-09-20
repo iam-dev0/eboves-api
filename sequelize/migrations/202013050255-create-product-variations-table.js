@@ -46,6 +46,8 @@ module.exports.up = (queryInterface, DataTypes) => {
         type: DataTypes.INTEGER.UNSIGNED,
         default: 0,
       },
+      discountReason: DataTypes.TEXT,
+      discountType: DataTypes.TEXT,
       discountPrice: {
         type: DataTypes.FLOAT,
         default: 0,
@@ -81,7 +83,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         default: false,
       },
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -90,7 +92,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       },
 
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

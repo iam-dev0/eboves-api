@@ -40,6 +40,8 @@ module.exports = {
           price: Math.floor(Math.random() * 10000) + 100,
           supplierPrice: Math.floor(Math.random() * 10000) + 100,
           discountPercentage: Math.floor(Math.random() * 100) + 0,
+          discountReason:"Flash Sale",
+          discountType:"GENERAL_DISCOUNT",
           discountPrice: Math.floor(Math.random() * 10000) + 0,
           discountStartTime: new Date(),
           discountEndTime: new Date(),

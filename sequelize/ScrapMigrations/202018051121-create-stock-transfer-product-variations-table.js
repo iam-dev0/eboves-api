@@ -28,7 +28,7 @@ module.exports.up = (queryInterface, DataTypes) => {
       receivedQuantity: DataTypes.INTEGER.UNSIGNED,
 
       createdBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",
@@ -36,7 +36,7 @@ module.exports.up = (queryInterface, DataTypes) => {
         },
       },
       updatedBy: {
-        allowNull: false,
+        // allowNull: false,
         type: DataTypes.INTEGER.UNSIGNED,
         references: {
           key: "id",

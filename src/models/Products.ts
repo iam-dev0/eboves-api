@@ -36,6 +36,7 @@ import Suppliers from "./Supplier";
     attributes: [
       "id",
       "name",
+      "slug",
       "mainImage",
       "bestSeller",
       "featured",
@@ -91,6 +92,7 @@ export class Products extends Model<Products> {
   @BelongsToMany(() => Attributes, () => ProductAttribute)
   attributes!: Attributes[];
 
+
   @HasMany(() => ProductVariations)
   variations!: ProductVariations[];
 
@@ -98,7 +100,7 @@ export class Products extends Model<Products> {
   images!: ProductsImages[];
 
   @BelongsTo(() => Categories)
-  Category!: Categories;
+  category!: Categories;
 
   @BelongsTo(() => Suppliers)
   supplier!: Suppliers;
@@ -174,6 +176,16 @@ export class Products extends Model<Products> {
   @DeletedAt
   @Column
   deletedAt!: Date;
+
+
+
+
+
+
+  //--------------------------------//relations-------------------//
+  
+  @HasMany(() => ProductAttribute)
+  attributesRelation!: ProductAttribute[];
 }
 
 export default Products;

@@ -9,19 +9,21 @@ import {
   PrimaryKey,
   AutoIncrement,
   IsUrl,
+  IsEmail,
+  NotNull,
 } from "sequelize-typescript";
 
 @Table({
   paranoid: false,
   timestamps: false,
-  tableName: "banners",
+  tableName: "contact_us",
 })
 @Scopes({
   website: {
     where: { active: true },
   },
 })
-export class Banners extends Model<Banners> {
+export class ContactUs extends Model<ContactUs> {
   @AllowNull(false)
   @PrimaryKey
   @AutoIncrement
@@ -31,21 +33,20 @@ export class Banners extends Model<Banners> {
   id!: number;
 
   @Column
-  title!: string;
+  name!: string;
 
-  
+  @IsEmail
   @Column
-  image!: string;
-
-  @Column
-  href!: string;
+  email!: string;
 
   @Column
-  type!: string;
+  phone!: string;
 
-  @Default(true)
   @Column
-  active!: boolean;
+  subject!: string;
+
+  @Column
+  message!: string;
 }
 
-export default Banners;
+export default ContactUs;

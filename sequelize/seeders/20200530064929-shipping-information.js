@@ -4,6 +4,7 @@ const {
   stringGenerator,
   randomArrayElement,
   getrandomBoolean,
+  randomUser,
 } = require("../../dist/util/index");
 module.exports = {
   up: async (queryInterface, Sequelize) => {
@@ -18,24 +19,23 @@ module.exports = {
       }], {});
     */
 
-   const products = await queryInterface.sequelize.query(
-    "select * from product_attribute"
-  );
-  const productVariations = await queryInterface.sequelize.query(
-    "select * from product_variations"
-  );
-
+    const cities = await queryInterface.sequelize.query("select * from cities");
     const values = [];
-    for (let i = 1; i < Math.floor(Math.random() * 20) + 5; i++) {
+    for (let i = 1; i < 5; i++) {
+      const user=randomUser();
       values.push({
-        title: stringGenerator(1),
-        type: randomArrayElement(["slider", "banner1", "banner2", "banner3"]),
-        active: getrandomBoolean(0.2),
-        href: "https://github.com/",
-        image: "https://via.placeholder.com/720x720",
+        firstName: user.name.split(" ")[0],
+        lastName: user.name.split(" ")[1],
+        address:  stringGenerator(3),
+        cityId: randomArrayElement(cities[0]).id,
+        email: user.email,
+        phone: user.phone,
       });
     }
-    return queryInterface.bulkInsert("product_variation_attribute_values", values);
+    return queryInterface.bulkInsert(
+      "shipping_information",
+      values
+    );
   },
 
   down: (queryInterface, Sequelize) => {
@@ -44,6 +44,10 @@ module.exports = {
       Return a promise to correctly handle asynchronicity.
 
       Example:*/
-    return queryInterface.bulkDelete("product_variation_attribute_values", null, {});
+    return queryInterface.bulkDelete(
+      "shipping_information",
+      null,
+      {}
+    );
   },
 };
