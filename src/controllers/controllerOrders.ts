@@ -117,10 +117,10 @@ export const create = async (
           lastName: name,
           email,
           phone,
-          cityId:1,
+          cityId: 1,
           address,
           order: {
-            shippingCharges: 200,
+            shippingCharges: actualAmount > 3000 ? 0 : 150,
             discountedPercentage,
             discountedAmount,
             amount: actualAmount,

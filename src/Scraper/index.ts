@@ -102,7 +102,7 @@ const attributeStructure = (rows) => {
 };
 
 app.get("/categories", async (req, res) => {
-  const rows = await readXlsxFile("./src/Scraper/Category.xlsx");
+  const rows = await readXlsxFile("./src/Scraper/Sabmilygaa.com.xlsx");
   // skip header
 
   rows.shift();
@@ -122,7 +122,7 @@ app.get("/categories", async (req, res) => {
 });
 
 app.get("/products", async (req, res) => {
-  const rows = await readXlsxFile("./src/Scraper/MrsMohsin.xlsx");
+  const rows = await readXlsxFile("./src/Scraper/HamadsBeautyCollection1.xlsx");
   // skip header
   rows.shift();
   const products: any[] = [];
@@ -136,11 +136,11 @@ app.get("/products", async (req, res) => {
         if (!row[2]) return;
 
         const object = {
-          supplier: row[4],
-          brand: row[5],
-          mainCategry: row[6],
-          category: row[7],
-          part: row[8],
+          supplier: row[4].trim(),
+          brand: row[5].trim(),
+          mainCategry: row[6].trim(),
+          category: row[7].trim(),
+          part: row[8].trim(),
         };
         brands.push(object.brand);
         suppliers.push(object.supplier);
@@ -158,11 +158,22 @@ app.get("/products", async (req, res) => {
       });
 
       suppliers = [...new Set(suppliers)];
-      brands = [...new Set(brands)];
+      brands = [
+        ...new Set(
+          brands.filter(function (item, index, self) {
+            return (
+              self.findIndex((i) => {
+                return i.toLowerCase() === item.toLowerCase();
+              }) === index
+            );
+          })
+        ),
+      ];
       categories = [...new Set(categories)];
       categories = categoryStructure(categories);
       attributes = attributeStructure(attributes);
 
+      // throw "hhelo";
       const supplierPromises: Promise<Suppliers>[] = [];
       for (const supplier of suppliers) {
         supplierPromises.push(
@@ -390,7 +401,9 @@ app.get("/products", async (req, res) => {
           brandId: brandData.find((item) => item.name === row[5])?.id,
           categoryId,
           description: row[9],
-          attributesRelation: attrs.map((item) => ({ attributeId: item.attributeId })),
+          attributesRelation: attrs.map((item) => ({
+            attributeId: item.attributeId,
+          })),
           variations: [
             {
               sku: row[10],
@@ -433,12 +446,15 @@ app.get("/products", async (req, res) => {
             as: "variations",
             include: [
               { model: ProductVariationsImages, as: "images" },
-              { model: ProductVariationAttributeValues, as: "attributesRelation" },
+              {
+                model: ProductVariationAttributeValues,
+                as: "attributesRelation",
+              },
             ],
           },
           {
             model: ProductAttributes,
-            as:"attributesRelation"
+            as: "attributesRelation",
           },
         ],
       });
@@ -449,6 +465,43 @@ app.get("/products", async (req, res) => {
   } catch (err) {
     console.error(err);
   }
+});
+
+app.get("/discount", async (req, res) => {
+  const rows = await readXlsxFile("./src/Scraper/discount.xlsx");
+  // skip header
+  rows.shift();
+
+  const result = await myconnect.transaction(async (t) => {
+    const Promises: Promise<ProductVariations>[] = [];
+    for (const row of rows) {
+      if (row)
+        Promises.push(
+          new Promise(async (resolve, reject) => {
+            return await ProductVariations.update(
+              {
+                price: row[1],
+                supplierPrice: row[2],
+                discountPercentage: row[3],
+                discountPrice: (row[1] / 100) * row[3],
+                discountStartTime: row[4],
+                discountEndTime: row[5],
+                discountType: "GENERAL_DISCOUNT",
+                discountReason: "Launch Sale",
+              },
+              {
+                where: { sku: row[0] },
+                transaction: t,
+              }
+            )
+              // .then((data) => resolve(data[1][0]))
+              .catch((err) => reject(err));
+          })
+        );
+    }
+
+    return await Promise.all(Promises);
+  });
 });
 
 export default app;
