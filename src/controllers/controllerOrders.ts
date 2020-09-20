@@ -117,7 +117,7 @@ export const create = async (
           lastName: name,
           email,
           phone,
-          cityId,
+          cityId:1,
           address,
           order: {
             shippingCharges: 200,

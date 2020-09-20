@@ -954,6 +954,16 @@ export const getWebsiteProduct = async (
       },
     ],
     where: { slug },
+  }).then(data=>{
+    return {
+      ...data?.get(),
+      variations: data?.variations?.map((vs) => {
+        return {
+          ...vs.get(),
+          images: vs.images?.map((item) => item.image)
+        };
+      }),
+    };
   });
 
   // .then((data) => {
