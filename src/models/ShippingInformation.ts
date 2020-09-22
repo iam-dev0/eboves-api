@@ -7,8 +7,11 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
+  BelongsTo,
   HasOne,
+  ForeignKey,
 } from "sequelize-typescript";
+import Cities from "./Cities";
 
 import Orders from "./Order";
 
@@ -38,14 +41,18 @@ export class ShippingInformation extends Model<ShippingInformation> {
   })
   customerId!: number;
 
-  @HasOne(()=>Orders)
+  @HasOne(() => Orders)
   order!: Orders;
 
   @AllowNull(false)
+  @ForeignKey(() => Cities)
   @Column({
     type: DataType.INTEGER.UNSIGNED,
   })
   cityId!: number;
+
+  @BelongsTo(() => Cities)
+  city!: Cities;
 
   @Column
   firstName!: string;

@@ -19,7 +19,7 @@ const sequelize = new Sequelize({
     min: 0,
   },
   logging: (...msg) => {
-    if (config.env === "development") console.log(msg);
+    if (databaseInfo.databaseDebug) console.log(msg);
   },
   models: [__dirname + "./../models"],
 });

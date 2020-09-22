@@ -9,6 +9,7 @@ import moment from "moment";
 import myconnect from "../db/db";
 import ShippingInformation from "../models/ShippingInformation";
 import OrderItems from "../models/OrderItems";
+import Cities from "../models/Cities";
 
 interface ShippingInformationStructure {
   name: string;
@@ -57,7 +58,10 @@ export const getOne = async (
         },
         include: [{ model: ProductVariations, attributes: ["sku"] }],
       },
-      { model: ShippingInformation },
+      {
+        model: ShippingInformation,
+        include: [{ model: Cities, attributes: ["id", "name"] }],
+      },
     ],
   }).then((data) => {
     return {
@@ -97,10 +101,11 @@ export const create = async (
       moment().isSameOrBefore(p.discountEndTime)
     ) {
       actualAmount =
-        actualAmount + (p.price - (p.price / 100) * p.discountPercentage);
+        actualAmount +
+        p.qty * (p.price - (p.price / 100) * p.discountPercentage);
       discountReason.push(p.discountReason);
     } else {
-      actualAmount = actualAmount + p.price;
+      actualAmount = actualAmount + p.qty * p.price;
     }
   }
 
