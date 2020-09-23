@@ -47,13 +47,13 @@ export const getBrands = async (
     .findAndCountAll({
       where,
       order,
-      limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
+      limit: params.name ? undefined : parseInt(params.pageSize || "10000"), // For now as bug in sequlize
     })
     .then((data) => {
       return res.json({
         current: parseInt(params.current || "1"),
         data: data.rows,
-        pageSize: parseInt(params.pageSize || "20"),
+        pageSize: parseInt(params.pageSize || "10000"),
         success: true,
         total: data.count,
       });
