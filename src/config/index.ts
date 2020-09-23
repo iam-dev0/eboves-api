@@ -2,6 +2,7 @@ import Joi from "@hapi/joi";
 
 // require and configure dotenv, will load vars in .env in PROCESS.ENV
 import dotenv from "dotenv";
+import { env } from "process";
 
 dotenv.config();
 
@@ -55,17 +56,19 @@ interface DbInfo {
   password: string;
   host: string;
   port: number;
+  databaseDebug: boolean;
 }
 
 const envBasedDatabase = (): DbInfo => {
-  switch (envVars.env) {
+  switch (envVars.NODE_ENV) {
     case "development":
       return {
         name: envVars.DEV_DATABASE_NAME,
         user: envVars.DEV_DATABASE_USER,
         password: envVars.DEV_DATABASE_PASSWORD,
         host: envVars.DEV_DATABASE_HOST,
-        port: envVars.DEV_DATABASE_PORT
+        port: envVars.DEV_DATABASE_PORT,
+        databaseDebug:envVars.DATABASE_DEBUG,
       };
     case "production":
       return {
@@ -73,7 +76,8 @@ const envBasedDatabase = (): DbInfo => {
         user: envVars.PRO_DATABASE_USER,
         password: envVars.PRO_DATABASE_PASSWORD,
         host: envVars.PRO_DATABASE_HOST,
-        port: envVars.PRO_DATABASE_PORTPRO
+        port: envVars.PRO_DATABASE_PORTPRO,
+        databaseDebug:envVars.DATABASE_DEBUG,
       };
     case "test":
       return {
@@ -81,7 +85,8 @@ const envBasedDatabase = (): DbInfo => {
         user: envVars.TEST_DATABASE_USER,
         password: envVars.TEST_DATABASE_PASSWORD,
         host: envVars.TEST_DATABASE_HOST,
-        port: envVars.TEST_DATABASE_PORT
+        port: envVars.TEST_DATABASE_PORT,
+        databaseDebug:envVars.DATABASE_DEBUG,
       };
     default:
       return {
@@ -89,7 +94,8 @@ const envBasedDatabase = (): DbInfo => {
         user: envVars.DEV_DATABASE_USER,
         password: envVars.DEV_DATABASE_PASSWORD,
         host: envVars.DEV_DATABASE_HOST,
-        port: envVars.DEV_DATABASE_PORT
+        port: envVars.DEV_DATABASE_PORT,
+        databaseDebug:envVars.DATABASE_DEBUG,
       };
   }
 };

@@ -1,8 +1,7 @@
 import Brands from "../models/Brands";
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import httpStatus from "http-status";
 import { Op, literal } from "sequelize";
-
 
 export interface SearchParams {
   sorter?: string;
@@ -16,8 +15,9 @@ export interface SearchParams {
 
 export const getBrands = async (
   req: Request,
-  res: Response
-): Promise<Response> => {
+  res: Response,
+  next: NextFunction
+) => {
   const params: SearchParams = req.query;
 
   let where = {};
@@ -43,12 +43,22 @@ export const getBrands = async (
   if (params.featured)
     where = { ...where, featured: params.featured.toLowerCase() === "true" };
 
-  const data = await Brands.scope("basic").findAll({
-    where,
-    order,
-    limit: params.name ? undefined : parseInt(params.pageSize || "20"), // For now as bug in sequlize
-  });
-  return res.status(httpStatus.OK).json({ data });
+  return await Brands.scope("basic")
+    .findAndCountAll({
+      where,
+      order,
+      limit: params.name ? undefined : parseInt(params.pageSize || "10000"), // For now as bug in sequlize
+    })
+    .then((data) => {
+      return res.json({
+        current: parseInt(params.current || "1"),
+        data: data.rows,
+        pageSize: parseInt(params.pageSize || "10000"),
+        success: true,
+        total: data.count,
+      });
+    })
+    .catch(next);
 };
 
 export const getBrand = async (
@@ -202,7 +212,7 @@ export const getBrandWebsite = async (
   const data = await Brands.findOne({
     attributes: {
       exclude: [
-         "active",
+        "active",
         "createdBy",
         "updatedBy",
         "deletedBy",

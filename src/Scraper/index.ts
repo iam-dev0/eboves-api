@@ -472,7 +472,7 @@ app.get("/discount", async (req, res) => {
   // skip header
   rows.shift();
 
-  const result = await myconnect.transaction(async (t) => {
+  // const result = await myconnect.transaction(async (t) => {
     const Promises: Promise<ProductVariations>[] = [];
     for (const row of rows) {
       if (row)
@@ -491,7 +491,7 @@ app.get("/discount", async (req, res) => {
               },
               {
                 where: { sku: row[0] },
-                transaction: t,
+                // transaction: t,
               }
             )
               // .then((data) => resolve(data[1][0]))
@@ -500,8 +500,8 @@ app.get("/discount", async (req, res) => {
         );
     }
 
-    return await Promise.all(Promises);
-  });
+    return await Promise.all(Promises).catch((err) => console.error(err));
+  // });
 });
 
 export default app;
