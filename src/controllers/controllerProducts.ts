@@ -150,6 +150,7 @@ export const createProduct = async (
 ): Promise<Response> => {
   const {
     name,
+    slug,
     supplierId,
     brandId,
     productType,
@@ -167,6 +168,7 @@ export const createProduct = async (
     const result = await myconnect.transaction(async (t) => {
       const productData = {
         name,
+        slug,
         supplierId,
         brandId,
         productType,
@@ -338,6 +340,7 @@ export const createVariations = async (
             const pvDate = {
               productId: id,
               sku,
+              slug: sku,
               price,
               supplierPrice,
               mainImage: images ? images[0]?.url : null,
@@ -546,7 +549,7 @@ export const searchVariations = async (
 
       return res.json({
         data: result.map((v) => {
-          delete v.stocks;
+          delete v["stocks"];
           return v;
         }),
       });
@@ -647,7 +650,17 @@ export const getMainTabs = async (
       {
         required: true,
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+        ],
       },
       {
         model: Brands.scope("website"),
@@ -668,7 +681,17 @@ export const getMainTabs = async (
             [Op.gte]: moment().format("YYYY-MM-DD hh:mm:ss"),
           },
         },
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+        ],
       },
       {
         model: Brands.scope("website"),
@@ -683,7 +706,17 @@ export const getMainTabs = async (
       {
         required: true,
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+        ],
       },
       {
         model: Brands.scope("website"),
@@ -902,7 +935,7 @@ export const getWebsiteProduct = async (
     ],
     include: [
       // { model: ProductsImages },
-      { model: Attributes, attributes: ["id", "name", "type"] },
+      { model: Attributes, attributes: ["id", "name", "type","unit"] },
       {
         model: Brands,
         where: { active: true },
@@ -939,7 +972,7 @@ export const getWebsiteProduct = async (
           {
             model: Attributes,
             // where: { active: true },
-            attributes: ["id", "name", "type"],
+            attributes: ["id", "name", "type","unit"],
             through: {
               attributes: ["id", "alt", "value"],
               as: "value",
@@ -954,13 +987,14 @@ export const getWebsiteProduct = async (
       },
     ],
     where: { slug },
-  }).then(data=>{
+  }).then((data) => {
     return {
       ...data?.get(),
+      metaTitle: data?.metaTitle ? data?.metaTitle : data?.name,
       variations: data?.variations?.map((vs) => {
         return {
           ...vs.get(),
-          images: vs.images?.map((item) => item.image)
+          images: vs.images?.map((item) => item.image),
         };
       }),
     };

@@ -89,7 +89,7 @@ export class Categories extends Model<Categories> {
   })
   metaDescription!: string;
 
-  @Default(true)
+  @Default(false)
   @Column
   active!: boolean;
 

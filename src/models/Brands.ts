@@ -10,7 +10,7 @@ import {
   AllowNull,
   PrimaryKey,
   AutoIncrement,
-  IsUrl,
+, Default
 } from "sequelize-typescript";
 
 @Table({
@@ -80,6 +80,7 @@ export class Brands extends Model<Brands> {
   })
   metaDescription!: string;
 
+  @Default(false)
   @Column
   active!: boolean;
 
