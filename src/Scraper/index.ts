@@ -10,7 +10,6 @@ import Suppliers from "../models/Supplier";
 import Attributes from "../models/Attributes";
 import ProductAttributes from "../models/ProductAttributes";
 import ProductVariationAttributeValues from "../models/ProductVariationAttributeValues";
-import { getAttributes } from "sequelize-typescript";
 
 const baseURLforImags =
   "https://eboves.oss-ap-south-1.aliyuncs.com/images/products/";
@@ -102,7 +101,7 @@ const attributeStructure = (rows) => {
 };
 
 app.get("/categories", async (req, res) => {
-  const rows = await readXlsxFile("./src/Scraper/Sabmilygaa.com.xlsx");
+  const rows = await readXlsxFile("./src/Scraper/MarcasShoescollection.xlsx");
   // skip header
 
   rows.shift();
@@ -122,7 +121,7 @@ app.get("/categories", async (req, res) => {
 });
 
 app.get("/products", async (req, res) => {
-  const rows = await readXlsxFile("./src/Scraper/HamadsBeautyCollection1.xlsx");
+  const rows = await readXlsxFile("./src/Scraper/MarcasShoescollection.xlsx");
   // skip header
   rows.shift();
   const products: any[] = [];

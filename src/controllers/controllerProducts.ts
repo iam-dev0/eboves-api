@@ -546,7 +546,7 @@ export const searchVariations = async (
 
       return res.json({
         data: result.map((v) => {
-          delete v.stocks;
+          delete v["stocks"];
           return v;
         }),
       });
@@ -647,7 +647,17 @@ export const getMainTabs = async (
       {
         required: true,
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+        ],
       },
       {
         model: Brands.scope("website"),
@@ -668,7 +678,17 @@ export const getMainTabs = async (
             [Op.gte]: moment().format("YYYY-MM-DD hh:mm:ss"),
           },
         },
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+        ],
       },
       {
         model: Brands.scope("website"),
@@ -683,7 +703,17 @@ export const getMainTabs = async (
       {
         required: true,
         model: ProductVariations.scope("websiteListing"),
-        include: [{ model: Attributes }, { model: ProductVariationsImages }],
+        include: [
+          {
+            model: Attributes,
+            attributes: ["id", "name", "type"],
+            through: {
+              attributes: ["id", "alt", "value"],
+              as: "value",
+            },
+          },
+          { model: ProductVariationsImages },
+        ],
       },
       {
         model: Brands.scope("website"),
@@ -954,13 +984,14 @@ export const getWebsiteProduct = async (
       },
     ],
     where: { slug },
-  }).then(data=>{
+  }).then((data) => {
     return {
       ...data?.get(),
+      metaTitle:data?.metaTitle?data?.metaTitle:data?.name,
       variations: data?.variations?.map((vs) => {
         return {
           ...vs.get(),
-          images: vs.images?.map((item) => item.image)
+          images: vs.images?.map((item) => item.image),
         };
       }),
     };
