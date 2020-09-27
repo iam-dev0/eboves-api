@@ -150,6 +150,7 @@ export const createProduct = async (
 ): Promise<Response> => {
   const {
     name,
+    slug,
     supplierId,
     brandId,
     productType,
@@ -167,6 +168,7 @@ export const createProduct = async (
     const result = await myconnect.transaction(async (t) => {
       const productData = {
         name,
+        slug,
         supplierId,
         brandId,
         productType,
@@ -338,6 +340,7 @@ export const createVariations = async (
             const pvDate = {
               productId: id,
               sku,
+              slug: sku,
               price,
               supplierPrice,
               mainImage: images ? images[0]?.url : null,
@@ -932,7 +935,7 @@ export const getWebsiteProduct = async (
     ],
     include: [
       // { model: ProductsImages },
-      { model: Attributes, attributes: ["id", "name", "type"] },
+      { model: Attributes, attributes: ["id", "name", "type","unit"] },
       {
         model: Brands,
         where: { active: true },
@@ -969,7 +972,7 @@ export const getWebsiteProduct = async (
           {
             model: Attributes,
             // where: { active: true },
-            attributes: ["id", "name", "type"],
+            attributes: ["id", "name", "type","unit"],
             through: {
               attributes: ["id", "alt", "value"],
               as: "value",
@@ -987,7 +990,7 @@ export const getWebsiteProduct = async (
   }).then((data) => {
     return {
       ...data?.get(),
-      metaTitle:data?.metaTitle?data?.metaTitle:data?.name,
+      metaTitle: data?.metaTitle ? data?.metaTitle : data?.name,
       variations: data?.variations?.map((vs) => {
         return {
           ...vs.get(),
