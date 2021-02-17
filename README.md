@@ -1,4 +1,7 @@
 # Eboves APIs
+**Online eCommerce Shop** [https://github.com/awais000/eboves-website](https://github.com/awais000/eboves-website)
+**Managment System** [https://github.com/awais000/eboves-management-portal](https://github.com/awais000/eboves-management-portal)
+
 
 # We used TypeScript-Node-Starter as boilerplate.
 [![Dependency Status](https://david-dm.org/Microsoft/TypeScript-Node-Starter.svg)](https://david-dm.org/Microsoft/TypeScript-Node-Starter) [![Build Status](https://travis-ci.org/Microsoft/TypeScript-Node-Starter.svg?branch=master)](https://travis-ci.org/Microsoft/TypeScript-Node-Starter)
