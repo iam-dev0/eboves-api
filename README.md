@@ -1,14 +1,11 @@
-# TypeScript Node Starter
+# Eboves APIs
 
+# We used TypeScript-Node-Starter as boilerplate.
 [![Dependency Status](https://david-dm.org/Microsoft/TypeScript-Node-Starter.svg)](https://david-dm.org/Microsoft/TypeScript-Node-Starter) [![Build Status](https://travis-ci.org/Microsoft/TypeScript-Node-Starter.svg?branch=master)](https://travis-ci.org/Microsoft/TypeScript-Node-Starter)
 
 **Live Demo**: [https://typescript-node-starter.azurewebsites.net/](https://typescript-node-starter.azurewebsites.net/)
 
-![image](https://user-images.githubusercontent.com/820883/36764267-abbdb7f8-1be0-11e8-9678-2a9ea448d7f8.png)
-
-The main purpose of this repository is to show a good end-to-end project setup and workflow for writing Node code in TypeScript.
-We will try to keep this as up-to-date as possible, but community contributions and recommendations for improvements are encouraged and will be most welcome.
-
+The main purpose of this repository to build a headless eCommerce platform that can be set up easily and with minimal changes and you can have your own eCommerce platform up and running in no time.
 # Table of contents:
 
 - [Pre-reqs](#pre-reqs)
@@ -32,7 +29,7 @@ We will try to keep this as up-to-date as possible, but community contributions 
 # Pre-reqs
 To build and run this app locally you will need a few things:
 - Install [Node.js](https://nodejs.org/en/)
-- Install [MongoDB](https://docs.mongodb.com/manual/installation/)
+- Install [MySql](https://www.mysql.com/downloads/)
 - Install [VS Code](https://code.visualstudio.com/)
 
 # Getting started
@@ -45,29 +42,42 @@ git clone --depth=1 https://github.com/Microsoft/TypeScript-Node-Starter.git <pr
 cd <project_name>
 npm install
 ```
-- Configure your mongoDB server
-```bash
-# create the db directory
-sudo mkdir -p /data/db
-# give the db correct read/write permissions
-sudo chmod 777 /data/db
+- Configure your MySQl server
+create a database (dev).
+Enter Your credentials into .env file.
+```
 
-# starting from macOS 10.15 even the admin cannot create directory at root
-# so lets create the db directory under the home directory.
-mkdir -p ~/data/db
-# user account has automatically read and write permissions for ~/data/db.
-```
-- Start your mongoDB server (you'll probably want another command prompt)
-```bash
-mongod
+# Database Information on development
+DEV_DATABASE_NAME=dev
+DEV_DATABASE_USER=root
+DEV_DATABASE_PASSWORD=password
+DEV_DATABASE_HOST=127.0.0.1
+DEV_DATABASE_PORT=3306
 
-# on macOS 10.15 or above the db directory is under home directory
-mongod --dbpath ~/data/db
+
+# Database Information on test
+TEST_DATABASE_NAME=dev
+TEST_DATABASE_USER=root
+TEST_DATABASE_PASSWORD=password
+TEST_DATABASE_HOST=127.0.0.1
+TEST_DATABASE_PORT=3306
+
+
+# Database Information on production
+PRO_DATABASE_NAME=dev
+PRO_DATABASE_USER=root
+PRO_DATABASE_PASSWORD=password
+PRO_DATABASE_HOST=127.0.0.1
+PRO_DATABASE_PORT=3306
+
+
 ```
-- Build and run the project
+
+Note: if you are using mysql 8.0 sequilize does not caching_sha2_password then you might configure my_native_possword to make it work. Here is the link to an article that can help.[https://medium.com/codespace69/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server-consider-8afadc2385e2](https://medium.com/codespace69/mysql-8-0-client-does-not-support-authentication-protocol-requested-by-server-consider-8afadc2385e2) 
+
+-Run the project in Development
 ```
-npm run build
-npm start
+yarn dev
 ```
 Or, if you're using VS Code, you can use `cmd + shift + b` to run the default build task (which is mapped to `npm run build`), and then you can use the command palette (`cmd + shift + p`) and select `Tasks: Run Task` > `npm: start` to run `npm start` for you.
 
@@ -86,34 +96,8 @@ The Azure free tier gives you plenty of resources to play around with including 
 - [**VS Code**](https://code.visualstudio.com/) - We'll be using the interface provided by VS Code to quickly deploy our app.
 - [**Azure App Service VS Code extension**](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azureappservice) - In VS Code, search for `Azure App Service` in the extension marketplace (5th button down on the far left menu bar), install the extension, and then reload VS Code.
 - **Create a cloud database** -
-For local development, running MongoDB on localhost is fine, however once we deploy we need a database with high availability.
+For local development, running MySQl on localhost is fine, however once we deploy we need a database with high availability.
 The easiest way to achieve this is by using a managed cloud database.
-There are many different providers, but the easiest one to get started with is [MongoLab](#mlab).
-- **SendGrid Account** -
-If you don't have one, you can sign up for free, we will need it to send emails. There are many different providers that Nodemailer supports ([Well-known services](https://nodemailer.com/smtp/well-known/)), we'll be using [SendGrid](#sendgrid).
-
-### <a name="mlab"></a> Create a managed MongoDB with MongoLab
-1. Navigate to [MongoLab's Website](https://mlab.com/), sign up for a free account, and then log in.
-2. In the **MongoDB Deployments** section, click the **Create New** button.
-3. Select any provider (I recommend **Microsoft Azure** as it provides an easier path to upgrading to globally distributed instances later).
-4. Select **Sandbox** to keep it free unless you know what you're doing, and hit **Continue**.
-5. Select a region (I recommend the region geographically closest to your app's users).
-6. Add a name, click **Continue** again, and finally **Submit Order**.
-7. Once your new database is created, select it from the **MongoDB Deployments** section.
-8. Create a user by selecting the **User** tab, clicking the **Add database user** button, adding a username and password, and then clicking **Create**.
-A user account is required to connect to the database, so remember these values because you will need them as part of your connection string.
-9. Copy the connection string from the top of the page, it should look like this: `mongodb://<dbuser>:<dbpassword>@ds036069.mlab.com:36069/test-asdf`
-and replace `<dbUser>` and `<dbpassword>` with the credentials you just created.
-Back in your project, open your `.env` file and update `MONGODB_URI` with your new connection string.
-    > NOTE! - If you don't have an `.env` file yet, rename `.env.example` to `.env` and follow the comments to update the values in that file.
-10. **Success!**
-You can test that it works locally by updating `MONGODB_URI_LOCAL` to the same connection string you just updated in `MONGO_URI`.
-After rebuilding/serving, the app should work, but users that were previously created in local testing will not exist in the new database!
-Don't forget to return the `MONGO_URI_LOCAL` to your local test database (if you so desire).
-
-### <a name="sendgrid"></a> SendGrid Account
-1. Navigate to [SendGrid's Website](https://sendgrid.com/), sign up for a free account, and complete the verification process.
-2. Open your `.env` file and update `SENDGRID_USERNAME` and `SENDGRID_PASSWORD` with your SendGrid username and password respectively.
 
 ## Deploying to Azure App Service
 Deploying from VS Code can be broken into the following steps:
@@ -139,7 +123,7 @@ Additionally you should see the email associated with your account listed in the
 Building the app locally is required to generate a zip to deploy because the App Service won't execute build tasks.
 Build the app however you normally would:
 - `ctrl + shift + b` - kicks off default build in VS Code
-- execute `npm run build` from a terminal window
+- execute `npm run build or yarn build` from a terminal window
 
 ### Zip deploy from VS Code
 1. Make sure your app is built, whatever is currently in your `dist` and `node_modules` folders will be the app that is deployed.
