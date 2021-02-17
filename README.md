@@ -36,6 +36,7 @@ To build and run this app locally you will need a few things:
 - Install [Node.js](https://nodejs.org/en/)
 - Install [MySql](https://www.mysql.com/downloads/)
 - Install [VS Code](https://code.visualstudio.com/)
+- Google Cloud or Alibaba S3 bucket for storing Images 
 
 # Getting started
 - Clone the repository
