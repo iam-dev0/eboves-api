@@ -1,13 +1,13 @@
 import OSS from "ali-oss";
 import httpStatus from "http-status";
 
-const client = new OSS({
+/*const client = new OSS({
   region: "oss-ap-south-1",
-  accessKeyId: "LTAI4GAnQkd5wJqFqY4wzxf1",
-  accessKeySecret: "LZFQWAKFdxxtJ4a480qeoQDWCMo5f1",
+  accessKeyId: "SKADJFJjHiyKJ785bv65g",
+  accessKeySecret: "SKADJFJjHiyKJ785bv65g",
   bucket: "eboves",
   secure: true,
-});
+});*/
 
 const sendUploadToGCS = async (req, res, next) => {
   if (!req.file) {
