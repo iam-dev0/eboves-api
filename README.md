@@ -10,6 +10,7 @@
 **Live Demo**: [https://typescript-node-starter.azurewebsites.net/](https://typescript-node-starter.azurewebsites.net/)
 
 The main purpose of this repository to build a headless eCommerce platform that can be set up easily and with minimal changes and you can have your own eCommerce platform up and running in no time.
+We also support S3 Buckets and at the momenet We are using Google S3 buckets/ Alibaba Object Storage
 # Table of contents:
 
 - [Pre-reqs](#pre-reqs)
